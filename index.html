@@ -9,7 +9,6 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',sans-serif; overflow:hidden; height:100vh; width:100vw; }
 
-/* === 页面闪烁遮罩 === */
 #flash-overlay { position:fixed; inset:0; z-index:9997; pointer-events:none; opacity:0; transition:opacity 0.15s ease-out; }
 
 #intro { position:fixed; inset:0; background:#000; z-index:9998; display:flex; justify-content:center; align-items:center; transition:opacity 0.6s ease; }
@@ -21,7 +20,6 @@ body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',san
 .topbar { height:48px; background:rgba(0,0,0,0.9); border-bottom:1px solid #330000; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .topbar-title { font-size:15px; font-weight:900; font-style:italic; letter-spacing:3px; text-shadow:0 0 8px currentColor, 0 0 20px currentColor; transition:color 0.4s ease, text-shadow 0.4s ease; cursor:default; }
 
-/* === 日志面板 === */
 #log-panel { position:fixed; bottom:0; left:0; right:0; max-height:35vh; background:rgba(0,20,0,0.95); border-top:2px solid #0f0; z-index:9999; overflow-y:auto; display:none; padding:8px 10px; font-family:'Courier New',monospace; font-size:11px; color:#0f0; }
 #log-panel.show { display:block; }
 #log-panel .log-line { margin:1px 0; }
@@ -65,7 +63,7 @@ body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',san
 #mute-btn { position:fixed; bottom:60px; right:130px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,0.7); color:#fff; border:1px solid #c00; font-size:16px; cursor:pointer; z-index:998; display:flex; align-items:center; justify-content:center; }
 #mute-btn:hover { background:rgba(200,0,0,0.5); }
 
-/* === 曲目名：柔和发光 + 移动端适配 === */
+/* === 曲目名 === */
 #now-playing {
   position:fixed;
   bottom:70px;
@@ -77,7 +75,7 @@ body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',san
   z-index:999;
   pointer-events:none;
   opacity:0;
-  transition:opacity 0.4s, color 0.4s ease, transform 0.3s;
+  transition:opacity 0.4s, color 0.4s ease;
   text-shadow:0 0 8px rgba(255,255,255,0.8), 0 0 16px rgba(255,255,255,0.5);
   max-width:60vw;
   white-space:nowrap;
@@ -145,7 +143,6 @@ body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',san
 <div id="log-panel"></div>
 
 <script>
-// ========== API Key（直接写死）==========
 var API_KEY = "sk-5Jg72uXUHod43eEUQOssxpIxp8mbmFCk6u3REqHAJehTO07z".trim();
 var API_ENDPOINTS = [
   "https://speed.toter.me/v1/chat/completions",
@@ -153,7 +150,6 @@ var API_ENDPOINTS = [
 ];
 var MODEL = "gemini-3-flash";
 
-// ========== 日志 ==========
 var logPanel = document.getElementById('log-panel');
 var logoTapCount = 0;
 var lastTapTime = 0;
@@ -162,7 +158,6 @@ function bindLogoTap(el) {
   el.addEventListener('click', function() {
     var now = Date.now();
     if (now - lastTapTime < 350) {
-      // 双击 → 日志面板
       logoTapCount++;
       if (logoTapCount >= 2) {
         logPanel.classList.toggle('show');
@@ -170,7 +165,6 @@ function bindLogoTap(el) {
         log('日志面板 ' + (logPanel.classList.contains('show') ? '打开' : '关闭'), 'ok');
       }
     } else {
-      // 单击 → 跳百度百科鬼泣5页面
       logoTapCount = 1;
       setTimeout(function() {
         if (logoTapCount === 1) {
@@ -194,22 +188,10 @@ function log(msg, type) {
   logPanel.scrollTop = logPanel.scrollHeight;
 }
 
-// ========== 标题 + 闪烁颜色 ==========
-var TITLE_COLORS = {
-  nero:  "#ffffff",
-  dante: "#ff5252",
-  vergil: "#4fc3f7"
-};
+var TITLE_COLORS = { nero:"#ffffff", dante:"#ff5252", vergil:"#4fc3f7" };
+var FLASH_COLORS = { nero:"rgba(255,255,255,0.35)", dante:"rgba(255,0,0,0.35)", vergil:"rgba(79,195,247,0.35)" };
 
-var FLASH_COLORS = {
-  nero:  "rgba(255,255,255,0.35)",
-  dante: "rgba(255,0,0,0.35)",
-  vergil: "rgba(79,195,247,0.35)"
-};
-
-function updateTitleColor(role) {
-  document.getElementById('top-title').style.color = TITLE_COLORS[role];
-}
+function updateTitleColor(role) { document.getElementById('top-title').style.color = TITLE_COLORS[role]; }
 
 function flashPage(role) {
   var overlay = document.getElementById('flash-overlay');
@@ -218,14 +200,12 @@ function flashPage(role) {
   setTimeout(function() { overlay.style.opacity = '0'; }, 180);
 }
 
-// ========== 曲目名 ==========
 var TRACK_NAMES = {
-  nero:  { text: "♪ Nero — Devil Trigger",   color: "#ffffff" },
-  dante: { text: "♪ Dante — Subhuman",       color: "#ff5252" },
-  vergil:{ text: "♪ Vergil — Bury the Light",color: "#4fc3f7" }
+  nero:  { text:"♪ Nero — Devil Trigger",   color:"#ffffff" },
+  dante: { text:"♪ Dante — Subhuman",       color:"#ff5252" },
+  vergil:{ text:"♪ Vergil — Bury the Light",color:"#4fc3f7" }
 };
 
-// ========== 音频 ==========
 var audios = {
   nero: document.getElementById('aud-nero'),
   dante: document.getElementById('aud-dante'),
@@ -237,9 +217,8 @@ var cur = "vergil";
 var np = document.getElementById('now-playing');
 var muteBtn = document.getElementById('mute-btn');
 
-// 初始化曲目名状态
-np.style.opacity = '0';
-np.textContent = '';
+// ✅ 关键修复：用 classList 控制显示，不再用内联 style.opacity
+np.classList.remove('show');
 
 Object.keys(audios).forEach(function(k) {
   var a = audios[k];
@@ -273,7 +252,7 @@ function forceUnlockAndPlay(role) {
           np.style.color = TRACK_NAMES[role].color;
         }
       }, 100);
-    }).catch(function(e) { log('静音播放也失败: ' + e.name, 'err'); np.classList.remove('show'); });
+    }).catch(function(e) { log('静音播放也失败: ' + e.name, 'err'); });
   }
 }
 
@@ -282,17 +261,19 @@ function playRole(role) {
   Object.keys(audios).forEach(function(k) {
     if (k !== role) { audios[k].pause(); try { audios[k].currentTime = 0; } catch(e) {} }
   });
+  // ✅ 先显示曲目名（不依赖播放结果）
+  np.textContent = TRACK_NAMES[role].text;
+  np.style.color = TRACK_NAMES[role].color;
+  np.classList.add('show');
+
   var target = audios[role];
-  if (target.readyState < 2) { np.textContent = '♪ 缓冲中...'; np.classList.add('show'); }
   target.volume = isMuted ? 0 : 0.3;
   try { target.currentTime = 0; } catch(e) {}
   var p = target.play();
   if (p && p.then) {
     p.then(function() {
       log('✅ 播放成功: ' + TRACK_NAMES[role].text, 'ok');
-      np.textContent = TRACK_NAMES[role].text;
-      np.style.color = TRACK_NAMES[role].color;
-    }).catch(function(e) { log('❌ 播放失败: ' + e.name, 'err'); np.classList.remove('show'); });
+    }).catch(function(e) { log('❌ 播放失败（曲目名已显示）: ' + e.name, 'warn'); });
   }
 }
 
@@ -315,7 +296,6 @@ function toggleMute() {
   if (!isMuted && audioUnlocked) playRole(cur);
 }
 
-// ========== Logo 动画 ==========
 var intro = document.getElementById('intro');
 var logo = document.getElementById('intro-logo');
 var mini = document.getElementById('mini-logo');
@@ -366,7 +346,6 @@ function startApp() {
 
 startApp();
 
-// ========== 角色 ==========
 var intros = {
   nero: "喂！别挡路！今天的我可是无敌的！Yahoo！",
   dante: "哟，伙计！准备好迎接Style了吗？Jackpot！",
@@ -382,9 +361,9 @@ var prompts = {
   dante: "你是《鬼泣5》的但丁，Devil May Cry事务所主人，斯巴达之子。不羁、爱笑、玩世不恭，战斗追求Style，爱说Jackpot!和草莓圣代。用中文回答，轻松痞气，偶尔耍帅，不解释哲理，直接逗比回击。",
   vergil: "你是《鬼泣5》的维吉尔，但丁孪生兄长，阎魔刀使者。冷酷、高傲、信奉力量即真理，经典台词I am the storm that is approaching。用中文回答，简短、压迫感、蔑视弱者，绝不废话超过三句。"
 };
-var dtLines = { nero: "Fuck you!", dante: "Jackpot!", vergil: "This is power!" };
-var bubbleClass = { nero: "bubble-nero", dante: "bubble-dante", vergil: "bubble-vergil" };
-var nameClass = { nero: "name-nero", dante: "name-dante", vergil: "name-vergil" };
+var dtLines = { nero:"Fuck you!", dante:"Jackpot!", vergil:"This is power!" };
+var bubbleClass = { nero:"bubble-nero", dante:"bubble-dante", vergil:"bubble-vergil" };
+var nameClass = { nero:"name-nero", dante:"name-dante", vergil:"name-vergil" };
 
 var STYLE_TABLE = [
   { g:"D", sub:"Dismal 糟糕的", cls:"style-d" },
@@ -450,7 +429,7 @@ async function callAI(role, msg) {
       var res = await fetch(API_ENDPOINTS[i], {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": "Bearer " + API_KEY },
-        body: JSON.stringify({ model: MODEL, messages: [{ role: "system", content: prompts[role] }, { role: "user", content: msg }], max_tokens: 300, temperature: 0.9 }),
+        body: JSON.stringify({ model: MODEL, messages: [{ role:"system", content: prompts[role] }, { role:"user", content: msg }], max_tokens: 300, temperature: 0.9 }),
         signal: ctl.signal
       });
       clearTimeout(to);
@@ -527,6 +506,7 @@ log('提示: 单击Logo跳转百度百科 / 双击Logo开关日志');
 </script>
 </body>
 </html>
+
 
 
 

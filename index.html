@@ -89,9 +89,10 @@ body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',san
 </head>
 <body>
 
-<audio id="aud-nero" preload="auto" src="nero.mp3"></audio>
-<audio id="aud-dante" preload="auto" src="dante.mp3"></audio>
-<audio id="aud-vergil" preload="auto" src="vergil.mp3"></audio>
+<!-- preload 改为 metadata，只拉时长不预下载整首 -->
+<audio id="aud-nero" preload="metadata" src="nero.mp3"></audio>
+<audio id="aud-dante" preload="metadata" src="dante.mp3"></audio>
+<audio id="aud-vergil" preload="metadata" src="vergil.mp3"></audio>
 
 <div id="intro">
   <img id="intro-logo" src="https://i.postimg.cc/TwdDGNdY/e6e5add26d2fdd9558b8f92097d3cb44b3baf321aead2097e78133d06b2ac778-0.webp">
@@ -173,14 +174,17 @@ var cur = "vergil";
 var np = document.getElementById('now-playing');
 var muteBtn = document.getElementById('mute-btn');
 
-// 检查每个文件加载状态
+// 加载状态监听
 Object.keys(audios).forEach(function(k) {
   var a = audios[k];
   a.addEventListener('loadedmetadata', function() {
     log(k + '.mp3 已加载, 时长:' + (a.duration ? a.duration.toFixed(1) + 's' : '未知'), a.duration > 0 ? 'ok' : 'warn');
   });
+  a.addEventListener('canplay', function() {
+    log(k + '.mp3 可以播放了', 'ok');
+  });
   a.addEventListener('error', function() {
-    log(k + '.mp3 加载失败: ' + (a.error ? a.error.message : '未知错误'), 'err');
+    log(k + '.mp3 加载失败', 'err');
   });
 });
 
@@ -190,32 +194,36 @@ function setVolumes() {
   });
 }
 
-// 强制唤醒：先静音播 → 100ms 后恢复音量
 function forceUnlockAndPlay(role) {
   log('尝试强制解锁播放: ' + role);
   var target = audios[role];
-  // 先静音
   target.volume = 0;
   target.currentTime = 0;
+
+  // 显示缓冲提示
+  np.textContent = '♪ 缓冲中...';
+  np.classList.add('show');
+
   var p = target.play();
   if (p && p.then) {
     p.then(function() {
-      log('静音播放成功，100ms 后恢复音量', 'ok');
+      log('静音播放成功，恢复音量', 'ok');
       setTimeout(function() {
         target.volume = isMuted ? 0 : 0.3;
         if (!isMuted) {
           np.textContent = TRACK_NAMES[role];
-          np.classList.add('show');
         }
       }, 100);
     }).catch(function(e) {
-      log('静音播放也失败: ' + e.name + ' - ' + e.message, 'err');
+      log('静音播放也失败: ' + e.name, 'err');
+      np.classList.remove('show');
     });
   }
 }
 
 function playRole(role) {
   log('切换歌曲: ' + role);
+
   // 停其他
   Object.keys(audios).forEach(function(k) {
     if (k !== role) {
@@ -223,10 +231,18 @@ function playRole(role) {
       try { audios[k].currentTime = 0; } catch (e) {}
     }
   });
-  // 播目标
+
   var target = audios[role];
+
+  // 如果还没加载好，显示缓冲提示
+  if (target.readyState < 2) {
+    np.textContent = '♪ 缓冲中...';
+    np.classList.add('show');
+  }
+
   target.volume = isMuted ? 0 : 0.3;
   try { target.currentTime = 0; } catch (e) {}
+
   var p = target.play();
   if (p && p.then) {
     p.then(function() {
@@ -245,7 +261,6 @@ function unlockAudio() {
   audioUnlocked = true;
   log('音频解锁（用户手势）', 'ok');
   setVolumes();
-  // 用强制唤醒
   forceUnlockAndPlay(cur);
 }
 
@@ -485,3 +500,4 @@ log('提示: 双击左上角 Logo 打开/关闭日志');
 </script>
 </body>
 </html>
+

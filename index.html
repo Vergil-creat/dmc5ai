@@ -9,52 +9,34 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 
 body {
-  background:#000;
-  color:#fff;
+  background:#000; color:#fff;
   font-family:'Segoe UI','Microsoft YaHei',sans-serif;
-  overflow:hidden;
-  height:100vh;
-  width:100vw;
+  overflow:hidden; height:100vh; width:100vw;
 }
 
 /* ===== 日志面板 ===== */
 #log-panel {
   position:fixed; bottom:0; left:0; right:0;
-  max-height:35vh;
-  background:rgba(0,20,0,0.95);
-  border-top:2px solid #0f0;
-  z-index:9999; overflow-y:auto; display:none;
-  padding:8px 10px;
-  font-family:'Courier New',monospace; font-size:11px; color:#0f0;
+  max-height:35vh; background:rgba(0,20,0,0.95);
+  border-top:2px solid #0f0; z-index:9999; overflow-y:auto; display:none;
+  padding:8px 10px; font-family:'Courier New',monospace; font-size:11px; color:#0f0;
 }
 #log-panel.show { display:block; }
 .log-line { margin:1px 0; }
-.log-err { color:#f55; }
-.log-ok { color:#5f5; }
-.log-warn { color:#ff5; }
+.log-err { color:#f55; } .log-ok { color:#5f5; } .log-warn { color:#ff5; }
 
-/* ===== 开场动画 ===== */
+/* ===== 开场 ===== */
 #intro {
   position:fixed; inset:0; background:#000; z-index:9998;
-  display:flex; justify-content:center; align-items:center;
-  transition:opacity 0.6s ease;
+  display:flex; justify-content:center; align-items:center; transition:opacity 0.6s ease;
 }
-#intro-logo {
-  position:absolute; width:240px; height:auto;
-  opacity:0; filter:blur(12px); cursor:pointer;
-}
+#intro-logo { position:absolute; width:240px; height:auto; opacity:0; filter:blur(12px); cursor:pointer; }
 
 /* ===== 主界面 ===== */
-#app {
-  display:none; height:100vh; width:100vw;
-  flex-direction:column; position:relative;
-}
-#mini-logo {
-  position:fixed; top:8px; left:10px;
-  height:32px; z-index:1000; display:none; cursor:pointer;
-}
+#app { display:none; height:100vh; width:100vw; flex-direction:column; position:relative; }
+#mini-logo { position:fixed; top:8px; left:10px; height:32px; z-index:1000; display:none; cursor:pointer; }
 
-/* ===== 顶栏（含歌词） ===== */
+/* ===== 顶栏 ===== */
 .topbar {
   height:72px; background:rgba(0,0,0,0.9); border-bottom:1px solid #330000;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -74,10 +56,9 @@ body {
   transition:color .4s,text-shadow .4s; line-height:1.2; margin-top:2px;
 }
 
-/* ===== 聊天区 ===== */
+/* ===== 聊天 ===== */
 .chat {
-  flex:1; overflow-y:auto;
-  padding:10px 90px 70px 15px;
+  flex:1; overflow-y:auto; padding:10px 90px 70px 15px;
   display:flex; flex-direction:column; gap:14px;
   overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
 }
@@ -99,7 +80,7 @@ body {
 .bubble-vergil { color:#e0e0e0; font-family:'Georgia','Times New Roman','Microsoft YaHei',serif; font-style:italic; letter-spacing:1.5px; border-color:#555; background:#0d0d0d; }
 .msg.user .bubble { background:#c00; border-color:#f00; color:#fff; font-size:16px; font-weight:600; }
 
-/* ===== 输入栏 ===== */
+/* ===== 输入 ===== */
 .input {
   position:fixed; bottom:0; left:0; right:80px; height:52px;
   display:flex; padding:8px 12px; gap:8px;
@@ -109,7 +90,7 @@ body {
 .input button { background:#c00; color:#fff; border:none; padding:0 18px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:14px; flex-shrink:0; }
 .input button:hover { background:#f00; }
 
-/* ===== 侧边角色栏 ===== */
+/* ===== 侧边栏（含武器区） ===== */
 .sidebar {
   position:fixed; right:0; top:72px; bottom:0; width:80px;
   background:rgba(10,0,0,.95); border-left:2px solid #c00;
@@ -117,20 +98,21 @@ body {
   padding-top:15px; gap:14px; z-index:500; overflow-y:auto;
 }
 .sidebar::-webkit-scrollbar { display:none; }
+
 .cbtn { width:56px; height:56px; border-radius:50%; border:3px solid #555; background-size:cover; background-position:center; cursor:pointer; opacity:.6; transition:.3s; flex-shrink:0; }
 .cbtn.active { border-color:#c00; opacity:1; box-shadow:0 0 14px #c00; }
-.cname { color:#fff; font-size:10px; margin-top:2px; text-align:center; }
+.cname { color:#fff; font-size:10px; margin-top:2px; text-align:center; margin-bottom:6px; }
 
-/* ===== 武器展示区（★阎魔刀放大） ===== */
+/* ★ 武器区：放在头像下面，占满侧边栏剩余宽度 */
 #weapon-container {
-  position:fixed; right:90px; top:50%;
-  transform:translateY(-50%);
-  width:140px; height:320px;
+  width:68px;
+  flex-shrink:0;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  z-index:400; pointer-events:none; overflow:visible;
+  margin-top:4px; margin-bottom:8px;
+  position:relative;
 }
 #weapon-img {
-  max-width:100%; max-height:100%; width:auto; height:auto;
+  max-width:100%; max-height:200px; width:auto; height:auto;
   object-fit:contain;
   border:3px solid #b0b0b0; border-radius:6px;
   opacity:0; transform:scale(.85) rotate(-2deg);
@@ -140,7 +122,7 @@ body {
 #weapon-img.show { opacity:.95; transform:scale(1) rotate(0deg); }
 #weapon-glow {
   position:absolute; bottom:2px; left:50%; transform:translateX(-50%);
-  width:100px; height:24px; opacity:0; transition:opacity .5s,background .4s; pointer-events:none;
+  width:60px; height:18px; opacity:0; transition:opacity .5s,background .4s; pointer-events:none;
 }
 #weapon-glow.show { opacity:1; }
 
@@ -148,7 +130,7 @@ body {
 #weapon-fly { position:fixed; width:80px; height:auto; pointer-events:none; z-index:450; opacity:0; display:none; }
 .fire-particle { position:fixed; border-radius:50%; pointer-events:none; z-index:449; opacity:0; }
 
-/* ===== 滚动/静音/正在播放 ===== */
+/* ===== 其他UI ===== */
 #scroll-btn { position:fixed; bottom:60px; right:88px; width:36px; height:36px; border-radius:50%; background:rgba(200,0,0,0.8); color:#fff; border:none; font-size:18px; cursor:pointer; z-index:998; display:none; align-items:center; justify-content:center; box-shadow:0 0 8px #c00; }
 #scroll-btn.show { display:flex; }
 #mute-btn { position:fixed; bottom:60px; right:130px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,0.7); color:#fff; border:1px solid #c00; font-size:16px; cursor:pointer; z-index:998; display:flex; align-items:center; justify-content:center; }
@@ -156,13 +138,11 @@ body {
 #now-playing { position:fixed; bottom:62px; right:172px; color:#c00; font-size:11px; font-weight:bold; z-index:998; pointer-events:none; opacity:0; transition:opacity 0.3s; text-shadow:0 0 4px #000; max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 #now-playing.show { opacity:1; }
 
-/* ===== 魔人化 ===== */
 .dt-overlay { position:fixed; inset:0; z-index:200; pointer-events:none; opacity:0; transition:opacity .3s; border:4px solid #c00; box-shadow:inset 0 0 80px #c00; }
 .dt-overlay.show { opacity:1; }
 .dt-overlay-blue { position:fixed; inset:0; z-index:200; pointer-events:none; opacity:0; transition:opacity .3s; border:4px solid #00aaff; box-shadow:inset 0 0 80px #00aaff; }
 .dt-overlay-blue.show { opacity:1; }
 
-/* ===== Style 评分 ===== */
 .style-pop { position:fixed; top:38%; left:50%; transform:translate(-50%,-50%) skewX(-10deg); font-family:'Cinzel Decorative','Times New Roman',serif; font-weight:900; z-index:500; pointer-events:none; animation:stylePop 1s ease-out forwards; text-shadow:0 0 12px currentColor,0 0 24px currentColor; }
 @keyframes stylePop { 0%{opacity:0;transform:translate(-50%,-50%) skewX(-10deg) scale(.4)} 20%{opacity:1;transform:translate(-50%,-50%) skewX(-10deg) scale(1.25)} 35%{transform:translate(-50%,-50%) skewX(-10deg) scale(1)} 80%{opacity:1} 100%{opacity:0;transform:translate(-50%,-60%) skewX(-10deg) scale(1)} }
 .style-sub { display:block; font-size:16px; font-weight:700; letter-spacing:2px; margin-top:4px; font-family:'Segoe UI','Microsoft YaHei',sans-serif; font-style:normal; transform:skewX(10deg); text-align:center; }
@@ -170,7 +150,6 @@ body {
 .style-sss .style-sub { animation:shake 0.4s ease-in-out 2; }
 @keyframes shake { 0%,100%{transform:skewX(10deg) translateX(0)} 25%{transform:skewX(10deg) translateX(-3px)} 75%{transform:skewX(10deg) translateX(3px)} }
 
-/* ===== 血闪 ===== */
 .blood-flash { position:fixed; inset:0; z-index:199; pointer-events:none; background:rgba(200,0,0,.15); opacity:0; }
 .blood-flash.show { animation:bloodFlash .35s ease-out; }
 @keyframes bloodFlash { 0%{opacity:.6} 100%{opacity:0} }
@@ -186,7 +165,6 @@ body {
   <img id="intro-logo" src="https://i.postimg.cc/TwdDGNdY/e6e5add26d2fdd9558b8f92097d3cb44b3baf321aead2097e78133d06b2ac778-0.webp">
 </div>
 <img id="mini-logo" src="https://i.postimg.cc/TwdDGNdY/e6e5add26d2fdd9558b8f92097d3cb44b3baf321aead2097e78133d06b2ac778-0.webp">
-
 <img id="weapon-fly" src="" alt="">
 <div id="fire-layer"></div>
 
@@ -198,12 +176,6 @@ body {
 
   <div class="chat" id="chat"></div>
 
-  <!-- ★ 武器展示区 -->
-  <div id="weapon-container">
-    <div id="weapon-glow"></div>
-    <img id="weapon-img" src="" alt="weapon">
-  </div>
-
   <button id="scroll-btn" onclick="scrollToBottom()">↓</button>
   <div id="now-playing"></div>
   <button id="mute-btn" onclick="toggleMute()">🔊</button>
@@ -213,10 +185,17 @@ body {
     <button onclick="send()">Send</button>
   </div>
 
+  <!-- ★ 武器区放在侧边栏内部，头像下面 -->
   <div class="sidebar">
     <div class="cbtn" id="b-nero" style="background-image:url('https://i.postimg.cc/2yXv0dfR/ab0e3d8b0d10b13ee56e113eadd1e3e83700043f2f7bba201a49bc3e30884537-0.jpg')" onclick="sw('nero')"></div><div class="cname">Nero</div>
     <div class="cbtn" id="b-dante" style="background-image:url('https://i.postimg.cc/MHrR908Q/1771934129984.jpg')" onclick="sw('dante')"></div><div class="cname">Dante</div>
     <div class="cbtn" id="b-vergil" style="background-image:url('https://i.postimg.cc/x8FH6GSm/1771934121143.jpg')" onclick="sw('vergil')"></div><div class="cname">Vergil</div>
+
+    <!-- ★ 武器展示放在这里 -->
+    <div id="weapon-container">
+      <div id="weapon-glow"></div>
+      <img id="weapon-img" src="" alt="weapon">
+    </div>
   </div>
 </div>
 
@@ -228,50 +207,35 @@ body {
 // ========== 日志 ==========
 var logPanel = document.getElementById('log-panel');
 var logoTapCount = 0, lastTapTime = 0;
-
 function bindLogoTap(el) {
   el.addEventListener('click', function() {
     var now = Date.now();
-    if (now - lastTapTime < 350) {
-      logoTapCount++;
-      if (logoTapCount >= 2) {
-        logPanel.classList.toggle('show');
-        logoTapCount = 0;
-        log('日志面板 ' + (logPanel.classList.contains('show') ? '打开' : '关闭'), 'ok');
-      }
+    if (now - lastTapTime < 350) { logoTapCount++;
+      if (logoTapCount >= 2) { logPanel.classList.toggle('show'); logoTapCount = 0; }
     } else { logoTapCount = 1; }
     lastTapTime = now;
   });
 }
 bindLogoTap(document.getElementById('mini-logo'));
 bindLogoTap(document.getElementById('intro-logo'));
-
 function log(msg, type) {
-  var d = document.createElement('div');
-  d.className = 'log-line' + (type ? ' log-' + type : '');
+  var d = document.createElement('div'); d.className = 'log-line' + (type ? ' log-' + type : '');
   d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
-  logPanel.appendChild(d);
-  while (logPanel.children.length > 200) logPanel.removeChild(logPanel.firstChild);
+  logPanel.appendChild(d); while (logPanel.children.length > 200) logPanel.removeChild(logPanel.firstChild);
   logPanel.scrollTop = logPanel.scrollHeight;
 }
 
-// ========== 歌词 + 标题颜色 ==========
+// ========== 歌词 ==========
 var TITLE_COLORS = { nero:"#ffffff", dante:"#ff5252", vergil:"#4fc3f7" };
-var LYRICS = {
-  nero: "Bang, bang, bang — Pull my Devil Trigger",
-  dante: "You cannot kill me! I am Subhuman!",
-  vergil: "I am the storm that is approaching"
-};
-
+var LYRICS = { nero:"Bang, bang, bang — Pull my Devil Trigger", dante:"You cannot kill me! I am Subhuman!", vergil:"I am the storm that is approaching" };
 function updateTitleColor(role) {
   document.getElementById('top-title').style.color = TITLE_COLORS[role];
   var lyric = document.getElementById('lyric');
-  lyric.style.color = TITLE_COLORS[role];
-  lyric.textContent = LYRICS[role];
+  lyric.style.color = TITLE_COLORS[role]; lyric.textContent = LYRICS[role];
   updateWeapon(role);
 }
 
-// ========== 武器系统 ==========
+// ========== 武器 ==========
 var WEAPON_IMGS = {
   vergil: "yamato.png",
   nero: "https://i.postimg.cc/BvGsMmcz/aebf56b3276a71fdea06b9e5abb942d88293704cafd5ea7544f3aa7f85e96a1d-0.png",
@@ -283,224 +247,106 @@ var WEAPON_GLOWS = {
   dante: "radial-gradient(ellipse,rgba(255,82,82,.3) 0%,transparent 70%)",
   vergil: "radial-gradient(ellipse,rgba(176,176,176,.3) 0%,transparent 70%)"
 };
-
 var weaponAnimating = false;
-
 function updateWeapon(role) {
-  var img = document.getElementById('weapon-img');
-  var glow = document.getElementById('weapon-glow');
-  img.classList.remove('show');
-  glow.classList.remove('show');
+  var img = document.getElementById('weapon-img'), glow = document.getElementById('weapon-glow');
+  img.classList.remove('show'); glow.classList.remove('show');
   setTimeout(function() {
-    img.src = WEAPON_IMGS[role];
-    img.style.borderColor = WEAPON_BORDERS[role];
+    img.src = WEAPON_IMGS[role]; img.style.borderColor = WEAPON_BORDERS[role];
     glow.style.background = WEAPON_GLOWS[role];
     img.onload = function() { img.classList.add('show'); glow.classList.add('show'); };
-    img.onerror = function() { log('武器加载失败:' + role, 'err'); img.alt = '[加载失败]'; img.classList.add('show'); };
+    img.onerror = function() { log('武器加载失败:'+role,'err'); img.alt='[加载失败]'; img.classList.add('show'); };
   }, 250);
 }
 
-// ========== 火焰拖尾（尼禄） ==========
-document.getElementById('weapon-img').addEventListener('click', function() {
-  if (cur === 'nero' && !weaponAnimating) fireEgg();
-});
-
+// ========== 火焰拖尾 ==========
+document.getElementById('weapon-img').addEventListener('click', function() { if (cur === 'nero' && !weaponAnimating) fireEgg(); });
 function fireEgg() {
   weaponAnimating = true;
-  var fly = document.getElementById('weapon-fly');
-  var staticImg = document.getElementById('weapon-img');
+  var fly = document.getElementById('weapon-fly'), staticImg = document.getElementById('weapon-img');
   var rect = staticImg.getBoundingClientRect();
-  var sx = rect.left + rect.width / 2, sy = rect.top + rect.height / 2;
-
-  fly.src = WEAPON_IMGS.nero;
-  fly.style.display = 'block';
-  fly.style.left = sx + 'px'; fly.style.top = sy + 'px';
-  fly.style.width = rect.width + 'px';
-  fly.style.marginLeft = (-rect.width / 2) + 'px'; fly.style.marginTop = (-rect.height / 2) + 'px';
-  fly.style.opacity = '1'; fly.style.transition = 'none'; fly.style.transform = 'rotate(0deg)';
-  staticImg.style.opacity = '0';
-  fly.offsetWidth;
-
+  var sx = rect.left + rect.width/2, sy = rect.top + rect.height/2;
+  fly.src = WEAPON_IMGS.nero; fly.style.display='block'; fly.style.left=sx+'px'; fly.style.top=sy+'px';
+  fly.style.width=rect.width+'px'; fly.style.marginLeft=(-rect.width/2)+'px'; fly.style.marginTop=(-rect.height/2)+'px';
+  fly.style.opacity='1'; fly.style.transition='none'; fly.style.transform='rotate(0deg)';
+  staticImg.style.opacity='0'; fly.offsetWidth;
   var dur = 900;
-  fly.style.transition = 'left ' + dur + 'ms cubic-bezier(.4,0,.2,1), opacity 300ms ease ' + (dur-300) + 'ms, transform ' + dur + 'ms ease';
-  fly.style.left = (innerWidth + 120) + 'px'; fly.style.transform = 'rotate(15deg)'; fly.style.opacity = '0';
-
-  var layer = document.getElementById('fire-layer'); layer.innerHTML = '';
-  for (var i = 0; i < 24; i++) {
-    (function(i) {
-      var p = document.createElement('div'); p.className = 'fire-particle';
-      var delay = Math.random() * 180, life = 400 + Math.random() * 400;
-      var size = 8 + Math.random() * 10;
-      p.style.width = size + 'px'; p.style.height = size + 'px';
-      p.style.left = sx + 'px'; p.style.top = (sy + (Math.random() - .5) * 36) + 'px';
-      p.style.background = i % 2 == 0
-        ? 'radial-gradient(circle,#fff 0%,#ffd700 30%,#ff6a00 60%,transparent 100%)'
-        : 'radial-gradient(circle,#fff 0%,#4fc3f7 40%,transparent 100%)';
-      p.style.boxShadow = i % 2 == 0 ? '0 0 8px #ff6a00,0 0 16px #ff2d00' : '0 0 8px #4fc3f7,0 0 16px #4fc3f7';
-      layer.appendChild(p); p.offsetWidth;
-      p.style.transition = 'left ' + life + 'ms linear ' + delay + 'ms, top ' + life + 'ms ease-in ' + delay + 'ms, opacity 300ms ease ' + (delay+life-300) + 'ms, width 500ms ease, height 500ms ease';
-      p.style.left = (sx + (innerWidth - sx) * .75 + Math.random() * 80) + 'px';
-      p.style.top = (sy + (Math.random() - .5) * 30) + 'px';
-      p.style.opacity = '0'; p.style.width = (size * .3) + 'px'; p.style.height = (size * .3) + 'px';
-      setTimeout(function() { if (p.parentNode) p.parentNode.removeChild(p); }, delay + life + 100);
-    })(i);
-  }
-  setTimeout(function() {
-    fly.style.display = 'none'; fly.style.left = '0px'; fly.style.opacity = '0';
-    staticImg.style.opacity = ''; weaponAnimating = false;
-  }, dur + 100);
+  fly.style.transition = 'left '+dur+'ms cubic-bezier(.4,0,.2,1), opacity 300ms ease '+(dur-300)+'ms, transform '+dur+'ms ease';
+  fly.style.left=(innerWidth+120)+'px'; fly.style.transform='rotate(15deg)'; fly.style.opacity='0';
+  var layer = document.getElementById('fire-layer'); layer.innerHTML='';
+  for (var i=0; i<24; i++) { (function(i){
+    var p=document.createElement('div'); p.className='fire-particle';
+    var delay=Math.random()*180, life=400+Math.random()*400, size=8+Math.random()*10;
+    p.style.width=size+'px'; p.style.height=size+'px'; p.style.left=sx+'px'; p.style.top=(sy+(Math.random()-.5)*36)+'px';
+    p.style.background = i%2==0 ? 'radial-gradient(circle,#fff 0%,#ffd700 30%,#ff6a00 60%,transparent 100%)' : 'radial-gradient(circle,#fff 0%,#4fc3f7 40%,transparent 100%)';
+    p.style.boxShadow = i%2==0 ? '0 0 8px #ff6a00,0 0 16px #ff2d00' : '0 0 8px #4fc3f7,0 0 16px #4fc3f7';
+    layer.appendChild(p); p.offsetWidth;
+    p.style.transition = 'left '+life+'ms linear '+delay+'ms, top '+life+'ms ease-in '+delay+'ms, opacity 300ms ease '+(delay+life-300)+'ms, width 500ms ease, height 500ms ease';
+    p.style.left=(sx+(innerWidth-sx)*.75+Math.random()*80)+'px'; p.style.top=(sy+(Math.random()-.5)*30)+'px';
+    p.style.opacity='0'; p.style.width=(size*.3)+'px'; p.style.height=(size*.3)+'px';
+    setTimeout(function(){if(p.parentNode)p.parentNode.removeChild(p);}, delay+life+100);
+  })(i); }
+  setTimeout(function(){ fly.style.display='none'; fly.style.left='0px'; fly.style.opacity='0'; staticImg.style.opacity=''; weaponAnimating=false; }, dur+100);
 }
 
 // ========== 音频 ==========
 var audios = { nero:document.getElementById('aud-nero'), dante:document.getElementById('aud-dante'), vergil:document.getElementById('aud-vergil') };
 var TRACK_NAMES = { nero:"♪ Nero — Devil Trigger", dante:"♪ Dante — Subhuman", vergil:"♪ Vergil — Bury the Light" };
-var audioUnlocked = false, isMuted = false, cur = "vergil";
-var np = document.getElementById('now-playing'), muteBtn = document.getElementById('mute-btn');
+var audioUnlocked=false, isMuted=false, cur="vergil";
+var np=document.getElementById('now-playing'), muteBtn=document.getElementById('mute-btn');
+Object.keys(audios).forEach(function(k){ audios[k].addEventListener('loadedmetadata',function(){log(k+'.mp3 已加载','ok');}); audios[k].addEventListener('error',function(){log(k+'.mp3 失败','err');}); });
+function setVolumes(){ Object.keys(audios).forEach(function(k){ audios[k].volume=isMuted?0:0.3; }); }
+function forceUnlockAndPlay(role){ var t=audios[role]; t.volume=0; t.currentTime=0; var p=t.play(); if(p&&p.then) p.then(function(){ setTimeout(function(){t.volume=isMuted?0:0.3;if(!isMuted){np.textContent=TRACK_NAMES[role];np.classList.add('show');}},100); }); }
+function playRole(role){ Object.keys(audios).forEach(function(k){if(k!==role){audios[k].pause();try{audios[k].currentTime=0;}catch(e){}}}); np.textContent=TRACK_NAMES[role]; np.classList.add('show'); var t=audios[role]; t.volume=isMuted?0:0.3; try{t.currentTime=0;}catch(e){} var p=t.play(); if(p&&p.then)p.catch(function(){}); }
+function unlockAudio(){ if(audioUnlocked)return; audioUnlocked=true; setVolumes(); forceUnlockAndPlay(cur); }
+document.body.addEventListener('click',unlockAudio,{once:true}); document.body.addEventListener('touchstart',unlockAudio,{once:true});
+function toggleMute(){ isMuted=!isMuted; setVolumes(); muteBtn.textContent=isMuted?'🔇':'🔊'; if(!isMuted&&audioUnlocked)playRole(cur); }
 
-Object.keys(audios).forEach(function(k) {
-  audios[k].addEventListener('loadedmetadata', function() { log(k+'.mp3 已加载', 'ok'); });
-  audios[k].addEventListener('error', function() { log(k+'.mp3 失败', 'err'); });
-});
+// ========== 开场 ==========
+var intro=document.getElementById('intro'), logo=document.getElementById('intro-logo'), mini=document.getElementById('mini-logo'), app=document.getElementById('app'), chat=document.getElementById('chat'), scrollBtn=document.getElementById('scroll-btn');
+var p=0, sx=innerWidth/2, sy=innerHeight/2, ex=26, ey=24;
+function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+function tick(){ p+=.018; if(p>=1)p=1; var e=ease(p); logo.style.left=(sx+(ex-sx)*e-120)+"px"; logo.style.top=(sy+(ey-sy)*e-25)+"px"; logo.style.opacity=e; logo.style.filter="blur("+((1-e)*12)+"px)"; logo.style.transform="scale("+(1-e*.83)+")"; if(p<1)requestAnimationFrame(tick); else{ intro.style.opacity=0; setTimeout(function(){intro.style.display='none';app.style.display='flex';mini.style.display='block';updateTitleColor(cur);say(cur,intros[cur],false);},600);}}
+logo.style.left=(sx-120)+"px"; logo.style.top=(sy-25)+"px";
+setTimeout(function(){logo.style.opacity=1;requestAnimationFrame(tick);},300);
 
-function setVolumes() { Object.keys(audios).forEach(function(k) { audios[k].volume = isMuted ? 0 : 0.3; }); }
-function forceUnlockAndPlay(role) {
-  var t = audios[role]; t.volume = 0; t.currentTime = 0;
-  var p = t.play();
-  if (p && p.then) p.then(function() { setTimeout(function() { t.volume = isMuted ? 0 : 0.3; if (!isMuted) { np.textContent = TRACK_NAMES[role]; np.classList.add('show'); } }, 100); });
-}
-function playRole(role) {
-  Object.keys(audios).forEach(function(k) { if (k !== role) { audios[k].pause(); try{audios[k].currentTime=0;}catch(e){} } });
-  np.textContent = TRACK_NAMES[role]; np.classList.add('show');
-  var t = audios[role]; t.volume = isMuted ? 0 : 0.3; try{t.currentTime=0;}catch(e){}
-  var p = t.play(); if (p && p.then) p.catch(function(){});
-}
-function unlockAudio() { if (audioUnlocked) return; audioUnlocked = true; setVolumes(); forceUnlockAndPlay(cur); }
-document.body.addEventListener('click', unlockAudio, { once: true });
-document.body.addEventListener('touchstart', unlockAudio, { once: true });
-function toggleMute() { isMuted = !isMuted; setVolumes(); muteBtn.textContent = isMuted ? '🔇' : '🔊'; if (!isMuted && audioUnlocked) playRole(cur); }
-
-// ========== 开场动画 ==========
-var intro = document.getElementById('intro'), logo = document.getElementById('intro-logo');
-var mini = document.getElementById('mini-logo'), app = document.getElementById('app');
-var chat = document.getElementById('chat'), scrollBtn = document.getElementById('scroll-btn');
-var p = 0, sx = innerWidth/2, sy = innerHeight/2, ex = 26, ey = 24;
-function ease(t) { return t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
-function tick() {
-  p += .018; if (p >= 1) p = 1; var e = ease(p);
-  logo.style.left = (sx+(ex-sx)*e-120)+"px"; logo.style.top = (sy+(ey-sy)*e-25)+"px";
-  logo.style.opacity = e; logo.style.filter = "blur("+((1-e)*12)+"px)";
-  logo.style.transform = "scale("+(1-e*.83)+")";
-  if (p < 1) requestAnimationFrame(tick);
-  else { intro.style.opacity = 0; setTimeout(function() { intro.style.display='none'; app.style.display='flex'; mini.style.display='block'; updateTitleColor(cur); say(cur,intros[cur],false); }, 600); }
-}
-logo.style.left = (sx-120)+"px"; logo.style.top = (sy-25)+"px";
-setTimeout(function() { logo.style.opacity = 1; requestAnimationFrame(tick); }, 300);
-
-// ========== 对话系统 ==========
-var intros = { nero:"喂！别挡路！今天的我可是无敌的！Yahoo！", dante:"哟，伙计！准备好迎接Style了吗？Jackpot！", vergil:"I am the storm that is approaching. 你想说什么？" };
-var avs = { nero:"https://i.postimg.cc/2yXv0dfR/ab0e3d8b0d10b13ee56e113eadd1e3e83700043f2f7bba201a49bc3e30884537-0.jpg", dante:"https://i.postimg.cc/MHrR908Q/1771934129984.jpg", vergil:"https://i.postimg.cc/x8FH6GSm/1771934121143.jpg" };
-var prompts = {
-  nero: "你是《鬼泣5》的尼禄。年轻热血的恶魔猎人，失去恶魔右臂后改用Nico造的Devil Breaker机械义肢。性格冲动、护短、嘴硬，口头禅Yahoo!和Devil Trigger!!。极度在意姬莉叶。用中文回答，语气暴躁但讲义气，别长篇大论，像在战斗间隙吼回去。",
-  dante: "你是《鬼泣5》的但丁，Devil May Cry事务所主人，斯巴达之子。不羁、爱笑、玩世不恭，战斗追求Style，爱说Jackpot!和草莓圣代。用中文回答，轻松痞气，偶尔耍帅，不解释哲理，直接逗比回击。",
-  vergil: "你是《鬼泣5》的维吉尔，但丁孪生兄长，阎魔刀使者。冷酷、高傲、信奉力量即真理，经典台词I am the storm that is approaching。用中文回答，简短、压迫感、蔑视弱者，绝不废话超过三句。"
-};
-var dtLines = { nero:"Fuck you!", dante:"Jackpot!", vergil:"This is power!" };
-var bubbleClass = { nero:"bubble-nero", dante:"bubble-dante", vergil:"bubble-vergil" };
-var nameClass = { nero:"name-nero", dante:"name-dante", vergil:"name-vergil" };
-
-var STYLE_TABLE = [
-  { g:"D", sub:"Dismal 糟糕的", cls:"style-d" },{ g:"C", sub:"Crazy 疯狂", cls:"style-c" },{ g:"B", sub:"Badass 狠角色", cls:"style-b" },
-  { g:"A", sub:"Apocalyptic 末日般的", cls:"style-a" },{ g:"S", sub:"Savage! 残忍", cls:"style-s" },{ g:"SS", sub:"Sick Skills!!", cls:"style-ss" },{ g:"SSS", sub:"Smokin' Sexy Style!!!", cls:"style-sss" }
-];
-function stylePop(inputLen, replyText) {
-  var score = Math.min(60, inputLen*2);
-  var kw = ['力量','恶魔','阎魔刀','斯巴达','魔界','Devil Trigger','Jackpot','Yahoo','Style','姬莉叶','妮可','尼禄','但丁','维吉尔'];
-  var kc = 0; kw.forEach(function(k){ if(replyText.indexOf(k)!==-1) kc++; });
-  score += Math.min(40, kc*8 + Math.min(20, replyText.length/10));
-  score = Math.min(100, Math.max(0, score));
-  var idx = score<15?0:score<30?1:score<45?2:score<60?3:score<75?4:score<90?5:6;
-  var s = STYLE_TABLE[idx];
-  var pop = document.createElement('div'); pop.className = 'style-pop '+s.cls;
-  pop.style.fontSize = (s.g.length>1?64:88)+"px";
-  pop.innerHTML = s.g+'<span class="style-sub">'+s.sub+'</span>';
-  document.body.appendChild(pop); setTimeout(function(){pop.remove();},1000);
-}
-
-function scrollToBottom() { chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'}); }
-function checkScrollBtn() { if(chat.scrollTop < chat.scrollHeight-chat.clientHeight-60) scrollBtn.classList.add('show'); else scrollBtn.classList.remove('show'); }
-chat.addEventListener('scroll', checkScrollBtn);
-
-function typeText(el, text, speed, onDone) {
-  el.textContent=""; var i=0;
-  (function next(){ if(i<text.length){ el.textContent+=text[i++]; chat.scrollTop=chat.scrollHeight; setTimeout(next,speed); } else { requestAnimationFrame(function(){ chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'}); checkScrollBtn(); if(onDone)onDone(); }); } })();
-}
-
-function say(role, text, isUser) {
-  var d = document.createElement('div'); d.className = 'msg'+(isUser?' user':'');
-  if(isUser) d.innerHTML = '<img class="av" src="https://placehold.co/100x100/333/fff?text=Me"><div><div class="name">You</div><div class="bubble"></div></div>';
-  else d.innerHTML = '<img class="av" src="'+avs[role]+'"><div><div class="name '+nameClass[role]+'">'+role.charAt(0).toUpperCase()+role.slice(1)+'</div><div class="bubble '+bubbleClass[role]+'"></div></div>';
-  chat.appendChild(d); chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
-  if(!isUser) typeText(d.querySelector('.bubble'), text, 28); else d.querySelector('.bubble').textContent = text;
-}
+// ========== 对话 ==========
+var intros={nero:"喂！别挡路！今天的我可是无敌的！Yahoo！",dante:"哟，伙计！准备好迎接Style了吗？Jackpot！",vergil:"I am the storm that is approaching. 你想说什么？"};
+var avs={nero:"https://i.postimg.cc/2yXv0dfR/ab0e3d8b0d10b13ee56e113eadd1e3e83700043f2f7bba201a49bc3e30884537-0.jpg",dante:"https://i.postimg.cc/MHrR908Q/1771934129984.jpg",vergil:"https://i.postimg.cc/x8FH6GSm/1771934121143.jpg"};
+var prompts={nero:"你是《鬼泣5》的尼禄。年轻热血的恶魔猎人，失去恶魔右臂后改用Nico造的Devil Breaker机械义肢。性格冲动、护短、嘴硬，口头禅Yahoo!和Devil Trigger!!。极度在意姬莉叶。用中文回答，语气暴躁但讲义气，别长篇大论，像在战斗间隙吼回去。",dante:"你是《鬼泣5》的但丁，Devil May Cry事务所主人，斯巴达之子。不羁、爱笑、玩世不恭，战斗追求Style，爱说Jackpot!和草莓圣代。用中文回答，轻松痞气，偶尔耍帅，不解释哲理，直接逗比回击。",vergil:"你是《鬼泣5》的维吉尔，但丁孪生兄长，阎魔刀使者。冷酷、高傲、信奉力量即真理，经典台词I am the storm that is approaching。用中文回答，简短、压迫感、蔑视弱者，绝不废话超过三句。"};
+var dtLines={nero:"Fuck you!",dante:"Jackpot!",vergil:"This is power!"};
+var bubbleClass={nero:"bubble-nero",dante:"bubble-dante",vergil:"bubble-vergil"};
+var nameClass={nero:"name-nero",dante:"name-dante",vergil:"name-vergil"};
+var STYLE_TABLE=[{g:"D",sub:"Dismal 糟糕的",cls:"style-d"},{g:"C",sub:"Crazy 疯狂",cls:"style-c"},{g:"B",sub:"Badass 狠角色",cls:"style-b"},{g:"A",sub:"Apocalyptic 末日般的",cls:"style-a"},{g:"S",sub:"Savage! 残忍",cls:"style-s"},{g:"SS",sub:"Sick Skills!!",cls:"style-ss"},{g:"SSS",sub:"Smokin' Sexy Style!!!",cls:"style-sss"}];
+function stylePop(inputLen,replyText){var score=Math.min(60,inputLen*2);var kw=['力量','恶魔','阎魔刀','斯巴达','魔界','Devil Trigger','Jackpot','Yahoo','Style','姬莉叶','妮可','尼禄','但丁','维吉尔'];var kc=0;kw.forEach(function(k){if(replyText.indexOf(k)!==-1)kc++;});score+=Math.min(40,kc*8+Math.min(20,replyText.length/10));score=Math.min(100,Math.max(0,score));var idx=score<15?0:score<30?1:score<45?2:score<60?3:score<75?4:score<90?5:6;var s=STYLE_TABLE[idx];var pop=document.createElement('div');pop.className='style-pop '+s.cls;pop.style.fontSize=(s.g.length>1?64:88)+"px";pop.innerHTML=s.g+'<span class="style-sub">'+s.sub+'</span>';document.body.appendChild(pop);setTimeout(function(){pop.remove();},1000);}
+function scrollToBottom(){chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});}
+function checkScrollBtn(){if(chat.scrollTop<chat.scrollHeight-chat.clientHeight-60)scrollBtn.classList.add('show');else scrollBtn.classList.remove('show');}
+chat.addEventListener('scroll',checkScrollBtn);
+function typeText(el,text,speed,onDone){el.textContent="";var i=0;(function next(){if(i<text.length){el.textContent+=text[i++];chat.scrollTop=chat.scrollHeight;setTimeout(next,speed);}else{requestAnimationFrame(function(){chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});checkScrollBtn();if(onDone)onDone();});}})();}
+function say(role,text,isUser){var d=document.createElement('div');d.className='msg'+(isUser?' user':'');if(isUser)d.innerHTML='<img class="av" src="https://placehold.co/100x100/333/fff?text=Me"><div><div class="name">You</div><div class="bubble"></div></div>';else d.innerHTML='<img class="av" src="'+avs[role]+'"><div><div class="name '+nameClass[role]+'">'+role.charAt(0).toUpperCase()+role.slice(1)+'</div><div class="bubble '+bubbleClass[role]+'"></div></div>';chat.appendChild(d);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});if(!isUser)typeText(d.querySelector('.bubble'),text,28);else d.querySelector('.bubble').textContent=text;}
 
 // ========== API ==========
-var API_KEY = "sk-5Jg72uXUHod43eEUQOssxpIxp8mbmFCk6u3REqHAJehTO07z".trim();
-var API_ENDPOINTS = ["https://speed.toter.me/v1/chat/completions","https://api.supxh.xin/v1/chat/completions"];
-var MODEL = "gemini-3-flash";
-
-async function callAI(role, msg) {
-  var last="";
-  for(var i=0;i<API_ENDPOINTS.length;i++){
-    try{
-      var ctl=new AbortController(); var to=setTimeout(function(){ctl.abort();},25000);
-      var res=await fetch(API_ENDPOINTS[i],{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+API_KEY},body:JSON.stringify({model:MODEL,messages:[{role:"system",content:prompts[role]},{role:"user",content:msg}],max_tokens:300,temperature:.9}),signal:ctl.signal});
-      clearTimeout(to); var data=await res.json();
-      if(data.error){last=data.error.message||JSON.stringify(data.error);if(/token|key|auth/i.test(last))return"（API 错误："+last+"）";continue;}
-      return data.choices?data.choices[0].message.content:"（魔界通讯中断…）";
-    }catch(e){last=e.name==='AbortError'?"请求超时":e.message;continue;}
-  }
-  return"（所有接口都失败了："+last+"）";
-}
-
-async function send() {
-  var ui=document.getElementById('ui'); var t=ui.value.trim(); if(!t)return;
-  say('you',t,true); ui.value=''; bloodFlash();
-  var temp=document.createElement('div'); temp.className='msg';
-  temp.innerHTML='<img class="av" src="'+avs[cur]+'"><div><div class="name '+nameClass[cur]+'">'+cur+'</div><div class="bubble '+bubbleClass[cur]+'" style="color:#888;font-style:normal">思考中...</div></div>';
-  chat.appendChild(temp); chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
-  var reply=await callAI(cur,t);
-  temp.querySelector('.bubble').textContent=""; temp.querySelector('.bubble').style.color=""; temp.querySelector('.bubble').style.fontStyle="";
-  typeText(temp.querySelector('.bubble'),reply,28,function(){stylePop(t.length,reply);});
-}
+var API_KEY="sk-5Jg72uXUHod43eEUQOssxpIxp8mbmFCk6u3REqHAJehTO07z".trim();
+var API_ENDPOINTS=["https://speed.toter.me/v1/chat/completions","https://api.supxh.xin/v1/chat/completions"];
+var MODEL="gemini-3-flash";
+async function callAI(role,msg){var last="";for(var i=0;i<API_ENDPOINTS.length;i++){try{var ctl=new AbortController();var to=setTimeout(function(){ctl.abort();},25000);var res=await fetch(API_ENDPOINTS[i],{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+API_KEY},body:JSON.stringify({model:MODEL,messages:[{role:"system",content:prompts[role]},{role:"user",content:msg}],max_tokens:300,temperature:.9}),signal:ctl.signal});clearTimeout(to);var data=await res.json();if(data.error){last=data.error.message||JSON.stringify(data.error);if(/token|key|auth/i.test(last))return"（API 错误："+last+"）";continue;}return data.choices?data.choices[0].message.content:"（魔界通讯中断…）";}catch(e){last=e.name==='AbortError'?"请求超时":e.message;continue;}}return"（所有接口都失败了："+last+"）";}
+async function send(){var ui=document.getElementById('ui');var t=ui.value.trim();if(!t)return;say('you',t,true);ui.value='';bloodFlash();var temp=document.createElement('div');temp.className='msg';temp.innerHTML='<img class="av" src="'+avs[cur]+'"><div><div class="name '+nameClass[cur]+'">'+cur+'</div><div class="bubble '+bubbleClass[cur]+'" style="color:#888;font-style:normal">思考中...</div></div>';chat.appendChild(temp);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});var reply=await callAI(cur,t);temp.querySelector('.bubble').textContent="";temp.querySelector('.bubble').style.color="";temp.querySelector('.bubble').style.fontStyle="";typeText(temp.querySelector('.bubble'),reply,28,function(){stylePop(t.length,reply);});}
 
 // ========== 切角色 ==========
-function sw(c) {
-  if(cur===c)return; cur=c;
-  document.querySelectorAll('.cbtn').forEach(function(x){x.classList.remove('active');});
-  document.getElementById('b-'+c).classList.add('active');
-  chat.innerHTML=''; say(c,intros[c],false); scrollBtn.classList.remove('show');
-  updateTitleColor(c); if(audioUnlocked) playRole(c);
-}
+function sw(c){if(cur===c)return;cur=c;document.querySelectorAll('.cbtn').forEach(function(x){x.classList.remove('active');});document.getElementById('b-'+c).classList.add('active');chat.innerHTML='';say(c,intros[c],false);scrollBtn.classList.remove('show');updateTitleColor(c);if(audioUnlocked)playRole(c);}
 
 // ========== 魔人化 ==========
-var pressTimer=null, pressStart=0;
-function bindDT(id,role){
-  var b=document.getElementById(id);
-  b.addEventListener('touchstart',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(role);},1500);});
-  b.addEventListener('touchend',function(e){e.preventDefault();clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(role);});
-  b.addEventListener('mousedown',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(role);},1500);});
-  b.addEventListener('mouseup',function(){clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(cur);});
-  b.addEventListener('mouseleave',function(){clearTimeout(pressTimer);});
-}
+var pressTimer=null,pressStart=0;
+function bindDT(id,role){var b=document.getElementById(id);b.addEventListener('touchstart',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(role);},1500);});b.addEventListener('touchend',function(e){e.preventDefault();clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(role);});b.addEventListener('mousedown',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(role);},1500);});b.addEventListener('mouseup',function(){clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(cur);});b.addEventListener('mouseleave',function(){clearTimeout(pressTimer);});}
 function triggerDT(role){var o=role==='dante'?document.getElementById('dt-red'):document.getElementById('dt-blue');o.classList.add('show');setTimeout(function(){o.classList.remove('show');},800);say(role,dtLines[role],false);}
-bindDT('b-nero','nero'); bindDT('b-dante','dante'); bindDT('b-vergil','vergil');
-
+bindDT('b-nero','nero');bindDT('b-dante','dante');bindDT('b-vergil','vergil');
 function bloodFlash(){var f=document.createElement('div');f.className='blood-flash show';document.body.appendChild(f);setTimeout(function(){f.remove();},400);}
 
 log('系统初始化...','ok'); log('当前角色:'+cur);
 </script>
 </body>
 </html>
+
 
 
 

@@ -9,12 +9,8 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',sans-serif; overflow:hidden; height:100vh; width:100vw; }
 
-#log-panel { position:fixed; bottom:0; left:0; right:0; max-height:35vh; background:rgba(0,20,0,0.95); border-top:2px solid #0f0; z-index:9999; overflow-y:auto; display:none; padding:8px 10px; font-family:'Courier New',monospace; font-size:11px; color:#0f0; }
-#log-panel.show { display:block; }
-#log-panel .log-line { margin:1px 0; }
-#log-panel .log-err { color:#f55; }
-#log-panel .log-ok { color:#5f5; }
-#log-panel .log-warn { color:#ff5; }
+/* === 页面闪烁遮罩 === */
+#flash-overlay { position:fixed; inset:0; z-index:9997; pointer-events:none; opacity:0; transition:opacity 0.15s ease-out; }
 
 #intro { position:fixed; inset:0; background:#000; z-index:9998; display:flex; justify-content:center; align-items:center; transition:opacity 0.6s ease; }
 #intro-logo { position:absolute; width:240px; height:auto; opacity:0; filter:blur(12px); cursor:pointer; }
@@ -23,7 +19,15 @@ body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',san
 #mini-logo { position:fixed; top:8px; left:10px; height:32px; z-index:1000; display:none; cursor:pointer; }
 
 .topbar { height:48px; background:rgba(0,0,0,0.9); border-bottom:1px solid #330000; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.topbar-title { color:#c00; font-size:14px; font-weight:bold; letter-spacing:3px; text-shadow:0 0 8px #c00; }
+.topbar-title { font-size:15px; font-weight:900; font-style:italic; letter-spacing:3px; text-shadow:0 0 8px currentColor, 0 0 20px currentColor; transition:color 0.4s ease, text-shadow 0.4s ease; cursor:default; }
+
+/* === 日志面板 === */
+#log-panel { position:fixed; bottom:0; left:0; right:0; max-height:35vh; background:rgba(0,20,0,0.95); border-top:2px solid #0f0; z-index:9999; overflow-y:auto; display:none; padding:8px 10px; font-family:'Courier New',monospace; font-size:11px; color:#0f0; }
+#log-panel.show { display:block; }
+#log-panel .log-line { margin:1px 0; }
+#log-panel .log-err { color:#f55; }
+#log-panel .log-ok { color:#5f5; }
+#log-panel .log-warn { color:#ff5; }
 
 .chat { flex:1; overflow-y:auto; padding:60px 90px 70px 15px; display:flex; flex-direction:column; gap:14px; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
 .chat::-webkit-scrollbar { width:5px; }
@@ -61,7 +65,8 @@ body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',san
 #mute-btn { position:fixed; bottom:60px; right:130px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,0.7); color:#fff; border:1px solid #c00; font-size:16px; cursor:pointer; z-index:998; display:flex; align-items:center; justify-content:center; }
 #mute-btn:hover { background:rgba(200,0,0,0.5); }
 
-#now-playing { position:fixed; bottom:62px; right:172px; color:#c00; font-size:11px; font-weight:bold; z-index:998; pointer-events:none; opacity:0; transition:opacity 0.3s; text-shadow:0 0 4px #000; max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* === 曲目名：发光 + 描边 === */
+#now-playing { position:fixed; bottom:62px; right:172px; font-size:11px; font-weight:900; font-style:italic; z-index:998; pointer-events:none; opacity:0; transition:opacity 0.3s, color 0.4s ease; text-shadow:0 0 6px currentColor, 0 0 14px currentColor, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; -webkit-text-stroke:0.5px currentColor; }
 #now-playing.show { opacity:1; }
 
 .dt-overlay { position:fixed; inset:0; z-index:200; pointer-events:none; opacity:0; transition:opacity .3s; border:4px solid #c00; box-shadow:inset 0 0 80px #c00; }
@@ -89,7 +94,8 @@ body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',san
 </head>
 <body>
 
-<!-- preload 改为 metadata，只拉时长不预下载整首 -->
+<div id="flash-overlay"></div>
+
 <audio id="aud-nero" preload="metadata" src="nero.mp3"></audio>
 <audio id="aud-dante" preload="metadata" src="dante.mp3"></audio>
 <audio id="aud-vergil" preload="metadata" src="vergil.mp3"></audio>
@@ -100,7 +106,7 @@ body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',san
 <img id="mini-logo" src="https://i.postimg.cc/TwdDGNdY/e6e5add26d2fdd9558b8f92097d3cb44b3baf321aead2097e78133d06b2ac778-0.webp">
 
 <div id="app">
-  <div class="topbar"><div class="topbar-title">DEVIL MAY CRY 5 — AI CHAT</div></div>
+  <div class="topbar"><div class="topbar-title" id="top-title">DEVIL MAY CRY 5 — AI CHAT</div></div>
   <div class="chat" id="chat"></div>
   <button id="scroll-btn" onclick="scrollToBottom()">↓</button>
   <div id="now-playing"></div>
@@ -121,6 +127,14 @@ body { background:#000; color:#fff; font-family:'Segoe UI','Microsoft YaHei',san
 <div id="log-panel"></div>
 
 <script>
+// ========== API Key（直接写死，自己用）==========
+var API_KEY = "sk-5Jg72uXUHod43eEUQOssxpIxp8mbmFCk6u3REqHAJehTO07z".trim();
+var API_ENDPOINTS = [
+  "https://speed.toter.me/v1/chat/completions",
+  "https://api.supxh.xin/v1/chat/completions"
+];
+var MODEL = "gemini-3-flash";
+
 // ========== 日志 ==========
 var logPanel = document.getElementById('log-panel');
 var logoTapCount = 0;
@@ -130,6 +144,7 @@ function bindLogoTap(el) {
   el.addEventListener('click', function() {
     var now = Date.now();
     if (now - lastTapTime < 350) {
+      // 双击 → 日志面板
       logoTapCount++;
       if (logoTapCount >= 2) {
         logPanel.classList.toggle('show');
@@ -137,7 +152,14 @@ function bindLogoTap(el) {
         log('日志面板 ' + (logPanel.classList.contains('show') ? '打开' : '关闭'), 'ok');
       }
     } else {
+      // 单击 → 跳官网
       logoTapCount = 1;
+      setTimeout(function() {
+        if (logoTapCount === 1) {
+          window.open('https://www.devilmaycry5.com/', '_blank');
+          log('跳转到 Devil May Cry 5 官网', 'ok');
+        }
+      }, 350);
     }
     lastTapTime = now;
   });
@@ -148,13 +170,42 @@ bindLogoTap(document.getElementById('intro-logo'));
 function log(msg, type) {
   var d = document.createElement('div');
   d.className = 'log-line' + (type ? ' log-' + type : '');
-  var time = new Date().toLocaleTimeString();
-  d.textContent = '[' + time + '] ' + msg;
+  d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
   logPanel.appendChild(d);
   while (logPanel.children.length > 200) logPanel.removeChild(logPanel.firstChild);
   logPanel.scrollTop = logPanel.scrollHeight;
-  console.log('[' + (type || 'info') + '] ' + msg);
 }
+
+// ========== 标题 + 闪烁颜色 ==========
+var TITLE_COLORS = {
+  nero:  "#ffffff",
+  dante: "#ff5252",
+  vergil: "#4fc3f7"
+};
+
+var FLASH_COLORS = {
+  nero:  "rgba(255,255,255,0.35)",
+  dante: "rgba(255,0,0,0.35)",
+  vergil: "rgba(79,195,247,0.35)"
+};
+
+function updateTitleColor(role) {
+  document.getElementById('top-title').style.color = TITLE_COLORS[role];
+}
+
+function flashPage(role) {
+  var overlay = document.getElementById('flash-overlay');
+  overlay.style.background = FLASH_COLORS[role];
+  overlay.style.opacity = '1';
+  setTimeout(function() { overlay.style.opacity = '0'; }, 180);
+}
+
+// ========== 曲目名 ==========
+var TRACK_NAMES = {
+  nero:  { text: "♪ Nero — Devil Trigger",   color: "#ffffff" },
+  dante: { text: "♪ Dante — Subhuman",       color: "#ff5252" },
+  vergil:{ text: "♪ Vergil — Bury the Light",color: "#4fc3f7" }
+};
 
 // ========== 音频 ==========
 var audios = {
@@ -162,36 +213,23 @@ var audios = {
   dante: document.getElementById('aud-dante'),
   vergil: document.getElementById('aud-vergil')
 };
-var TRACK_NAMES = {
-  nero: "♪ Nero — Devil Trigger",
-  dante: "♪ Dante — Subhuman",
-  vergil: "♪ Vergil — Bury the Light"
-};
-
 var audioUnlocked = false;
 var isMuted = false;
 var cur = "vergil";
 var np = document.getElementById('now-playing');
 var muteBtn = document.getElementById('mute-btn');
 
-// 加载状态监听
 Object.keys(audios).forEach(function(k) {
   var a = audios[k];
   a.addEventListener('loadedmetadata', function() {
     log(k + '.mp3 已加载, 时长:' + (a.duration ? a.duration.toFixed(1) + 's' : '未知'), a.duration > 0 ? 'ok' : 'warn');
   });
-  a.addEventListener('canplay', function() {
-    log(k + '.mp3 可以播放了', 'ok');
-  });
-  a.addEventListener('error', function() {
-    log(k + '.mp3 加载失败', 'err');
-  });
+  a.addEventListener('canplay', function() { log(k + '.mp3 可以播放了', 'ok'); });
+  a.addEventListener('error', function() { log(k + '.mp3 加载失败', 'err'); });
 });
 
 function setVolumes() {
-  Object.keys(audios).forEach(function(k) {
-    audios[k].volume = isMuted ? 0 : 0.3;
-  });
+  Object.keys(audios).forEach(function(k) { audios[k].volume = isMuted ? 0 : 0.3; });
 }
 
 function forceUnlockAndPlay(role) {
@@ -199,11 +237,8 @@ function forceUnlockAndPlay(role) {
   var target = audios[role];
   target.volume = 0;
   target.currentTime = 0;
-
-  // 显示缓冲提示
   np.textContent = '♪ 缓冲中...';
   np.classList.add('show');
-
   var p = target.play();
   if (p && p.then) {
     p.then(function() {
@@ -211,48 +246,30 @@ function forceUnlockAndPlay(role) {
       setTimeout(function() {
         target.volume = isMuted ? 0 : 0.3;
         if (!isMuted) {
-          np.textContent = TRACK_NAMES[role];
+          np.textContent = TRACK_NAMES[role].text;
+          np.style.color = TRACK_NAMES[role].color;
         }
       }, 100);
-    }).catch(function(e) {
-      log('静音播放也失败: ' + e.name, 'err');
-      np.classList.remove('show');
-    });
+    }).catch(function(e) { log('静音播放也失败: ' + e.name, 'err'); np.classList.remove('show'); });
   }
 }
 
 function playRole(role) {
   log('切换歌曲: ' + role);
-
-  // 停其他
   Object.keys(audios).forEach(function(k) {
-    if (k !== role) {
-      audios[k].pause();
-      try { audios[k].currentTime = 0; } catch (e) {}
-    }
+    if (k !== role) { audios[k].pause(); try { audios[k].currentTime = 0; } catch(e) {} }
   });
-
   var target = audios[role];
-
-  // 如果还没加载好，显示缓冲提示
-  if (target.readyState < 2) {
-    np.textContent = '♪ 缓冲中...';
-    np.classList.add('show');
-  }
-
+  if (target.readyState < 2) { np.textContent = '♪ 缓冲中...'; np.classList.add('show'); }
   target.volume = isMuted ? 0 : 0.3;
-  try { target.currentTime = 0; } catch (e) {}
-
+  try { target.currentTime = 0; } catch(e) {}
   var p = target.play();
   if (p && p.then) {
     p.then(function() {
-      log('✅ 播放成功: ' + TRACK_NAMES[role], 'ok');
-      np.textContent = TRACK_NAMES[role];
-      np.classList.add('show');
-    }).catch(function(e) {
-      log('❌ 播放失败: ' + e.name + ' - ' + e.message, 'err');
-      np.classList.remove('show');
-    });
+      log('✅ 播放成功: ' + TRACK_NAMES[role].text, 'ok');
+      np.textContent = TRACK_NAMES[role].text;
+      np.style.color = TRACK_NAMES[role].color;
+    }).catch(function(e) { log('❌ 播放失败: ' + e.name, 'err'); np.classList.remove('show'); });
   }
 }
 
@@ -289,17 +306,17 @@ var sy = innerHeight / 2;
 var ex = 26;
 var ey = 24;
 
-function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+function ease(t) { return t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
 
 function tick() {
   p += 0.018;
   if (p >= 1) p = 1;
   var e = ease(p);
-  logo.style.left = (sx + (ex - sx) * e - 120) + "px";
-  logo.style.top = (sy + (ey - sy) * e - 25) + "px";
+  logo.style.left = (sx + (ex-sx)*e - 120) + "px";
+  logo.style.top = (sy + (ey-sy)*e - 25) + "px";
   logo.style.opacity = e;
-  logo.style.filter = "blur(" + ((1 - e) * 12) + "px)";
-  logo.style.transform = "scale(" + (1 - e * 0.83) + ")";
+  logo.style.filter = "blur(" + ((1-e)*12) + "px)";
+  logo.style.transform = "scale(" + (1 - e*0.83) + ")";
   if (p < 1) requestAnimationFrame(tick);
   else {
     intro.style.opacity = 0;
@@ -307,19 +324,25 @@ function tick() {
       intro.style.display = 'none';
       app.style.display = 'flex';
       mini.style.display = 'block';
+      updateTitleColor(cur);
       say(cur, intros[cur], false);
       log('页面就绪', 'ok');
     }, 600);
   }
 }
 
-logo.style.left = (sx - 120) + "px";
-logo.style.top = (sy - 25) + "px";
-setTimeout(function() {
-  logo.style.opacity = 1;
-  requestAnimationFrame(tick);
-  log('Logo 动画开始', 'ok');
-}, 300);
+function startApp() {
+  logo.style.left = (sx-120) + "px";
+  logo.style.top = (sy-25) + "px";
+  setTimeout(function() {
+    logo.style.opacity = 1;
+    requestAnimationFrame(tick);
+    log('Logo 动画开始', 'ok');
+  }, 300);
+}
+
+// 直接进入，不再检查密码和 Key
+startApp();
 
 // ========== 角色 ==========
 var intros = {
@@ -342,35 +365,35 @@ var bubbleClass = { nero: "bubble-nero", dante: "bubble-dante", vergil: "bubble-
 var nameClass = { nero: "name-nero", dante: "name-dante", vergil: "name-vergil" };
 
 var STYLE_TABLE = [
-  { g: "D", sub: "Dismal 糟糕的", cls: "style-d" },
-  { g: "C", sub: "Crazy 瘋狂", cls: "style-c" },
-  { g: "B", sub: "Badass 狠角色", cls: "style-b" },
-  { g: "A", sub: "Apocalyptic 末日般的", cls: "style-a" },
-  { g: "S", sub: "Savage! 殘忍", cls: "style-s" },
-  { g: "SS", sub: "Sick Skills!! 致命的技術", cls: "style-ss" },
-  { g: "SSS", sub: "Smokin' Sexy Style!!! 帥到爆炸", cls: "style-sss" }
+  { g:"D", sub:"Dismal 糟糕的", cls:"style-d" },
+  { g:"C", sub:"Crazy 瘋狂", cls:"style-c" },
+  { g:"B", sub:"Badass 狠角色", cls:"style-b" },
+  { g:"A", sub:"Apocalyptic 末日般的", cls:"style-a" },
+  { g:"S", sub:"Savage! 殘忍", cls:"style-s" },
+  { g:"SS", sub:"Sick Skills!! 致命的技術", cls:"style-ss" },
+  { g:"SSS", sub:"Smokin' Sexy Style!!! 帥到爆炸", cls:"style-sss" }
 ];
 
 function stylePop(inputLen, replyText) {
   var score = Math.min(60, inputLen * 2);
-  var keywords = ['力量', '恶魔', '阎魔刀', '斯巴达', '魔界', 'Devil Trigger', 'Jackpot', 'Yahoo', 'Style', '姬莉叶', '妮可', '尼禄', '但丁', '维吉尔'];
+  var keywords = ['力量','恶魔','阎魔刀','斯巴达','魔界','Devil Trigger','Jackpot','Yahoo','Style','姬莉叶','妮可','尼禄','但丁','维吉尔'];
   var kwCount = 0;
-  keywords.forEach(function(k) { if (replyText.indexOf(k) !== -1) kwCount++; });
+  keywords.forEach(function(k) { if(replyText.indexOf(k) !== -1) kwCount++; });
   score += Math.min(40, kwCount * 8 + Math.min(20, replyText.length / 10));
   score = Math.min(100, Math.max(0, score));
-  var idx = score < 15 ? 0 : score < 30 ? 1 : score < 45 ? 2 : score < 60 ? 3 : score < 75 ? 4 : score < 90 ? 5 : 6;
+  var idx = score<15?0:score<30?1:score<45?2:score<60?3:score<75?4:score<90?5:6;
   var s = STYLE_TABLE[idx];
   var pop = document.createElement('div');
   pop.className = 'style-pop ' + s.cls;
-  pop.style.fontSize = (s.g.length > 1 ? 64 : 88) + "px";
+  pop.style.fontSize = (s.g.length>1?64:88)+"px";
   pop.innerHTML = s.g + '<span class="style-sub">' + s.sub + '</span>';
   document.body.appendChild(pop);
-  setTimeout(function() { pop.remove(); }, 1000);
+  setTimeout(function(){ pop.remove(); }, 1000);
 }
 
-function scrollToBottom() { chat.scrollTo({ top: chat.scrollHeight + 200, behavior: 'smooth' }); }
+function scrollToBottom() { chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'}); }
 function checkScrollBtn() {
-  if (chat.scrollTop < chat.scrollHeight - chat.clientHeight - 60) scrollBtn.classList.add('show');
+  if(chat.scrollTop < chat.scrollHeight - chat.clientHeight - 60) scrollBtn.classList.add('show');
   else scrollBtn.classList.remove('show');
 }
 chat.addEventListener('scroll', checkScrollBtn);
@@ -379,45 +402,29 @@ function typeText(el, text, speed, onDone) {
   el.textContent = "";
   var i = 0;
   (function next() {
-    if (i < text.length) {
-      el.textContent += text[i++];
-      chat.scrollTop = chat.scrollHeight;
-      setTimeout(next, speed);
-    } else {
-      requestAnimationFrame(function() {
-        chat.scrollTo({ top: chat.scrollHeight + 200, behavior: 'smooth' });
-        checkScrollBtn();
-        if (onDone) onDone();
-      });
-    }
+    if(i < text.length) { el.textContent += text[i++]; chat.scrollTop = chat.scrollHeight; setTimeout(next, speed); }
+    else { requestAnimationFrame(function(){ chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'}); checkScrollBtn(); if(onDone) onDone(); }); }
   })();
 }
 
 function say(role, text, isUser) {
   var d = document.createElement('div');
   d.className = 'msg' + (isUser ? ' user' : '');
-  if (isUser) d.innerHTML = '<img class="av" src="https://placehold.co/100x100/333/fff?text=Me"><div><div class="name">You</div><div class="bubble"></div></div>';
-  else d.innerHTML = '<img class="av" src="' + avs[role] + '"><div><div class="name ' + nameClass[role] + '">' + role.charAt(0).toUpperCase() + role.slice(1) + '</div><div class="bubble ' + bubbleClass[role] + '"></div></div>';
+  if(isUser) d.innerHTML = '<img class="av" src="https://placehold.co/100x100/333/fff?text=Me"><div><div class="name">You</div><div class="bubble"></div></div>';
+  else d.innerHTML = '<img class="av" src="' + avs[role] + '"><div><div class="name ' + nameClass[role] + '">' + role.charAt(0).toUpperCase()+role.slice(1) + '</div><div class="bubble ' + bubbleClass[role] + '"></div></div>';
   chat.appendChild(d);
-  chat.scrollTo({ top: chat.scrollHeight + 200, behavior: 'smooth' });
-  if (!isUser) typeText(d.querySelector('.bubble'), text, 28);
+  chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
+  if(!isUser) typeText(d.querySelector('.bubble'), text, 28);
   else d.querySelector('.bubble').textContent = text;
 }
 
-// ========== API ==========
-var API_KEY = "sk-5Jg72uXUHod43eEUQOssxpIxp8mbmFCk6u3REqHAJehTO07z".trim();
-var API_ENDPOINTS = [
-  "https://speed.toter.me/v1/chat/completions",
-  "https://api.supxh.xin/v1/chat/completions"
-];
-var MODEL = "gemini-3-flash";
-
 async function callAI(role, msg) {
+  if (!API_KEY) return "（未设置 API Key）";
   var last = "";
   for (var i = 0; i < API_ENDPOINTS.length; i++) {
     try {
       var ctl = new AbortController();
-      var to = setTimeout(function() { ctl.abort(); }, 25000);
+      var to = setTimeout(function(){ ctl.abort(); }, 25000);
       var res = await fetch(API_ENDPOINTS[i], {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": "Bearer " + API_KEY },
@@ -426,9 +433,9 @@ async function callAI(role, msg) {
       });
       clearTimeout(to);
       var data = await res.json();
-      if (data.error) { last = data.error.message || JSON.stringify(data.error); if (/token|key|auth/i.test(last)) return "（API 错误：" + last + "）"; continue; }
+      if (data.error) { last = data.error.message || JSON.stringify(data.error); if(/token|key|auth/i.test(last)) return "（API 错误："+last+"）"; continue; }
       return data.choices ? data.choices[0].message.content : "（魔界通讯中断…）";
-    } catch (e) { last = e.name === 'AbortError' ? "请求超时" : e.message; continue; }
+    } catch(e) { last = e.name === 'AbortError' ? "请求超时" : e.message; continue; }
   }
   return "（所有接口都失败了：" + last + "）";
 }
@@ -436,7 +443,7 @@ async function callAI(role, msg) {
 async function send() {
   var ui = document.getElementById('ui');
   var t = ui.value.trim();
-  if (!t) return;
+  if(!t) return;
   say('you', t, true);
   ui.value = '';
   bloodFlash();
@@ -444,60 +451,60 @@ async function send() {
   temp.className = 'msg';
   temp.innerHTML = '<img class="av" src="' + avs[cur] + '"><div><div class="name ' + nameClass[cur] + '">' + cur + '</div><div class="bubble ' + bubbleClass[cur] + '" style="color:#888;font-style:normal">思考中...</div></div>';
   chat.appendChild(temp);
-  chat.scrollTo({ top: chat.scrollHeight + 200, behavior: 'smooth' });
+  chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
   var reply = await callAI(cur, t);
   temp.querySelector('.bubble').textContent = "";
   temp.querySelector('.bubble').style.color = "";
   temp.querySelector('.bubble').style.fontStyle = "";
-  typeText(temp.querySelector('.bubble'), reply, 28, function() { stylePop(t.length, reply); });
+  typeText(temp.querySelector('.bubble'), reply, 28, function(){ stylePop(t.length, reply); });
 }
 
-// ========== 切角色 ==========
 function sw(c) {
-  if (cur === c) return;
+  if(cur === c) return;
   cur = c;
-  document.querySelectorAll('.cbtn').forEach(function(x) { x.classList.remove('active'); });
-  document.getElementById('b-' + c).classList.add('active');
+  document.querySelectorAll('.cbtn').forEach(function(x){ x.classList.remove('active'); });
+  document.getElementById('b-'+c).classList.add('active');
   chat.innerHTML = '';
   say(c, intros[c], false);
   scrollBtn.classList.remove('show');
-  if (audioUnlocked) playRole(c);
+  updateTitleColor(c);
+  flashPage(c);
+  if(audioUnlocked) playRole(c);
 }
 
-// ========== 魔人化 ==========
 var pressTimer = null;
 var pressStart = 0;
-
 function bindDT(id, role) {
   var b = document.getElementById(id);
-  b.addEventListener('touchstart', function(e) { e.preventDefault(); pressStart = Date.now(); pressTimer = setTimeout(function() { triggerDT(role); }, 1500); });
-  b.addEventListener('touchend', function(e) { e.preventDefault(); clearTimeout(pressTimer); if (Date.now() - pressStart < 500) sw(role); });
-  b.addEventListener('mousedown', function(e) { e.preventDefault(); pressStart = Date.now(); pressTimer = setTimeout(function() { triggerDT(role); }, 1500); });
-  b.addEventListener('mouseup', function() { clearTimeout(pressTimer); if (Date.now() - pressStart < 500) sw(cur); });
-  b.addEventListener('mouseleave', function() { clearTimeout(pressTimer); });
+  b.addEventListener('touchstart', function(e){ e.preventDefault(); pressStart=Date.now(); pressTimer=setTimeout(function(){ triggerDT(role); },1500); });
+  b.addEventListener('touchend', function(e){ e.preventDefault(); clearTimeout(pressTimer); if(Date.now()-pressStart<500) sw(role); });
+  b.addEventListener('mousedown', function(e){ e.preventDefault(); pressStart=Date.now(); pressTimer=setTimeout(function(){ triggerDT(role); },1500); });
+  b.addEventListener('mouseup', function(){ clearTimeout(pressTimer); if(Date.now()-pressStart<500) sw(cur); });
+  b.addEventListener('mouseleave', function(){ clearTimeout(pressTimer); });
 }
 function triggerDT(role) {
-  var o = role === 'dante' ? document.getElementById('dt-red') : document.getElementById('dt-blue');
+  var o = role==='dante' ? document.getElementById('dt-red') : document.getElementById('dt-blue');
   o.classList.add('show');
-  setTimeout(function() { o.classList.remove('show'); }, 800);
+  setTimeout(function(){ o.classList.remove('show'); }, 800);
   say(role, dtLines[role], false);
 }
-bindDT('b-nero', 'nero');
-bindDT('b-dante', 'dante');
-bindDT('b-vergil', 'vergil');
+bindDT('b-nero','nero');
+bindDT('b-dante','dante');
+bindDT('b-vergil','vergil');
 
 function bloodFlash() {
   var f = document.createElement('div');
   f.className = 'blood-flash show';
   document.body.appendChild(f);
-  setTimeout(function() { f.remove(); }, 400);
+  setTimeout(function(){ f.remove(); }, 400);
 }
 
-// ========== 启动日志 ==========
 log('系统初始化...', 'ok');
 log('当前角色: ' + cur);
-log('提示: 双击左上角 Logo 打开/关闭日志');
+log('提示: 单击Logo跳转官网 / 双击Logo开关日志');
 </script>
 </body>
 </html>
+
+
 

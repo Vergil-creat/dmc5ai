@@ -226,37 +226,6 @@ body { position:fixed; top:0; left:0; right:0; bottom:0; }
 .coin-rain { position:fixed; inset:0; z-index:301; pointer-events:none; overflow:hidden; }
 .coin { position:absolute; top:-40px; width:20px; height:20px; background:radial-gradient(circle,#ffd700 30%,#b8860b 70%,#8b6914 100%); border-radius:50%; animation:coinFall linear forwards; box-shadow:0 0 6px #ffd700; }
 @keyframes coinFall { 0%{transform:translateY(0) rotate(0deg); opacity:1;} 100%{transform:translateY(110vh) rotate(720deg); opacity:0.3;} }
-
-/* ============================================================
-   音频提示框系统（新增 — 角色色 + 失败重试 + 静默检测）
-   ============================================================ */
-#audio-overlay {
-  position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:10000;
-  display:none; justify-content:center; align-items:center;
-}
-#audio-overlay.show { display:flex; }
-.audio-card {
-  border:3px solid; border-radius:14px; padding:28px 24px 20px;
-  max-width:320px; width:88vw; text-align:center;
-  background:rgba(0,0,0,0.95); box-shadow:0 0 30px currentColor;
-  animation:hintPulse 1.8s ease-in-out infinite;
-}
-@keyframes hintPulse {
-  0%,100%{box-shadow:0 0 16px currentColor;}
-  50%{box-shadow:0 0 36px currentColor,0 0 60px currentColor;}
-}
-.audio-card .audio-title { font-size:18px; font-weight:900; margin-bottom:8px; }
-.audio-card .audio-desc { font-size:13px; opacity:.85; margin-bottom:18px; line-height:1.5; }
-.audio-card .audio-btn {
-  display:inline-block; padding:12px 36px; border-radius:8px; font-size:15px; font-weight:bold;
-  cursor:pointer; transition:.2s; background:#fff; color:#000; border:2px solid #fff;
-}
-.audio-card .audio-btn:active { transform:scale(.95); }
-.audio-card .audio-btn.secondary { background:#222; color:#fff; border-color:#555; margin-left:10px; }
-.audio-nero { color:#ffffff; }
-.audio-dante { color:#ff5252; }
-.audio-vergil { color:#80c0ff; }
-.audio-v { color:#c876ff; }
 </style>
 </head>
 <body>
@@ -273,18 +242,6 @@ body { position:fixed; top:0; left:0; right:0; bottom:0; }
 </div>
 <img id="mini-logo" src="https://i.postimg.cc/TwdDGNdY/e6e5add26d2fdd9558b8f92097d3cb44b3baf321aead2097e78133d06b2ac778-0.webp">
 <canvas id="fire-canvas"></canvas>
-
-<!-- ===== 音频提示框系统（新增） ===== -->
-<div id="audio-overlay">
-  <div class="audio-card audio-nero" id="audio-card">
-    <div class="audio-title" id="audio-title">🔊 开启音频</div>
-    <div class="audio-desc" id="audio-desc">点击下方按钮开启角色战斗曲<br>需要用户交互才能播放音频</div>
-    <div>
-      <span class="audio-btn" id="audio-btn-yes">点击开启音频</span>
-      <span class="audio-btn secondary" id="audio-btn-no" style="display:none;">不再提示</span>
-    </div>
-  </div>
-</div>
 
 <div id="creator-line">
   <span class="c-name">制作者：一庭霜月满襟寒（bilibili）</span>
@@ -341,7 +298,7 @@ function _log(msg,type){
   p.scrollTop=p.scrollHeight;
 }
 
-//================================================== Logo
+//================================================== Logo 单击百科/双击日志
 var BAIKE_URL='https://baike.baidu.com/item/%E9%AC%BC%E6%B3%A35';
 var logoClickTimer=null;
 function bindLogoTap(el){
@@ -352,9 +309,8 @@ bindLogoTap(document.getElementById('mini-logo'));
 bindLogoTap(document.getElementById('intro-logo'));
 document.getElementById('log-panel').addEventListener('click',function(e){e.stopPropagation();});
 
-//================================================== 角色颜色
+//================================================== 角色颜色配置
 var TITLE_COLORS={nero:"#ffffff",dante:"#ff5252",vergil:"#80c0ff",v:"#c876ff"};
-var AUDIO_CLS={nero:"audio-nero",dante:"audio-dante",vergil:"audio-vergil",v:"audio-v"};
 var LYRICS={nero:"Bang, bang, bang — Pull my Devil Trigger",dante:"You cannot kill me! I am Subhuman!",vergil:"I am the storm that is approaching",v:"Savior Bloodstained Hellfire Shadow"};
 var TRACK_NAMES={nero:"♪ Nero — Devil Trigger",dante:"♪ Dante — Subhuman",vergil:"♪ Vergil — Bury the Light",v:"♪ V — Crimson Cloud"};
 var TRACK_COLORS={nero:"#ffffff",dante:"#ff5252",vergil:"#80c0ff",v:"#c876ff"};
@@ -372,10 +328,11 @@ function updateWeapon(r){
   if(glowTimer){clearTimeout(glowTimer);glowTimer=null;}
   setTimeout(function(){img.src=WEAPON_IMGS[r];img.style.borderColor=WEAPON_BORDERS[r];glow.style.background=WEAPON_GLOWS[r];if(r==='v')img.classList.add('v-weapon');
     img.onload=function(){img.classList.add('show');glow.classList.add('show');if(r==='nero')img.classList.add('glow-cyan');};
-    img.onerror=function(){_log('武器加载失败:'+r,'err');img.alt='[加载失败]';img.classList.add('show');};},250);
+    img.onerror=function(){_log('武器加载失败:'+r,'err');img.alt='[加载失败]';img.classList.add('show');};
+  },250);
 }
 
-//================================================== 火焰
+//================================================== 火焰粒子
 var fireCanvas=document.getElementById('fire-canvas'),fireCtx=fireCanvas.getContext('2d');
 function resizeCanvas(){fireCanvas.width=window.innerWidth;fireCanvas.height=window.innerHeight;}resizeCanvas();window.addEventListener('resize',resizeCanvas);
 function BladeFlame(sx,sy,sw,sh){this.p=Math.random();this.x=sx+this.p*sw;this.y=sy+(0.15+Math.random()*0.7)*sh;this.len=30+Math.random()*55;this.width=1.8+Math.random()*3.2;this.angle=-Math.PI*(125+Math.random()*45)/180;this.speed=3.5+Math.random()*4.5;this.life=1;this.decay=0.016+Math.random()*0.014;this.hx=this.x;this.hy=this.y;}
@@ -390,7 +347,7 @@ Spark.prototype.draw=function(c){if(this.life<=0)return;c.beginPath();c.arc(this
 function spawnFire(sx,sy,sw,sh){var ps=[];for(var i=0;i<50;i++)ps.push(new BladeFlame(sx,sy,sw,sh));var tipX=sx+sw*0.88,tipY=sy+sh*0.12;for(var j=0;j<25;j++)ps.push(new TrailLine(tipX,tipY));for(var k=0;k<30;k++)ps.push(new Spark(tipX,tipY));fireCanvas.style.display='block';var st=performance.now(),D=1500;function fr(now){var pr=(now-st)/D;fireCtx.globalCompositeOperation='destination-out';fireCtx.fillStyle='rgba(0,0,0,0.28)';fireCtx.fillRect(0,0,fireCanvas.width,fireCanvas.height);fireCtx.globalCompositeOperation='lighter';var inten=pr<0.05?pr/0.05:Math.max(0,1-(pr-0.05)/0.95);for(var i=0;i<ps.length;i++){ps[i].update();fireCtx.globalAlpha=inten;ps[i].draw(fireCtx);}fireCtx.globalAlpha=1;if(pr<1&&inten>0)requestAnimationFrame(fr);else{fireCtx.clearRect(0,0,fireCanvas.width,fireCanvas.height);fireCanvas.style.display='none';weaponAnimating=false;}}requestAnimationFrame(fr);}
 document.getElementById('weapon-img').addEventListener('click',function(e){e.preventDefault();if(this.src.indexOf('aebf56b3276a71fdea06b9e5abb942d88293704cafd5ea7544f3aa7f85e96a1d')===-1)return;var img=this,rect=this.getBoundingClientRect();if(!weaponAnimating){img.classList.remove('glow-cyan','fire-burst');img.classList.add('glow-red');if(glowTimer)clearTimeout(glowTimer);glowTimer=setTimeout(function(){img.classList.remove('glow-red','fire-burst');img.classList.add('glow-cyan');glowTimer=null;},2000);}else{img.classList.add('fire-burst');setTimeout(function(){img.classList.remove('fire-burst');},350);}weaponAnimating=true;spawnFire(rect.left,rect.top,rect.width,rect.height);});
 
-//================================================== AI
+//================================================== AI 对话
 var API_KEY="sk-5Jg72uXUHod43eEUQOssxpIxp8mbmFCk6u3REqHAJehTO07z".trim();
 var API_ENDPOINTS=["https://speed.toter.me/v1/chat/completions","https://api.supxh.xin/v1/chat/completions"];
 var MODEL="gemini-3-flash";
@@ -416,49 +373,32 @@ async function callAI(r,msg){
 }
 function checkQuota(){fetch(API_ENDPOINTS[0],{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+API_KEY},body:JSON.stringify({model:MODEL,messages:[{role:"user",content:"hi"}],max_tokens:1})}).then(function(r){return r.json();}).then(function(d){if(d.error&&/token|key|auth|quota|limit|429/i.test(JSON.stringify(d.error))){document.getElementById('quota-warning').style.display='flex';document.getElementById('ui').placeholder="⚠️ AI额度已耗尽";}}).catch(function(){});}
 
-//================================================== 音频系统（整合版）
+//================================================== 音频系统（无提示框，纯检测 + 失败confirm重试）
 var audios={nero:document.getElementById('aud-nero'),dante:document.getElementById('aud-dante'),vergil:document.getElementById('aud-vergil'),v:document.getElementById('aud-v')};
 var audioUnlocked=false,isMuted=false,cur="nero";
 var np=document.getElementById('now-playing'),muteBtn=document.getElementById('mute-btn');
 Object.keys(audios).forEach(function(k){audios[k].addEventListener('loadedmetadata',function(){_log(k+'.mp3 已加载','ok');});audios[k].addEventListener('error',function(){_log(k+'.mp3 加载失败','err');});});
 function setVolumes(){Object.keys(audios).forEach(function(k){audios[k].volume=isMuted?0:0.3;});}
 
-// ===== 音频提示框 DOM =====
-var audioOverlay=document.getElementById('audio-overlay'),audioCard=document.getElementById('audio-card'),audioTitle=document.getElementById('audio-title'),audioDesc=document.getElementById('audio-desc'),audioBtnYes=document.getElementById('audio-btn-yes'),audioBtnNo=document.getElementById('audio-btn-no');
-
-function showAudioHint(role){
-  audioCard.className='audio-card '+(AUDIO_CLS[role]||'audio-nero');
-  audioTitle.textContent='🔊 开启音频';
-  audioDesc.innerHTML='点击按钮开启战斗曲<br>当前角色：'+role.toUpperCase();
-  audioBtnYes.textContent='点击开启音频';
-  audioBtnNo.style.display='none';
-  audioBtnYes.onclick=function(){attemptPlay(role);};
-  audioOverlay.classList.add('show');
-}
-function showRetryBox(role){
-  audioCard.className='audio-card '+(AUDIO_CLS[role]||'audio-nero');
-  audioTitle.textContent='⚠ 音频播放失败';
-  audioDesc.innerHTML='无法播放 '+role+'.mp3<br>是否重试？';
-  audioBtnYes.textContent='是';
-  audioBtnNo.textContent='否';
-  audioBtnNo.style.display='inline-block';
-  audioBtnYes.onclick=function(){attemptPlay(role);};
-  audioBtnNo.onclick=function(){audioOverlay.classList.remove('show');};
-  audioOverlay.classList.add('show');
-}
-function hideAudioOverlay(){audioOverlay.classList.remove('show');}
-
-function attemptPlay(role){
-  // 先停其他
+// 核心：尝试播放 + 检测
+function tryPlay(role, isRetry){
+  // 停其他
   Object.keys(audios).forEach(function(k){if(k!==role){audios[k].pause();try{audios[k].currentTime=0;}catch(e){}}});
   var t=audios[role];
-  t.volume=0;try{t.currentTime=0;}catch(e){}
+  t.volume=isMuted?0:0.3;
+  try{t.currentTime=0;}catch(e){}
   var p=t.play();
   function onSuccess(){
-    audioUnlocked=true;setVolumes();updateNowPlaying(role);hideAudioOverlay();
+    audioUnlocked=true;
+    updateNowPlaying(role);
     _log(role+'.mp3 播放成功','ok');
   }
-  function onFail(){_log(role+'.mp3 播放失败','err');showRetryBox(role);}
+  function onFail(){
+    _log(role+'.mp3 播放失败','err');
+    // 浏览器原生 confirm —— 角色色用不了，但至少不黑屏、不自定义框
+    var msg='⚠ '+role+'.mp3 播放失败。\n是否重试？';
+    if(confirm(msg)){ tryPlay(role,true); }
+  }
   if(p&&p.then){p.then(onSuccess).catch(onFail);}else{onSuccess();}
 }
 
@@ -472,11 +412,15 @@ function playRole(r){
     p.then(function(){
       // 800ms 后检测静默失败
       setTimeout(function(){
-        if(t.currentTime>0){audioUnlocked=true;hideAudioOverlay();}
-        else if(audioUnlocked){showAudioHint(r);} // 已解锁但没声音 → 重新提示
+        if(t.currentTime>0){audioUnlocked=true;}
+        // 静默失败：不弹框，静默处理（无提示框）
       },800);
     }).catch(function(){
-      if(audioUnlocked)showRetryBox(r); // 已解锁但被拒 → 重试框
+      // 已解锁后切角色失败 → 用 confirm 重试
+      if(audioUnlocked){
+        var msg='⚠ '+r+'.mp3 播放失败。\n是否重试？';
+        if(confirm(msg)){tryPlay(r,true);}
+      }
     });
   }
 }
@@ -487,7 +431,7 @@ function toggleTrack(){if(!audioUnlocked)return;var t=audios[cur];if(t.paused){t
 var intro=document.getElementById('intro'),logo=document.getElementById('intro-logo'),mini=document.getElementById('mini-logo'),app=document.getElementById('app'),chat=document.getElementById('chat'),scrollBtn=document.getElementById('scroll-btn');
 var p=0,sx=window.innerWidth/2,sy=window.innerHeight/2,ex=26,ey=24;
 function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
-function tick(){p+=.018;if(p>=1)p=1;var e=ease(p);logo.style.left=(sx+(ex-sx)*e-120)+"px";logo.style.top=(sy+(ey-sy)*e-25)+"px";logo.style.opacity=e;logo.style.filter="blur("+((1-e)*12)+"px)";logo.style.transform="scale("+(1-e*.83)+")";if(p<1)requestAnimationFrame(tick);else{intro.style.opacity=0;setTimeout(function(){intro.style.display='none';app.style.display='flex';mini.style.display='block';var ab=document.querySelector('.cbtn.active');var sr=ab?ab.id.replace('b-',''):'nero';cur=sr;updateTitleColor(sr);updateWeapon(sr);say(sr,getRandomIntro(sr),false);markVisited(sr);checkQuota();setTimeout(function(){showAudioHint(sr);},1500);},600);}}
+function tick(){p+=.018;if(p>=1)p=1;var e=ease(p);logo.style.left=(sx+(ex-sx)*e-120)+"px";logo.style.top=(sy+(ey-sy)*e-25)+"px";logo.style.opacity=e;logo.style.filter="blur("+((1-e)*12)+"px)";logo.style.transform="scale("+(1-e*.83)+")";if(p<1)requestAnimationFrame(tick);else{intro.style.opacity=0;setTimeout(function(){intro.style.display='none';app.style.display='flex';mini.style.display='block';var ab=document.querySelector('.cbtn.active');var sr=ab?ab.id.replace('b-',''):'nero';cur=sr;updateTitleColor(sr);updateWeapon(sr);say(sr,getRandomIntro(sr),false);markVisited(sr);checkQuota();setTimeout(function(){tryPlay(sr,false);},1500);},600);}}
 logo.style.left=(sx-120)+"px";logo.style.top=(sy-25)+"px";
 setTimeout(function(){logo.style.opacity=1;requestAnimationFrame(tick);},300);
 
@@ -527,7 +471,7 @@ bindDT('b-nero','nero');bindDT('b-dante','dante');bindDT('b-vergil','vergil');bi
 
 function bloodFlash(){var f=document.createElement('div');f.className='blood-flash show';document.body.appendChild(f);setTimeout(function(){f.remove();},400);}
 
-_log('系统初始化...','ok');_log('当前角色:'+cur);_log('功能:音频提示框(角色色)+失败重试+静默检测+Style连击+彩蛋','ok');
+_log('系统初始化...','ok');_log('当前角色:'+cur);_log('功能:音频检测(无提示框)+confirm重试+Style连击+彩蛋','ok');
 </script>
 </body>
 </html>

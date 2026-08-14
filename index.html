@@ -177,16 +177,29 @@ body {
 #mute-btn { position:fixed; bottom:60px; right:130px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,.7); color:#fff; border:1px solid #c00; font-size:16px; cursor:pointer; z-index:998; display:flex; align-items:center; justify-content:center; }
 #mute-btn:hover { background:rgba(200,0,0,.5); }
 
-/* 曲目名：默认白色，各角色JS动态改色 */
+/* ===== 曲目名 + 呼吸灯 ===== */
 #now-playing {
   position:fixed; bottom:62px; right:172px;
-  color:#ffffff; font-size:11px; font-weight:bold;
-  z-index:998; pointer-events:none; opacity:0;
-  transition:opacity .3s, color .4s;
-  max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  font-size:11px; font-weight:bold;
+  z-index:998; pointer-events:none;
+  opacity:0;
+  transition:color .4s;
+  max-width:140px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  animation: neonBreathe 2.4s ease-in-out infinite;
 }
 #now-playing.show { opacity:1; }
-#now-playing.v-track { color:#c876ff !important; text-shadow:0 0 8px #c876ff,0 0 16px rgba(200,118,255,0.4); }
+#now-playing.v-track { color:#c876ff !important; }
+
+@keyframes neonBreathe {
+  0%, 100% {
+    opacity: 0.45;
+    text-shadow: 0 0 3px currentColor;
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 35px currentColor;
+  }
+}
 
 /* ===== Devil Trigger 全屏覆盖 ===== */
 .dt-overlay { position:fixed; inset:0; z-index:200; pointer-events:none; opacity:0; transition:opacity .3s; border:4px solid #c00; box-shadow:inset 0 0 80px #c00; }
@@ -313,7 +326,7 @@ function bindLogoTap(el){
   });
   el.addEventListener('dblclick', function(e){
     e.preventDefault();
-    clearTimeout(logoClickTimer);   // 取消单击跳转
+    clearTimeout(logoClickTimer);  // 取消单击跳转
     var panel = document.getElementById('log-panel');
     panel.classList.toggle('show');
     if(panel.classList.contains('show')){
@@ -331,8 +344,8 @@ document.getElementById('log-panel').addEventListener('click', function(e){
 
 //==================================================
 //  角色颜色 / 歌词 / 曲目 配置
-//  Nero  = 白色  |  Dante = 红色
-//  Vergil = 浅蓝  |  V     = 紫色
+//  Nero = 白色  |  Dante = 红色
+//  Vergil = 浅蓝 |  V     = 紫色
 //==================================================
 var TITLE_COLORS = {
   nero:"#ffffff",
@@ -355,7 +368,7 @@ var TRACK_NAMES = {
   v:"♪ V — Crimson Cloud"
 };
 
-// 曲目名颜色（Nero=白，与标题一致）
+// 曲目名颜色（Nero=白，与标题一致；其他跟角色色）
 var TRACK_COLORS = {
   nero:"#ffffff",
   dante:"#ff5252",
@@ -553,7 +566,7 @@ var prompts = {
   v:"你是《鬼泣5》中的神秘角色V。身体虚弱需依靠手杖行走，但拥有召唤兽Shadow、Griffon、Nightmare。说话缓慢、诗意、带着宿命感，喜欢引用诗歌或隐喻，语气虚弱但内心坚定。用中文回答，保持神秘高冷，不要太长，像在念一首未写完的诗。"
 };
 
-// ===== 首次开场白池（每个角色独立）=====
+// ===== 首次开场白池 =====
 var FIRST_INTRO_POOL = {
   nero:[
     "新面孔？看你的样子，很适合拿来当绯红女皇的沙包……哈哈！我开玩笑的，但是我不保证我不会那么做！",
@@ -956,6 +969,5 @@ _log('当前角色:'+cur);
 </script>
 </body>
 </html>
-
 
 

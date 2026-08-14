@@ -90,11 +90,10 @@ body {
 .input button { background:#c00; color:#fff; border:none; padding:0 18px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:14px; flex-shrink:0; }
 .input button:hover { background:#f00; }
 
-/* ★ 制作者信息（紧贴输入框上方左侧） */
+/* ★ 制作者信息 */
 #creator-line {
   position:fixed; bottom:52px; left:12px; z-index:1000;
-  display:flex; flex-direction:column; gap:1px;
-  pointer-events:none; user-select:none;
+  display:flex; flex-direction:column; gap:1px; pointer-events:none; user-select:none;
 }
 #creator-line .c-name { color:#fff; font-size:11px; font-weight:bold; line-height:1.3; white-space:nowrap; }
 #creator-line .c-qq { color:#fff; font-size:11px; font-weight:bold; line-height:1.3; white-space:nowrap; }
@@ -121,10 +120,16 @@ body {
   max-width:100%; max-height:200px; width:auto; height:auto;
   object-fit:contain; border:3px solid #b0b0b0; border-radius:6px;
   opacity:0; transform:scale(.85) rotate(-2deg);
-  transition:opacity .5s,transform .5s,filter .4s,border-color .4s;
+  transition:opacity .5s,transform .5s,filter .4s,border-color .4s,box-shadow .3s;
   pointer-events:auto; cursor:pointer;
 }
 #weapon-img.show { opacity:.95; transform:scale(1) rotate(0deg); }
+/* ★ 绯红女皇 Exceed 充能：变暗+红光（原作还原） */
+#weapon-img.exceed-active {
+  filter:brightness(.55) saturate(1.4);
+  box-shadow:0 0 14px #ff3b00,0 0 28px #ff6a00;
+  border-color:#ff3b00;
+}
 #weapon-glow {
   position:absolute; bottom:2px; left:50%; transform:translateX(-50%);
   width:60px; height:18px; opacity:0; transition:opacity .5s,background .4s; pointer-events:none;
@@ -132,38 +137,19 @@ body {
 #weapon-glow.show { opacity:1; }
 
 /* 火焰拖尾 */
-#weapon-fly { position:fixed; width:80px; height:auto; pointer-events:none; z-index:448; opacity:0; display:none; }
-.fire-particle { position:fixed; border-radius:50%; pointer-events:none; z-index:449; opacity:0; }
+#weapon-fly { position:fixed; width:80px; height:auto; pointer-events:none; z-index:600; opacity:0; display:none; }
+.fire-particle { position:fixed; border-radius:50%; pointer-events:none; z-index:601; opacity:0; }
 
-/* ===== 额度警告横幅 ===== */
+/* ===== 额度警告 ===== */
 #quota-warning {
-  display:none;
-  position:fixed;
-  bottom:52px; left:0; right:80px;
-  background:rgba(20,0,0,0.95);
-  border-top:2px solid #c00;
-  border-bottom:2px solid #c00;
-  padding:8px 14px;
-  z-index:998;
-  align-items:center;
-  gap:10px;
-  animation:warnSlideUp .4s ease-out;
+  display:none; position:fixed; bottom:52px; left:0; right:80px;
+  background:rgba(20,0,0,0.95); border-top:2px solid #c00; border-bottom:2px solid #c00;
+  padding:8px 14px; z-index:998; align-items:center; gap:10px; animation:warnSlideUp .4s ease-out;
 }
 @keyframes warnSlideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-#warn-icon {
-  width:22px; height:22px; border-radius:50%;
-  background:#c00; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  font-weight:bold; font-size:14px; color:#fff;
-  text-shadow:none; line-height:1;
-}
-#warn-text {
-  color:#ff9999; font-size:12px; line-height:1.4;
-  flex:1;
-}
-#warn-close {
-  background:none; border:none; color:#ff6666; font-size:16px; cursor:pointer; padding:0 4px; flex-shrink:0;
-}
+#warn-icon { width:22px; height:22px; border-radius:50%; background:#c00; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px; color:#fff; line-height:1; }
+#warn-text { color:#ff9999; font-size:12px; line-height:1.4; flex:1; }
+#warn-close { background:none; border:none; color:#ff6666; font-size:16px; cursor:pointer; padding:0 4px; flex-shrink:0; }
 #warn-close:hover { color:#fff; }
 
 /* ===== 其他UI ===== */
@@ -204,13 +190,11 @@ body {
 <img id="weapon-fly" src="" alt="">
 <div id="fire-layer"></div>
 
-<!-- ★ 制作者信息（紧贴输入框上方左侧） -->
 <div id="creator-line">
   <span class="c-name">制作者：一庭霜月满襟寒（bilibili）</span>
   <span class="c-qq">网站制作者QQ：1127421253，欢迎提出建议</span>
 </div>
 
-<!-- ★ 额度警告横幅（默认隐藏） -->
 <div id="quota-warning">
   <div id="warn-icon">!</div>
   <div id="warn-text">本站使用免费 API 额度驱动对话，目前已耗尽，你可以继续体验界面交互功能，等候网站制作者自行恢复</div>
@@ -297,7 +281,7 @@ var WEAPON_GLOWS = {
 var weaponAnimating = false;
 function updateWeapon(role) {
   var img = document.getElementById('weapon-img'), glow = document.getElementById('weapon-glow');
-  img.classList.remove('show'); glow.classList.remove('show');
+  img.classList.remove('show','exceed-active'); glow.classList.remove('show');
   setTimeout(function() {
     img.src = WEAPON_IMGS[role]; img.style.borderColor = WEAPON_BORDERS[role];
     glow.style.background = WEAPON_GLOWS[role];
@@ -306,25 +290,40 @@ function updateWeapon(role) {
   }, 250);
 }
 
-// ========== 火焰拖尾（绯红女皇 Exceed 特效） ==========
-document.getElementById('weapon-img').addEventListener('click', function() { if (cur === 'nero' && !weaponAnimating) fireEgg(); });
+// ========== 火焰拖尾（绯红女皇 Exceed 特效·修复版） ==========
+// 不依赖 cur 竞态：只要点的武器图是绯红女皇（nero 武器）就触发
+document.getElementById('weapon-img').addEventListener('click', function() {
+  if (weaponAnimating) return;
+  if (this.src.indexOf('aebf56b3276a71fdea06b9e5abb942d88293704cafd5ea7544f3aa7f85e96a1d') !== -1) {
+    fireEgg();
+  }
+});
 
 function fireEgg() {
   weaponAnimating = true;
   var fly = document.getElementById('weapon-fly'), staticImg = document.getElementById('weapon-img');
   var rect = staticImg.getBoundingClientRect();
-  if (rect.width < 5) { weaponAnimating = false; return; }
+  // 没尺寸就用容器中心，避免 rect.width<5 直接 return
+  var sx = rect.width > 5 ? rect.left + rect.width/2 : (innerWidth - 40);
+  var sy = rect.height > 5 ? rect.top + rect.height/2 : innerHeight/2;
+  var w = rect.width > 5 ? rect.width : 60;
+  var h = rect.height > 5 ? rect.height : 160;
 
-  var sx = rect.left + rect.width / 2, sy = rect.top + rect.height / 2;
+  // 原作充能：变暗+红光，300ms 后恢复
+  staticImg.classList.add('exceed-active');
+  setTimeout(function(){ staticImg.classList.remove('exceed-active'); }, 320);
+
   fly.src = WEAPON_IMGS.nero;
-  fly.style.display = 'block'; fly.style.left = sx + 'px'; fly.style.top = sy + 'px';
-  fly.style.width = rect.width + 'px'; fly.style.marginLeft = (-rect.width / 2) + 'px'; fly.style.marginTop = (-rect.height / 2) + 'px';
+  fly.style.display = 'block';
+  fly.style.left = sx + 'px'; fly.style.top = sy + 'px';
+  fly.style.width = w + 'px';
+  fly.style.marginLeft = (-w/2) + 'px'; fly.style.marginTop = (-h/2) + 'px';
   fly.style.opacity = '1'; fly.style.transition = 'none'; fly.style.transform = 'rotate(0deg)';
   staticImg.style.opacity = '0.15';
   fly.offsetWidth;
 
   var dur = 900;
-  fly.style.transition = 'left ' + dur + 'ms cubic-bezier(.4,0,.2,1), opacity 300ms ease ' + (dur - 300) + 'ms, transform ' + dur + 'ms ease';
+  fly.style.transition = 'left ' + dur + 'ms cubic-bezier(.4,0,.2,1), opacity 300ms ease ' + (dur-300) + 'ms, transform ' + dur + 'ms ease';
   fly.style.left = (innerWidth + 120) + 'px'; fly.style.transform = 'rotate(15deg)'; fly.style.opacity = '0';
 
   var layer = document.getElementById('fire-layer'); layer.innerHTML = '';
@@ -340,7 +339,8 @@ function fireEgg() {
     '0 0 6px #e65100, 0 0 12px #b71c1c',
     '0 0 8px #7b1fa2, 0 0 16px #4a148c'
   ];
-  var startX = rect.right, startY = rect.top + rect.height / 2;
+  var startX = rect.width > 5 ? rect.right : sx + w/2;
+  var startY = rect.height > 5 ? rect.top + rect.height/2 : sy;
 
   for (var i = 0; i < 36; i++) {
     (function(i) {
@@ -361,7 +361,7 @@ function fireEgg() {
   setTimeout(function() { fly.style.display='none'; fly.style.left='0px'; fly.style.opacity='0'; staticImg.style.opacity=''; weaponAnimating=false; }, dur + 100);
 }
 
-// ========== API 调用 ==========
+// ========== API ==========
 var API_KEY = "sk-5Jg72uXUHod43eEUQOssxpIxp8mbmFCk6u3REqHAJehTO07z".trim();
 var API_ENDPOINTS = ["https://speed.toter.me/v1/chat/completions", "https://api.supxh.xin/v1/chat/completions"];
 var MODEL = "gemini-3-flash";
@@ -396,7 +396,6 @@ async function callAI(role, msg) {
   return QUOTA_LINES[role];
 }
 
-// ========== 额度预检 ==========
 function checkQuota() {
   log('正在预检 API 额度...','warn');
   fetch(API_ENDPOINTS[0], {
@@ -409,9 +408,7 @@ function checkQuota() {
       log('预检结果：额度已耗尽','warn');
       document.getElementById('quota-warning').style.display = 'flex';
       document.getElementById('ui').placeholder = "⚠️ AI 额度已耗尽，明天再来～";
-    } else {
-      log('预检结果：额度正常','ok');
-    }
+    } else { log('预检结果：额度正常','ok'); }
   })
   .catch(function(){ log('预检请求失败（不影响正常使用）','warn'); });
 }
@@ -452,20 +449,5 @@ chat.addEventListener('scroll',checkScrollBtn);
 function typeText(el,text,speed,onDone){el.textContent="";var i=0;(function next(){if(i<text.length){el.textContent+=text[i++];chat.scrollTop=chat.scrollHeight;setTimeout(next,speed);}else{requestAnimationFrame(function(){chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});checkScrollBtn();if(onDone)onDone();});}})();}
 function say(role,text,isUser){var d=document.createElement('div');d.className='msg'+(isUser?' user':'');if(isUser)d.innerHTML='<img class="av" src="https://placehold.co/100x100/333/fff?text=Me"><div><div class="name">You</div><div class="bubble"></div></div>';else d.innerHTML='<img class="av" src="'+avs[role]+'"><div><div class="name '+nameClass[role]+'">'+role.charAt(0).toUpperCase()+role.slice(1)+'</div><div class="bubble '+bubbleClass[role]+'"></div></div>';chat.appendChild(d);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});if(!isUser)typeText(d.querySelector('.bubble'),text,28);else d.querySelector('.bubble').textContent=text;}
 
-// ========== 发送 ==========
-async function send(){var ui=document.getElementById('ui');var t=ui.value.trim();if(!t)return;say('you',t,true);ui.value='';bloodFlash();var temp=document.createElement('div');temp.className='msg';temp.innerHTML='<img class="av" src="'+avs[cur]+'"><div><div class="name '+nameClass[cur]+'">'+cur+'</div><div class="bubble '+bubbleClass[cur]+'" style="color:#888;font-style:normal">思考中...</div></div>';chat.appendChild(temp);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});var reply=await callAI(cur,t);temp.querySelector('.bubble').textContent="";temp.querySelector('.bubble').style.color="";temp.querySelector('.bubble').style.fontStyle="";typeText(temp.querySelector('.bubble'),reply,28,function(){stylePop(t.length,reply);});}
+async function send(){var ui=document.getElementById('ui');var t=ui.value.trim();if(!t)return
 
-// ========== 切角色 ==========
-function sw(c){if(cur===c)return;cur=c;document.querySelectorAll('.cbtn').forEach(function(x){x.classList.remove('active');});document.getElementById('b-'+c).classList.add('active');chat.innerHTML='';say(c,intros[c],false);scrollBtn.classList.remove('show');updateTitleColor(c);if(audioUnlocked)playRole(c);}
-
-// ========== 魔人化 ==========
-var pressTimer=null,pressStart=0;
-function bindDT(id,role){var b=document.getElementById(id);b.addEventListener('touchstart',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(role);},1500);});b.addEventListener('touchend',function(e){e.preventDefault();clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(role);});b.addEventListener('mousedown',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(role);},1500);});b.addEventListener('mouseup',function(){clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(cur);});b.addEventListener('mouseleave',function(){clearTimeout(pressTimer);});}
-function triggerDT(role){var o=role==='dante'?document.getElementById('dt-red'):document.getElementById('dt-blue');o.classList.add('show');setTimeout(function(){o.classList.remove('show');},800);say(role,dtLines[role],false);}
-bindDT('b-nero','nero');bindDT('b-dante','dante');bindDT('b-vergil','vergil');
-function bloodFlash(){var f=document.createElement('div');f.className='blood-flash show';document.body.appendChild(f);setTimeout(function(){f.remove();},400);}
-
-log('系统初始化...','ok'); log('当前角色:'+cur);
-</script>
-</body>
-</html>

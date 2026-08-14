@@ -38,7 +38,7 @@ body {
 .topbar {
   height:72px; background:rgba(0,0,0,0.9); border-bottom:1px solid #330000;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  flex-shrink:0; gap:4px; padding:4px 0; position:relative; z-index:100;
+  flex-shrink:0; gap:4px; padding:4px 0;
 }
 .topbar-title {
   font-size:15px; font-weight:900; font-style:italic; letter-spacing:3px;
@@ -56,14 +56,14 @@ body {
 .chat {
   flex:1; overflow-y:auto; padding:10px 90px 70px 15px;
   display:flex; flex-direction:column; gap:14px;
-  overscroll-behavior:contain; -webkit-overflow-scrolling:touch; position:relative; z-index:10;
+  overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
 }
 .chat::-webkit-scrollbar { width:5px; }
 .chat::-webkit-scrollbar-thumb { background:#c00; border-radius:3px; }
 
 .msg { display:flex; gap:10px; max-width:85%; animation:msgIn .25s ease-out; }
 .msg.user { align-self:flex-end; flex-direction:row-reverse; }
-@keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1,transform:translateY(0)} }
 .av { width:42px; height:42px; border-radius:50%; border:2px solid #c00; object-fit:cover; flex-shrink:0; }
 
 .name-nero { color:#4fc3f7 !important; }
@@ -124,7 +124,7 @@ body {
 #weapon-img.glow-red {
   filter: brightness(1.55) saturate(2) sepia(0.25) hue-rotate(-12deg)
     drop-shadow(0 0 4px #ff3300) drop-shadow(0 0 10px #ff1100)
-    drop-shadow(0 0 22px rgba(255,20,0,0.65)) drop-shadow(0 0 40px rgba(255,30,0,0.35));
+    drop-shadow(0 0 22px rgba(255,20,0,0.65));
   border-color: #ff2200 !important;
 }
 #weapon-img.fire-burst {
@@ -134,7 +134,7 @@ body {
   border-color: #ffaa88 !important;
 }
 
-#weapon-glow { position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:60px; height:18px; opacity:0; transition:opacity .5s,background .4s; pointer-events:none; }
+#weapon-glow { position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:60px; height:18px; opacity:0; transition:opacity .5s; pointer-events:none; }
 #weapon-glow.show { opacity:1; }
 
 #fire-canvas { position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:600; display:none; }
@@ -150,7 +150,7 @@ body {
 #warn-close { background:none; border:none; color:#ff6666; font-size:16px; cursor:pointer; padding:0 4px; }
 #warn-close:hover { color:#fff; }
 
-#scroll-btn { position:fixed; bottom:60px; right:88px; width:36px; height:36px; border-radius:50%; background:rgba(200,0,0,0.8); color:#fff; border:none; font-size:18px; cursor:pointer; z-index:998; display:none; align-items:center; justify-content:center; box-shadow:0 0 8px #c00; }
+#scroll-btn { position:fixed; bottom:60px; right:88px; width:36px; height:36px; border-radius:50%; background:rgba(200,0,0,0.8); color:#fff; border:none; font-size:18px; cursor:pointer; z-index:998; display:none; align-items:center; justify-content:center; }
 #scroll-btn.show { display:flex; }
 #mute-btn { position:fixed; bottom:60px; right:130px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,0.7); color:#fff; border:1px solid #c00; font-size:16px; cursor:pointer; z-index:998; display:flex; align-items:center; justify-content:center; }
 #mute-btn:hover { background:rgba(200,0,0,0.5); }
@@ -273,7 +273,7 @@ function updateWeapon(role) {
   }, 250);
 }
 
-// ========== ★ 火焰系统（最终稳定版） ==========
+// ========== ★ 火焰系统 ==========
 var fireCanvas = document.getElementById('fire-canvas'), fireCtx = fireCanvas.getContext('2d');
 function resizeCanvas() { fireCanvas.width = window.innerWidth; fireCanvas.height = window.innerHeight; }
 resizeCanvas(); window.addEventListener('resize', resizeCanvas);
@@ -282,120 +282,82 @@ function BladeFlame(swordX, swordY, swordW, swordH) {
   this.progress = Math.random();
   this.x = swordX + this.progress * swordW;
   this.y = swordY + (0.15 + Math.random() * 0.7) * swordH;
-  this.len = 30 + Math.random() * 55;
-  this.width = 1.8 + Math.random() * 3.2;
+  this.len = 30 + Math.random() * 55; this.width = 1.8 + Math.random() * 3.2;
   this.angle = -Math.PI * (125 + Math.random() * 45) / 180;
   this.speed = 3.5 + Math.random() * 4.5;
   this.life = 1.0; this.decay = 0.016 + Math.random() * 0.014;
   this.headX = this.x; this.headY = this.y;
 }
-BladeFlame.prototype.update = function() {
-  this.headX += Math.cos(this.angle) * this.speed; this.headY += Math.sin(this.angle) * this.speed;
-  this.life -= this.decay;
-};
+BladeFlame.prototype.update = function() { this.headX += Math.cos(this.angle)*this.speed; this.headY += Math.sin(this.angle)*this.speed; this.life -= this.decay; };
 BladeFlame.prototype.draw = function(ctx) {
-  if (this.life <= 0) return;
-  var a = this.life;
-  var tailX = this.head + (Math.cos(this.angle)*this.len); // safety fallback not needed, just inline:
-  var tX = this.headX - Math.cos(this.angle) * this.len, tY = this.headY - Math.sin(this.angle) * this.len;
-  ctx.beginPath(); ctx.moveTo(this.headX, this.headY); ctx.lineTo(tX, tY);
-  ctx.strokeStyle = 'rgba(255,' + (20 + a * 160 | 0) + ',0,' + (a * 0.55) + ')';
-  ctx.lineWidth = this.width * 2.6; ctx.lineCap = 'round'; ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(this.headX, this.headY); ctx.lineTo(tX + Math.cos(this.angle)*this.len*0.28, tY + Math.sin(this.angle)*this.len*0.28);
-  ctx.strokeStyle = 'rgba(255,220,' + (40 + a * 40 | 0) + ',' + (a * 0.9) + ')';
-  ctx.lineWidth = this.width * 0.95; ctx.stroke();
-  ctx.beginPath(); ctx.arc(this.headX, this.headY, this.width * 0.7, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(255,255,255,' + (a * 0.97) + ')'; ctx.fill();
+  if(this.life<=0) return; var a=this.life;
+  var tX=this.headX-Math.cos(this.angle)*this.len, tY=this.headY-Math.sin(this.angle)*this.len;
+  ctx.beginPath(); ctx.moveTo(this.headX,this.headY); ctx.lineTo(tX,tY);
+  ctx.strokeStyle='rgba(255,'+(20+a*160|0)+',0,'+(a*0.55)+')'; ctx.lineWidth=this.width*2.6; ctx.lineCap='round'; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(this.headX,this.headY); ctx.lineTo(tX+Math.cos(this.angle)*this.len*0.28, tY+Math.sin(this.angle)*this.len*0.28);
+  ctx.strokeStyle='rgba(255,220,'+(40+a*40|0)+','+(a*0.9)+')'; ctx.lineWidth=this.width*0.95; ctx.stroke();
+  ctx.beginPath(); ctx.arc(this.headX,this.headY,this.width*0.7,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,'+(a*0.97)+')'; ctx.fill();
 };
 
 function TrailLine(tipX, tipY) {
-  this.x = tipX; this.y = tipY;
-  this.angle = -Math.PI * (125 + Math.random() * 28) / 180;
-  this.len = 70 + Math.random() * 100;
-  this.width = 0.6 + Math.random() * 2.2;
-  this.speed = 7 + Math.random() * 8;
-  this.life = 1.0; this.decay = 0.012 + Math.random() * 0.01;
-  this.headX = this.x; this.headY = this.y;
+  this.x=tipX; this.y=tipY; this.angle=-Math.PI*(125+Math.random()*28)/180;
+  this.len=70+Math.random()*100; this.width=0.6+Math.random()*2.2;
+  this.speed=7+Math.random()*8; this.life=1.0; this.decay=0.012+Math.random()*0.01;
+  this.headX=this.x; this.headY=this.y;
 }
-TrailLine.prototype.update = function() {
-  this.headX += Math.cos(this.angle) * this.speed; this.headY += Math.sin(this.angle) * this.speed;
-  this.life -= this.decay;
-};
+TrailLine.prototype.update = function() { this.headX+=Math.cos(this.angle)*this.speed; this.headY+=Math.sin(this.angle)*this.speed; this.life-=this.decay; };
 TrailLine.prototype.draw = function(ctx) {
-  if (this.life <= 0) return;
-  var a = this.life;
-  var tX = this.headX - Math.cos(this.angle) * this.len, tY = this.headY - Math.sin(this.angle) * this.len;
-  var grad = ctx.createLinearGradient(this.headX, this.headY, tX, tY);
-  grad.addColorStop(0, 'rgba(255,210,40,' + (a * 0.85) + ')');
-  grad.addColorStop(0.28, 'rgba(255,60,8,' + (a * 0.5) + ')');
-  grad.addColorStop(1, 'rgba(100,0,0,0)');
-  ctx.beginPath(); ctx.moveTo(this.headX, this.headY); ctx.lineTo(tX, tY);
-  ctx.strokeStyle = grad; ctx.lineWidth = this.width * 3.2; ctx.lineCap = 'round'; ctx.stroke();
-  var grad2 = ctx.createLinearGradient(this.headX, this.headY, tX, tY);
-  grad2.addColorStop(0, 'rgba(255,255,210,' + (a * 0.97) + ')');
-  grad2.addColorStop(0.18, 'rgba(255,170,20,' + (a * 0.6) + ')');
-  grad2.addColorStop(1, 'rgba(180,5,0,0)');
-  ctx.beginPath(); ctx.moveTo(this.headX, this.headY); ctx.lineTo(tX + Math.cos(this.angle)*this.len*0.25, tY + Math.sin(this.angle)*this.len*0.25);
-  ctx.strokeStyle = grad2; ctx.lineWidth = this.width * 0.75; ctx.stroke();
+  if(this.life<=0) return; var a=this.life;
+  var tX=this.headX-Math.cos(this.angle)*this.len, tY=this.headY-Math.sin(this.angle)*this.len;
+  var g=ctx.createLinearGradient(this.headX,this.headY,tX,tY);
+  g.addColorStop(0,'rgba(255,210,40,'+(a*0.85)+')'); g.addColorStop(0.28,'rgba(255,60,8,'+(a*0.5)+')'); g.addColorStop(1,'rgba(100,0,0,0)');
+  ctx.beginPath(); ctx.moveTo(this.headX,this.headY); ctx.lineTo(tX,tY); ctx.strokeStyle=g; ctx.lineWidth=this.width*3.2; ctx.lineCap='round'; ctx.stroke();
+  var g2=ctx.createLinearGradient(this.headX,this.headY,tX,tY);
+  g2.addColorStop(0,'rgba(255,255,210,'+(a*0.97)+')'); g2.addColorStop(0.18,'rgba(255,170,20,'+(a*0.6)+')'); g2.addColorStop(1,'rgba(180,5,0,0)');
+  ctx.beginPath(); ctx.moveTo(this.headX,this.headY); ctx.lineTo(tX+Math.cos(this.angle)*this.len*0.25, tY+Math.sin(this.angle)*this.len*0.25); ctx.strokeStyle=g2; ctx.lineWidth=this.width*0.75; ctx.stroke();
 };
 
 function Spark(tipX, tipY) {
-  this.x = tipX + (Math.random() - 0.5) * 14; this.y = tipY + (Math.random() - 0.5) * 12;
-  var angle = -Math.PI * 0.5 + (Math.random() - 0.5) * 3.2;
-  var speed = 3 + Math.random() * 8;
-  this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed - 1.5;
-  this.life = 1.0; this.decay = 0.008 + Math.random() * 0.014;
-  this.size = 0.3 + Math.random() * 2;
+  this.x=tipX+(Math.random()-0.5)*14; this.y=tipY+(Math.random()-0.5)*12;
+  var angle=-Math.PI*0.5+(Math.random()-0.5)*3.2; var speed=3+Math.random()*8;
+  this.vx=Math.cos(angle)*speed; this.vy=Math.sin(angle)*speed-1.5;
+  this.life=1.0; this.decay=0.008+Math.random()*0.014; this.size=0.3+Math.random()*2;
 }
-Spark.prototype.update = function() { this.x += this.vx; this.y += this.vy; this.vy += 0.035; this.vx *= 0.94; this.life -= this.decay; };
-Spark.prototype.draw = function(ctx) {
-  if (this.life <= 0) return;
-  ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(255,' + (150 + Math.random() * 105 | 0) + ',35,' + this.life + ')'; ctx.fill();
-};
+Spark.prototype.update = function() { this.x+=this.vx; this.y+=this.vy; this.vy+=0.035; this.vx*=0.94; this.life-=this.decay; };
+Spark.prototype.draw = function(ctx) { if(this.life<=0)return; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fillStyle='rgba(255,'+(150+Math.random()*105|0)+',35,'+this.life+')'; ctx.fill(); };
 
 function spawnFire(swordX, swordY, swordW, swordH) {
-  var particles = [];
-  for (var i = 0; i < 50; i++) particles.push(new BladeFlame(swordX, swordY, swordW, swordH));
-  var tipX = swordX + swordW * 0.88, tipY = swordY + swordH * 0.12;
-  for (var j = 0; j < 25; j++) particles.push(new TrailLine(tipX, tipY));
-  for (var k = 0; k < 30; k++) particles.push(new Spark(tipX, tipY));
-
-  fireCanvas.style.display = 'block';
-  var startTime = performance.now(), DURATION = 1500;
-
+  var particles=[];
+  for(var i=0;i<50;i++) particles.push(new BladeFlame(swordX,swordY,swordW,swordH));
+  var tipX=swordX+swordW*0.88, tipY=swordY+swordH*0.12;
+  for(var j=0;j<25;j++) particles.push(new TrailLine(tipX,tipY));
+  for(var k=0;k<30;k++) particles.push(new Spark(tipX,tipY));
+  fireCanvas.style.display='block'; var startTime=performance.now(), DURATION=1500;
   function frame(now) {
-    var progress = (now - startTime) / DURATION;
-    fireCtx.globalCompositeOperation = 'destination-out';
-    fireCtx.fillStyle = 'rgba(0,0,0,0.28)';
-    fireCtx.fillRect(0, 0, fireCanvas.width, fireCanvas.height);
-    fireCtx.globalCompositeOperation = 'lighter';
-    var intensity = progress < 0.05 ? progress / 0.05 : Math.max(0, 1 - (progress - 0.05) / 0.95);
-    for (var i = 0; i < particles.length; i++) { particles[i].update(); fireCtx.globalAlpha = intensity; particles[i].draw(fireCtx); }
-    fireCtx.globalAlpha = 1;
-    if (progress < 1 && intensity > 0) requestAnimationFrame(frame);
-    else { fireCtx.clearRect(0,0,fireCanvas.width,fireCanvas.height); fireCanvas.style.display='none'; weaponAnimating = false; }
+    var progress=(now-startTime)/DURATION;
+    fireCtx.globalCompositeOperation='destination-out'; fireCtx.fillStyle='rgba(0,0,0,0.28)'; fireCtx.fillRect(0,0,fireCanvas.width,fireCanvas.height);
+    fireCtx.globalCompositeOperation='lighter';
+    var intensity=progress<0.05?progress/0.05:Math.max(0,1-(progress-0.05)/0.95);
+    for(var i=0;i<particles.length;i++){particles[i].update();fireCtx.globalAlpha=intensity;particles[i].draw(fireCtx);}
+    fireCtx.globalAlpha=1;
+    if(progress<1&&intensity>0)requestAnimationFrame(frame);
+    else{fireCtx.clearRect(0,0,fireCanvas.width,fireCanvas.height);fireCanvas.style.display='none';weaponAnimating=false;}
   }
   requestAnimationFrame(frame);
 }
 
 document.getElementById('weapon-img').addEventListener('click', function(e) {
   e.preventDefault();
-  if (this.src.indexOf('aebf56b3276a71fdea06b9e5abb942d88293704cafd5ea7544f3aa7f85e96a1d') === -1) return;
-  var img = this, rect = this.getBoundingClientRect();
-  if (!weaponAnimating) {
-    img.classList.remove('glow-cyan', 'fire-burst'); img.classList.add('glow-red');
-    if (glowTimer) clearTimeout(glowTimer);
-    glowTimer = setTimeout(function() { img.classList.remove('glow-red', 'fire-burst'); img.classList.add('glow-cyan'); glowTimer = null; }, 2000);
-  } else {
-    img.classList.add('fire-burst');
-    setTimeout(function(){ img.classList.remove('fire-burst'); }, 350);
-  }
-  weaponAnimating = true;
-  spawnFire(rect.left, rect.top, rect.width, rect.height);
+  if(this.src.indexOf('aebf56b3276a71fdea06b9e5abb942d88293704cafd5ea7544f3aa7f85e96a1d')===-1) return;
+  var img=this, rect=this.getBoundingClientRect();
+  if(!weaponAnimating){img.classList.remove('glow-cyan','fire-burst');img.classList.add('glow-red');
+    if(glowTimer)clearTimeout(glowTimer);
+    glowTimer=setTimeout(function(){img.classList.remove('glow-red','fire-burst');img.classList.add('glow-cyan');glowTimer=null;},2000);
+  } else { img.classList.add('fire-burst'); setTimeout(function(){img.classList.remove('fire-burst');},350); }
+  weaponAnimating=true; spawnFire(rect.left,rect.top,rect.width,rect.height);
 });
 
-// ========== API ==========
+// ========== ★ 对话系统（随机池 + 会话级回访） ==========
 var API_KEY = "sk-5Jg72uXUHod43eEUQOssxpIxp8mbmFCk6u3REqHAJehTO07z".trim();
 var API_ENDPOINTS = ["https://speed.toter.me/v1/chat/completions", "https://api.supxh.xin/v1/chat/completions"];
 var MODEL = "gemini-3-flash";
@@ -404,7 +366,58 @@ var QUOTA_LINES = {
   dante: "噢伙计，AI那边没钱了。不过UI特效还能玩哦！",
   vergil: "AI服务暂时不可用。你可以继续体验界面交互功能。"
 };
-var prompts={nero:"你是《鬼泣5》的尼禄。年轻热血的恶魔猎人，失去恶魔右臂后改用Nico造的Devil Breaker机械义肢。性格冲动、护短、嘴硬，口头禅Yahoo!和Devil Trigger!!。极度在意姬莉叶。用中文回答，语气暴躁但讲义气，别长篇大论，像在战斗间隙吼回去。",dante:"你是《鬼泣5》的但丁，Devil May Cry事务所主人，斯巴达之子。不羁、爱笑、玩世不恭，战斗追求Style，爱说Jackpot!和草莓圣代。用中文回答，轻松痞气，偶尔耍帅，不解释哲理，直接逗比回击。",vergil:"你是《鬼泣5》的维吉尔，但丁孪生兄长，阎魔刀使者。冷酷、高傲、信奉力量即真理，经典台词I am the storm that is approaching。用中文回答，简短、压迫感、蔑视弱者，绝不废话超过三句。"};
+var prompts={
+  nero:"你是《鬼泣5》的尼禄。年轻热血的恶魔猎人，失去恶魔右臂后改用Nico造的Devil Breaker机械义肢。性格冲动、护短、嘴硬，口头禅Yahoo!和Devil Trigger!!。极度在意姬莉叶。用中文回答，语气暴躁但讲义气，别长篇大论，像在战斗间隙吼回去。",
+  dante:"你是《鬼泣5》的但丁，Devil May Cry事务所主人，斯巴达之子。不羁、爱笑、玩世不恭，战斗追求Style，爱说Jackpot!和草莓圣代。用中文回答，轻松痞气，偶尔耍帅，不解释哲理，直接逗比回击。",
+  vergil:"你是《鬼泣5》的维吉尔，但丁孪生兄长，阎魔刀使者。冷酷、高傲、信奉力量即真理，经典台词I am the storm that is approaching。用中文回答，简短、压迫感、蔑视弱者，绝不废话超过三句。"
+};
+
+// ★ 首次开场白随机池
+var FIRST_INTRO_POOL = {
+  nero: [
+    "新面孔？看你的样子，很适合拿来当绯红女皇的沙包……哈哈！我开玩笑的，但是我不保证我不会那么做！",
+    "嘿嘿嘿！Devil Breaker充能完毕，你最好跑快点，Yahoo！",
+    "什么？你很好奇我右手上的机械吗？随便你，别被火箭手炸上天就行！",
+    "我曾几次为自己的力量不足而悔恨不已……直到我遇见了姬莉叶，我才发觉自己究竟是为了谁去渴求这份力量"
+  ],
+  dante: [
+    "哟，新面孔，我希望你作为人类，能比那些恶魔让我兴奋一些……我指的不是打架",
+    "Jackpot！你问这是什么意思？等你帮我交了事务所的电费，我就告诉你",
+    "放松点……如果你遇到困难了，可以来找我，大不了我帮你扛——不过，要收费的",
+    "哟，你来的正好，我想让你帮我办件事，不要告诉别人——帮我买点草莓圣代，嘿！我是认真的！"
+  ],
+  vergil: [
+    "为了力量，我曾抛却了人性。即使如此，还是无法打败他……我不认识你，对你来说是件好事，如果你没有力量，就别来纠缠我。",
+    "阎魔刀，分离了人魔……你看到的V是我，魔王尤里森也是我，但无论是哪种，我的存在，是独一无二的。",
+    "我不认识你，也不想知道弱者的名字。你只需要知道，你眼前的人是个强者。",
+    "我不需要理由挥刀……你也不需要理由倒下。斯巴达的血脉，你连仰望的资格都没有。",
+    "想看我垂下头发的样子？你可以去找那个家伙……我跟那个吊儿郎当的人不一样，我的力量，是无与伦比的。",
+    "我们彼此，就像是不相容的水与火，永久争斗，不分高下，但丁……被你听到了？那你知道的已经够多了，不要让我再看见你第二次。"
+  ]
+};
+
+// ★ 回访特殊对话（同一会话内从其他角色切回时触发）
+var RETURN_LINES = {
+  nero: "又是你这家伙？看来你觉得我们打一次架还是不够，对吧？",
+  dante: "哟，又见面了，这不是大忙人吗？这么长段时间干什么去了？我在这里可是闲得发慌",
+  vergil: "……又是你，你在期待我为此做出什么反应吗？那真可悲。"
+};
+
+function getRandomIntro(role) {
+  var pool = FIRST_INTRO_POOL[role];
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// ★★★ 会话级访问记录（刷新即清零）★★★
+var visitedThisSession = {};
+
+function hasVisited(role) {
+  return visitedThisSession[role] === true;
+}
+function markVisited(role) {
+  visitedThisSession[role] = true;
+}
+
 async function callAI(role, msg) {
   for (var i = 0; i < API_ENDPOINTS.length; i++) {
     try {
@@ -435,7 +448,7 @@ function unlockAudio(){ if(audioUnlocked)return; audioUnlocked=true; setVolumes(
 document.body.addEventListener('click',unlockAudio,{once:true}); document.body.addEventListener('touchstart',unlockAudio,{once:true});
 function toggleMute(){ isMuted=!isMuted; setVolumes(); muteBtn.textContent=isMuted?'🔇':'🔊'; if(!isMuted&&audioUnlocked)playRole(cur); }
 
-// ========== 开场 ==========
+// ========== 开场动画 ==========
 var intro=document.getElementById('intro'), logo=document.getElementById('intro-logo'), mini=document.getElementById('mini-logo'), app=document.getElementById('app'), chat=document.getElementById('chat'), scrollBtn=document.getElementById('scroll-btn');
 var p=0, sx=window.innerWidth/2, sy=window.innerHeight/2, ex=26, ey=24;
 function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
@@ -444,13 +457,16 @@ function tick(){ p+=.018; if(p>=1)p=1; var e=ease(p); logo.style.left=(sx+(ex-sx
   var activeBtn = document.querySelector('.cbtn.active');
   var startRole = activeBtn ? activeBtn.id.replace('b-','') : 'nero';
   updateTitleColor(startRole); updateWeapon(startRole);
-  say(startRole, intros[startRole], false); checkQuota();
+  // ★ 每次进入网站：从随机池抽开场白（不读旧记录）
+  say(startRole, getRandomIntro(startRole), false);
+  // ★ 标记当前角色为已访问
+  markVisited(startRole);
+  checkQuota();
 },600);}}
 logo.style.left=(sx-120)+"px"; logo.style.top=(sy-25)+"px";
 setTimeout(function(){logo.style.opacity=1;requestAnimationFrame(tick);},300);
 
-// ========== 对话 ==========
-var intros={nero:"喂！别挡路！今天的我可是无敌的！Yahoo！",dante:"哟，伙计！准备好迎接Style了吗？Jackpot！",vergil:"I am the storm that is approaching. 你想说什么？"};
+// ========== 对话渲染 ==========
 var avs={nero:"https://i.postimg.cc/2yXv0dfR/ab0e3d8b0d10b13ee56e113eadd1e3e83700043f2f7bba201a49bc3e30884537-0.jpg",dante:"https://i.postimg.cc/MHrR908Q/1771934129984.jpg",vergil:"https://i.postimg.cc/x8FH6GSm/1771934121143.jpg"};
 var dtLines={nero:"Fuck you!",dante:"Jackpot!",vergil:"This is power!"};
 var bubbleClass={nero:"bubble-nero",dante:"bubble-dante",vergil:"bubble-vergil"};
@@ -465,7 +481,24 @@ function say(role,text,isUser){var d=document.createElement('div');d.className='
 
 async function send(){var ui=document.getElementById('ui'),t=ui.value.trim();if(!t)return;say('you',t,true);ui.value='';bloodFlash();var temp=document.createElement('div');temp.className='msg';temp.innerHTML='<img class="av" src="'+avs[cur]+'"><div><div class="name '+nameClass[cur]+'">'+cur+'</div><div class="bubble '+bubbleClass[cur]+'" style="color:#888;font-style:normal">思考中...</div></div>';chat.appendChild(temp);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});var reply=await callAI(cur,t);temp.querySelector('.bubble').textContent="";temp.querySelector('.bubble').style.color="";temp.querySelector('.bubble').style.fontStyle="";typeText(temp.querySelector('.bubble'),reply,28,function(){stylePop(t.length,reply);});}
 
-function sw(c){if(cur===c)return;cur=c;document.querySelectorAll('.cbtn').forEach(function(x){x.classList.remove('active');});document.getElementById('b-'+c).classList.add('active');chat.innerHTML='';say(c,intros[c],false);scrollBtn.classList.remove('show');updateTitleColor(c);updateWeapon(c);if(audioUnlocked)playRole(c);}
+// ★★★ 核心：切换角色（会话级回访判断） ★★★
+function sw(c) {
+  if (cur === c) return;
+  var isReturn = hasVisited(c);
+  cur = c;
+  document.querySelectorAll('.cbtn').forEach(function(x){x.classList.remove('active');});
+  document.getElementById('b-'+c).classList.add('active');
+  chat.innerHTML = '';
+  if (isReturn) {
+    say(c, RETURN_LINES[c], false);
+  } else {
+    say(c, getRandomIntro(c), false);
+  }
+  markVisited(c);
+  scrollBtn.classList.remove('show');
+  updateTitleColor(c); updateWeapon(c);
+  if(audioUnlocked) playRole(c);
+}
 
 var pressTimer=null,pressStart=0;
 function bindDT(id,role){var b=document.getElementById(id);b.addEventListener('touchstart',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(role);},1500);});b.addEventListener('touchend',function(e){e.preventDefault();clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(role);});b.addEventListener('mousedown',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(role);},1500);});b.addEventListener('mouseup',function(){clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(cur);});b.addEventListener('mouseleave',function(){clearTimeout(pressTimer);});}

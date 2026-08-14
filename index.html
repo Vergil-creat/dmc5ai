@@ -282,7 +282,11 @@ body { position:fixed; top:0; left:0; right:0; bottom:0; }
   border-radius:12px; padding:20px 30px; text-align:center;
   color:#fff; font-size:16px; cursor:pointer;
 }
-#audio-hint.show { display:block; animation:warnSlideUp .4s ease-out; }
+#audio-hint.show { display:block; animation:warnSlideUp .4s ease-out, hintPulse 1.8s ease-in-out 0.4s infinite; }
+@keyframes hintPulse {
+  0%,100%{ box-shadow:0 0 0 0 rgba(200,0,0,0.6); transform:translate(-50%,-50%) scale(1); }
+  50%{ box-shadow:0 0 20px 6px rgba(200,0,0,0.25); transform:translate(-50%,-50%) scale(1.03); }
+}
 #audio-hint .hint-title { font-size:20px; font-weight:900; color:#ff5252; margin-bottom:8px; }
 #audio-hint .hint-sub { font-size:13px; color:#ccc; }
 </style>
@@ -763,11 +767,18 @@ function forceUnlockAndPlay(r){
   try{ t.currentTime = 0; }catch(e){}
   var p = t.play();
   if(p && p.then) p.then(function(){
+    // 播放成功 → 隐藏音频解锁提示
+    document.getElementById('audio-hint').classList.remove('show');
+    audioUnlocked = true;
     setTimeout(function(){
       t.volume = isMuted ? 0 : 0.3;
       if(!isMuted){ updateNowPlaying(r); }
     },100);
-  }).catch(function(){});
+    _log('音频解锁成功 ['+r+']','ok');
+  }).catch(function(err){
+    // 播放被浏览器拒绝 → 保留提示，等用户手动点击
+    _log('音频解锁失败:'+err.message,'warn');
+  });
 }
 
 function playRole(r){
@@ -782,16 +793,17 @@ function playRole(r){
   t.volume = isMuted ? 0 : 0.3;
   try{ t.currentTime = 0; }catch(e){}
   var p = t.play();
-  if(p && p.then) p.catch(function(){});
+  if(p && p.then) p.then(function(){
+    // 切角色时播放成功 → 也隐藏提示
+    document.getElementById('audio-hint').classList.remove('show');
+    audioUnlocked = true;
+    _log('音频解锁成功 [切角色:'+r+']','ok');
+  }).catch(function(){});
 }
 
 function unlockAudio(){
   if(audioUnlocked) return;
-  audioUnlocked = true;
-  setVolumes();
-  document.getElementById('audio-hint').classList.remove('show');
   forceUnlockAndPlay(cur);
-  _log('音频已解锁','ok');
 }
 
 // APK 中显示提示，引导用户点击解锁音频
@@ -802,8 +814,8 @@ function showAudioHint(){
   hint.addEventListener('touchstart', unlockAudio, {once:true});
 }
 
-document.body.addEventListener('click', unlockAudio, {once:true});
-document.body.addEventListener('touchstart', unlockAudio, {once:true});
+// 不再监听 body 自动解锁——只有用户主动点击提示框或切角色时才会解锁
+// 这样"音频解锁提示"不会被意外隐藏，必须等战斗曲真正播放才消失
 
 function toggleMute(){
   isMuted = !isMuted;

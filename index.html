@@ -18,16 +18,16 @@ body {
   overscroll-behavior:none;
 }
 
-/* ===== 音频提示框系统 ===== */
+/* ===== 音频提示框 ===== */
 #audio-overlay {
-  position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:10000;
+  position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:10000;
   display:none; justify-content:center; align-items:center;
 }
 #audio-overlay.show { display:flex; }
 .audio-card {
   border:3px solid; border-radius:14px; padding:28px 24px 20px;
   max-width:320px; width:88vw; text-align:center;
-  background:rgba(0,0,0,0.92); box-shadow:0 0 30px currentColor;
+  background:rgba(0,0,0,0.95); box-shadow:0 0 30px currentColor;
   animation:hintPulse 1.8s ease-in-out infinite;
 }
 @keyframes hintPulse {
@@ -35,22 +35,19 @@ body {
   50%{box-shadow:0 0 36px currentColor,0 0 60px currentColor;}
 }
 .audio-card .audio-title { font-size:18px; font-weight:900; margin-bottom:8px; }
-.audio-card .audio-desc { font-size:13px; opacity:.8; margin-bottom:18px; line-height:1.5; }
+.audio-card .audio-desc { font-size:13px; opacity:.85; margin-bottom:18px; line-height:1.5; }
 .audio-card .audio-btn {
   display:inline-block; padding:12px 36px; border-radius:8px; font-size:15px; font-weight:bold;
   cursor:pointer; transition:.2s; background:#fff; color:#000; border:2px solid #fff;
 }
 .audio-card .audio-btn:active { transform:scale(.95); }
-.audio-card .audio-btn-row { display:flex; gap:14px; justify-content:center; margin-top:4px; }
-.audio-card .audio-btn.secondary { background:#222; color:#fff; border-color:#555; }
-
-/* 角色色变量通过 JS 动态设 currentColor，下面定义各角色专用 class */
 .audio-nero { color:#ffffff; }
 .audio-dante { color:#ff5252; }
 .audio-vergil { color:#80c0ff; }
 .audio-v { color:#c876ff; }
 
-/* ===== 日志面板 ===== */
+@keyframes blink { 0%,50%{opacity:1} 51%,100%{opacity:0} }
+
 #log-panel {
   position:fixed; bottom:0; left:0; right:0; max-height:35vh;
   background:rgba(0,20,0,0.95); border-top:2px solid #0f0; z-index:9999;
@@ -61,7 +58,6 @@ body {
 .log-line { margin:1px 0; }
 .log-err { color:#f55; } .log-ok { color:#5f5; } .log-warn { color:#ff5; }
 
-/* ===== 开场 ===== */
 #intro {
   position:fixed; inset:0; background:#000; z-index:9998;
   display:flex; justify-content:center; align-items:center; transition:opacity 0.6s ease;
@@ -71,7 +67,6 @@ body {
 #app { display:none; height:100vh; width:100vw; flex-direction:column; position:relative; }
 #mini-logo { position:fixed; top:8px; left:10px; height:32px; z-index:1000; display:none; cursor:pointer; }
 
-/* ===== 顶部栏 ===== */
 .topbar {
   height:72px; background:rgba(0,0,0,0.9); border-bottom:1px solid #330000;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -90,7 +85,6 @@ body {
   -webkit-text-stroke:.4px currentColor; transition:color .4s,text-shadow .4s; line-height:1.2; margin-top:2px;
 }
 
-/* ===== 聊天区 ===== */
 .chat {
   flex:1; overflow-y:auto; padding:10px 90px 70px 15px;
   display:flex; flex-direction:column; gap:14px;
@@ -114,7 +108,6 @@ body {
 .bubble-v { color:#d9c2ff; font-family:'Georgia','Times New Roman','Microsoft YaHei',serif; font-style:italic; letter-spacing:1px; border-color:#4a3a6e; background:#140d22; }
 .msg.user .bubble { background:#c00; border-color:#f00; color:#fff; font-size:16px; font-weight:600; }
 
-/* ===== 输入区 ===== */
 .input {
   position:fixed; bottom:0; left:0; right:80px; height:52px;
   display:flex; padding:8px 12px; gap:8px;
@@ -124,14 +117,12 @@ body {
 .input button { background:#c00; color:#fff; border:none; padding:0 18px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:14px; flex-shrink:0; }
 .input button:hover { background:#f00; }
 
-/* ===== 创作者信息 ===== */
 #creator-line {
   position:fixed; bottom:52px; left:12px; z-index:1000;
   display:flex; flex-direction:column; gap:1px; pointer-events:none; user-select:none;
 }
 #creator-line .c-name, #creator-line .c-qq { color:#fff; font-size:11px; font-weight:bold; line-height:1.3; white-space:nowrap; }
 
-/* ===== 侧边栏 ===== */
 .sidebar {
   position:fixed; right:0; top:72px; bottom:0; width:80px;
   background:rgba(10,0,0,.95); border-left:2px solid #c00;
@@ -143,7 +134,6 @@ body {
 .cbtn.active { border-color:#c00; opacity:1; box-shadow:0 0 14px #c00; }
 .cname { color:#fff; font-size:10px; margin-top:2px; text-align:center; margin-bottom:6px; }
 
-/* ===== 武器 ===== */
 #weapon-container {
   width:68px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
   margin-top:4px; margin-bottom:8px; position:relative;
@@ -166,7 +156,6 @@ body {
 
 #fire-canvas { position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:600; display:none; }
 
-/* ===== 配额警告 ===== */
 #quota-warning {
   display:none; position:fixed; bottom:52px; left:0; right:80px;
   background:rgba(20,0,0,0.95); border-top:2px solid #c00; border-bottom:2px solid #c00;
@@ -178,13 +167,11 @@ body {
 #warn-close { background:none; border:none; color:#ff6666; font-size:16px; cursor:pointer; padding:0 4px; }
 #warn-close:hover { color:#fff; }
 
-/* ===== 杂项按钮 ===== */
 #scroll-btn { position:fixed; bottom:60px; right:88px; width:36px; height:36px; border-radius:50%; background:rgba(200,0,0,0.8); color:#fff; border:none; font-size:18px; cursor:pointer; z-index:998; display:none; align-items:center; justify-content:center; }
 #scroll-btn.show { display:flex; }
 #mute-btn { position:fixed; bottom:60px; right:130px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,0.7); color:#fff; border:1px solid #c00; font-size:16px; cursor:pointer; z-index:998; display:flex; align-items:center; justify-content:center; }
 #mute-btn:hover { background:rgba(200,0,0,0.5); }
 
-/* ===== 曲目名 + 呼吸灯 ===== */
 #now-playing {
   position:fixed; bottom:62px; right:172px; color:#c00; font-size:11px; font-weight:bold;
   z-index:998; pointer-events:auto; cursor:pointer;
@@ -200,11 +187,9 @@ body {
   50%{opacity:1; text-shadow:0 0 12px currentColor,0 0 22px currentColor,0 0 36px currentColor;}
 }
 
-/* ===== DT 全屏 ===== */
 .dt-overlay { position:fixed; inset:0; z-index:200; pointer-events:none; opacity:0; transition:opacity .3s; border:4px solid #c00; box-shadow:inset 0 0 80px #c00; } .dt-overlay.show { opacity:1; }
 .dt-overlay-blue { position:fixed; inset:0; z-index:200; pointer-events:none; opacity:0; transition:opacity .3s; border:4px solid #00aaff; box-shadow:inset 0 0 80px #00aaff; } .dt-overlay-blue.show { opacity:1; }
 
-/* ===== Style 弹字 ===== */
 .style-pop { position:fixed; top:38%; left:50%; transform:translate(-50%,-50%) skewX(-10deg); font-family:'Cinzel Decorative',serif; font-weight:900; z-index:500; pointer-events:none; animation:stylePop 1s ease-out forwards; text-shadow:0 0 12px currentColor,0 0 24px currentColor; }
 @keyframes stylePop { 0%{opacity:0;transform:translate(-50%,-50%) skewX(-10deg) scale(.4)} 20%{opacity:1;transform:translate(-50%,-50%) skewX(-10deg) scale(1.25)} 35%{transform:translate(-50%,-50%) skewX(-10deg) scale(1)} 80%{opacity:1} 100%{opacity:0;transform:translate(-50%,-60%) skewX(-10deg) scale(1)} }
 .style-sub { display:block; font-size:16px; font-weight:700; letter-spacing:2px; margin-top:4px; font-family:'Segoe UI',sans-serif; transform:skewX(10deg); text-align:center; }
@@ -212,31 +197,27 @@ body {
 .blood-flash { position:fixed; inset:0; z-index:199; pointer-events:none; background:rgba(200,0,0,.15); opacity:0; } .blood-flash.show { animation:bloodFlash .35s ease-out; }
 @keyframes bloodFlash { 0%{opacity:.6} 100%{opacity:0} }
 
-/* ===== 彩蛋大字 ===== */
 .easter-pop { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Cinzel Decorative',serif; font-weight:900; font-size:48px; z-index:700; pointer-events:none; animation:easterPop 1.8s ease-out forwards; text-shadow:0 0 20px currentColor,0 0 40px currentColor; text-align:center; line-height:1.2; }
 @keyframes easterPop { 0%{opacity:0;transform:translate(-50%,-50%) scale(.3)} 15%{opacity:1;transform:translate(-50%,-50%) scale(1.1)} 30%{transform:translate(-50%,-50%) scale(1)} 75%{opacity:1} 100%{opacity:0;transform:translate(-50%,-55%) scale(1)} }
 </style>
 </head>
 <body>
 
-<!-- 音频元素 -->
 <audio id="aud-nero" preload="metadata" src="nero.mp3"></audio>
 <audio id="aud-dante" preload="metadata" src="dante.mp3"></audio>
 <audio id="aud-vergil" preload="metadata" src="vergil.mp3"></audio>
 <audio id="aud-v" preload="metadata" src="v.mp3"></audio>
 
-<!-- 开场 -->
 <div id="intro">
   <img id="intro-logo" src="https://i.postimg.cc/TwdDGNdY/e6e5add26d2fdd9558b8f92097d3cb44b3baf321aead2097e78133d06b2ac778-0.webp">
 </div>
 <img id="mini-logo" src="https://i.postimg.cc/TwdDGNdY/e6e5add26d2fdd9558b8f92097d3cb44b3baf321aead2097e78133d06b2ac778-0.webp">
 <canvas id="fire-canvas"></canvas>
 
-<!-- 音频提示框系统 -->
 <div id="audio-overlay">
-  <div class="audio-card" id="audio-card">
+  <div class="audio-card audio-nero" id="audio-card">
     <div class="audio-title" id="audio-title">🔊 开启音频</div>
-    <div class="audio-desc" id="audio-desc">点击下方按钮开启角色战斗曲<br>需要用户交互才能播放音频</div>
+    <div class="audio-desc" id="audio-desc">点击下方按钮开启角色战斗曲</div>
     <div class="audio-btn" id="audio-btn">点击开启音频</div>
   </div>
 </div>
@@ -245,7 +226,6 @@ body {
   <span class="c-name">制作者：一庭霜月满襟寒（bilibili）</span>
   <span class="c-qq">网站制作者QQ：1127421253，欢迎提出建议</span>
 </div>
-
 <div id="quota-warning">
   <div id="warn-icon">!</div>
   <div id="warn-text">本站使用免费 API 额度驱动对话，目前已耗尽，你可以继续体验界面交互功能，等候网站制作者自行恢复</div>
@@ -310,9 +290,9 @@ bindLogoTap(document.getElementById('mini-logo'));
 bindLogoTap(document.getElementById('intro-logo'));
 document.getElementById('log-panel').addEventListener('click', function(e){ e.stopPropagation(); });
 
-/* ===== 角色颜色配置 ===== */
+/* ===== 角色颜色 ===== */
 var TITLE_COLORS = { nero:"#ffffff", dante:"#ff5252", vergil:"#80c0ff", v:"#c876ff" };
-var AUDIO_COLORS = { nero:"audio-nero", dante:"audio-dante", vergil:"audio-vergil", v:"audio-v" };
+var AUDIO_CLS = { nero:"audio-nero", dante:"audio-dante", vergil:"audio-vergil", v:"audio-v" };
 var LYRICS = {
   nero:"Bang, bang, bang — Pull my Devil Trigger",
   dante:"You cannot kill me! I am Subhuman!",
@@ -332,7 +312,6 @@ function updateTitleColor(r){
   var l = document.getElementById('lyric');
   l.style.color = TITLE_COLORS[r]; l.textContent = LYRICS[r];
 }
-
 function updateNowPlaying(r){
   var np = document.getElementById('now-playing');
   np.textContent = TRACK_NAMES[r];
@@ -351,33 +330,29 @@ var audioDesc = document.getElementById('audio-desc');
 var audioBtn = document.getElementById('audio-btn');
 
 function showAudioHint(role){
-  audioCard.className = 'audio-card ' + (AUDIO_COLORS[role]||'audio-nero');
+  audioCard.className = 'audio-card ' + (AUDIO_CLS[role]||'audio-nero');
   audioTitle.textContent = '🔊 开启音频';
   audioDesc.innerHTML = '点击按钮开启战斗曲<br>当前角色：' + role.toUpperCase();
   audioBtn.textContent = '点击开启音频';
-  audioBtn.className = 'audio-btn';
   audioBtn.onclick = function(){ attemptPlay(role); };
   audioOverlay.classList.add('show');
 }
-
 function showRetryBox(role){
-  audioCard.className = 'audio-card ' + (AUDIO_COLORS[role]||'audio-nero');
+  audioCard.className = 'audio-card ' + (AUDIO_CLS[role]||'audio-nero');
   audioTitle.textContent = '⚠ 音频播放失败';
   audioDesc.innerHTML = '无法播放 ' + role + '.mp3<br>是否重试？';
-  audioBtn.textContent = '是';
-  audioBtn.className = 'audio-btn';
+  audioBtn.textContent = '重试';
   audioBtn.onclick = function(){ attemptPlay(role); };
   audioOverlay.classList.add('show');
 }
-
 function hideAudioOverlay(){ audioOverlay.classList.remove('show'); }
 
 function primeAllAudio(){
   Object.keys(audios).forEach(function(k){
     var a = audios[k];
     try{ a.load(); var p = a.play();
-      if(p&&p.then){ p.then(function(){a.pause();a.currentTime=0;}).catch(function(){}); }
-      else { a.pause(); a.currentTime=0; }
+      if(p&&p.then){ p.then(function(){try{a.pause();a.currentTime=0;}catch(e){}}).catch(function(){}); }
+      else { try{a.pause();a.currentTime=0;}catch(e){} }
     }catch(e){}
   });
 }
@@ -536,18 +511,18 @@ function playRole(r){
   var t=audios[r]; t.volume=isMuted?0:0.3;
   try{t.currentTime=0;}catch(e){}
   var p=t.play();
-  if(!audioUnlocked) return; // 还没解锁过，不检测（提示框还在）
   if(p&&p.then){
     p.then(function(){
-      // 成功 → 800ms 后检查是否真的在播
       setTimeout(function(){
-        if(!audioUnlocked) return;
-        if(t.currentTime > 0){ hideAudioOverlay(); }
-        else { showAudioHint(r); } // 静默失败
+        if(t.currentTime > 0){
+          audioUnlocked = true;
+          hideAudioOverlay();
+        } else if(audioUnlocked) {
+          showAudioHint(r);
+        }
       },800);
     }).catch(function(){
-      // rejected → 弹重试
-      showRetryBox(r);
+      if(audioUnlocked) showRetryBox(r);
     });
   }
 }
@@ -555,7 +530,7 @@ function toggleMute(){isMuted=!isMuted;setVolumes();muteBtn.textContent=isMuted?
 np.addEventListener('click',function(){if(!audios[cur])return;if(audios[cur].paused){audios[cur].play();np.classList.remove('paused');}else{audios[cur].pause();np.classList.add('paused');}});
 
 /* ===== 开场动画 ===== */
-var intro=document.getElementById('intro'),logo=document.getElementById('intro-logo'),mini=document.getElementById('mini-logo'),app=document.getElementById('app'),chat=document.getElementById('chat'),scrollBtn=document.getElementById('scroll-btn');
+var intro=document.getElementById('intro'),logo=document.getElementById('intro-logo'),mini=document.getElementById('mini-logo'),app=document.getElementById('app'),chat=document.getElementById('chat');
 var p=0,sx=window.innerWidth/2,sy=window.innerHeight/2,ex=26,ey=24;
 function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
 function tick(){
@@ -569,7 +544,6 @@ function tick(){
     updateTitleColor(sr); updateWeapon(sr);
     say(sr,getRandomIntro(sr),false); markVisited(sr);
     checkQuota();
-    // 1.5s 后弹音频提示框
     setTimeout(function(){ showAudioHint(sr); },1500);
   },600);}
 }
@@ -627,7 +601,7 @@ function sw(c){
   chat.innerHTML='';
   if(isReturn){var rp=RETURN_LINES[c];say(c,Array.isArray(rp)?rp[Math.floor(Math.random()*rp.length)]:rp,false);}
   else{say(c,getRandomIntro(c),false);}
-  markVisited(c);scrollBtn.classList.remove('show');
+  markVisited(c);var sb=document.getElementById('scroll-btn');if(sb)sb.classList.remove('show');
   updateTitleColor(c);updateWeapon(c);
   if(audioUnlocked)playRole(c);
 }
@@ -643,8 +617,8 @@ function bindDT(id,r){
   b.addEventListener('mouseleave',function(){clearTimeout(pressTimer);});
 }
 function triggerDT(r){
-  var o=r==='dante'?document.getElementById('dt-red'):document.getElementById('dt-blue');
-  o.classList.add('show');setTimeout(function(){o.classList.remove('show');},800);
+  var b=r==='dante'?document.getElementById('dt-red'):document.getElementById('dt-blue');
+  b.classList.add('show');setTimeout(function(){b.classList.remove('show');},800);
   say(r,dtLines[r],false);
 }
 bindDT('b-nero','nero');bindDT('b-dante','dante');bindDT('b-vergil','vergil');bindDT('b-v','v');

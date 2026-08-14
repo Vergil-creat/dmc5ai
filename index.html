@@ -2,38 +2,54 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- APK 友好：全屏、禁止缩放、隐藏状态栏 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
 <title>DEVIL MAY CRY 5 — AI CHAT</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body {
+html,body {
   background:#000; color:#fff;
   font-family:'Segoe UI','Microsoft YaHei',sans-serif;
   overflow:hidden; height:100vh; width:100vw;
   -webkit-user-drag:none; user-select:none; touch-action:manipulation;
   -webkit-tap-highlight-color:transparent;
+  overscroll-behavior:none;
 }
+body { position:fixed; top:0; left:0; right:0; bottom:0; }
 
+/* ===== 日志面板 ===== */
 #log-panel {
   position:fixed; bottom:0; left:0; right:0; max-height:35vh;
-  background:rgba(0,20,0,0.95); border-top:2px solid #0f0; z-index:9999;
-  overflow-y:auto; display:none; padding:8px 10px;
-  font-family:'Courier New',monospace; font-size:11px; color:#0f0;
+  background:rgba(0,20,0,0.95); border-top:2px solid #0f0;
+  z-index:9999; overflow-y:auto; display:none;
+  padding:8px 10px; font-family:'Courier New',monospace;
+  font-size:11px; color:#0f0;
 }
 #log-panel.show { display:block; }
 .log-line { margin:1px 0; }
 .log-err { color:#f55; } .log-ok { color:#5f5; } .log-warn { color:#ff5; }
 
+/* ===== 开场动画 ===== */
 #intro {
   position:fixed; inset:0; background:#000; z-index:9998;
-  display:flex; justify-content:center; align-items:center; transition:opacity 0.6s ease;
+  display:flex; justify-content:center; align-items:center;
+  transition:opacity 0.6s ease;
 }
-#intro-logo { position:absolute; width:240px; height:auto; opacity:0; filter:blur(12px); cursor:pointer; }
+#intro-logo {
+  position:absolute; width:240px; height:auto;
+  opacity:0; filter:blur(12px); cursor:pointer;
+}
 
+/* ===== 主界面 ===== */
 #app { display:none; height:100vh; width:100vw; flex-direction:column; position:relative; }
 #mini-logo { position:fixed; top:8px; left:10px; height:32px; z-index:1000; display:none; cursor:pointer; }
 
+/* ===== 顶部栏 ===== */
 .topbar {
   height:72px; background:rgba(0,0,0,0.9); border-bottom:1px solid #330000;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -48,10 +64,13 @@ body {
   font-size:12px; font-weight:700; font-style:italic; letter-spacing:1.5px;
   opacity:.9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   max-width:90vw; text-align:center;
-  text-shadow:0 0 6px currentColor,0 0 14px currentColor,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;
-  -webkit-text-stroke:.4px currentColor; transition:color .4s,text-shadow .4s; line-height:1.2; margin-top:2px;
+  text-shadow:0 0 6px currentColor,0 0 14px currentColor,
+    -1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;
+  -webkit-text-stroke:.4px currentColor;
+  transition:color .4s,text-shadow .4s; line-height:1.2; margin-top:2px;
 }
 
+/* ===== 聊天区域 ===== */
 .chat {
   flex:1; overflow-y:auto; padding:10px 90px 70px 15px;
   display:flex; flex-direction:column; gap:14px;
@@ -63,13 +82,15 @@ body {
 .msg { display:flex; gap:10px; max-width:85%; animation:msgIn .25s ease-out; }
 .msg.user { align-self:flex-end; flex-direction:row-reverse; }
 @keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
 .av { width:42px; height:42px; border-radius:50%; border:2px solid #c00; object-fit:cover; flex-shrink:0; }
 
 .name-nero { color:#4fc3f7 !important; }
 .name-dante { color:#ff5252 !important; }
-.name-vergil { color:#80c0ff !important; }
+.name-vergil { color:#b0b0b0 !important; }
 .name-v { color:#c876ff !important; }
 
+/* 气泡样式 */
 .bubble { background:#151515; border:1px solid #333; padding:10px 14px; border-radius:10px; line-height:1.65; font-size:16px; word-break:break-word; }
 .bubble-nero { color:#4fc3f7; font-family:'Nunito','Segoe UI','Microsoft YaHei',sans-serif; font-weight:700; border-color:#1a4a6e; background:#0a1622; }
 .bubble-dante { color:#ff5252; font-family:'Comic Sans MS','Segoe UI',sans-serif; font-style:italic; font-weight:600; border-color:#5a1a1a; background:#1a0a0a; }
@@ -77,6 +98,16 @@ body {
 .bubble-v { color:#d9c2ff; font-family:'Georgia','Times New Roman','Microsoft YaHei',serif; font-style:italic; letter-spacing:1px; border-color:#4a3a6e; background:#140d22; }
 .msg.user .bubble { background:#c00; border-color:#f00; color:#fff; font-size:16px; font-weight:600; }
 
+/* 等待动画光标 */
+.typing-cursor::after {
+  content:'▋';
+  animation:blink 1s step-end infinite;
+  margin-left:2px;
+  color:currentColor;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ===== 输入栏 ===== */
 .input {
   position:fixed; bottom:0; left:0; right:80px; height:52px;
   display:flex; padding:8px 12px; gap:8px;
@@ -85,13 +116,16 @@ body {
 .input input { flex:1; background:#111; border:1px solid #c00; color:#fff; padding:10px 12px; border-radius:4px; outline:none; font-size:15px; }
 .input button { background:#c00; color:#fff; border:none; padding:0 18px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:14px; flex-shrink:0; }
 .input button:hover { background:#f00; }
+.input input:disabled { opacity:0.5; cursor:not-allowed; }
 
+/* ===== 制作者信息 ===== */
 #creator-line {
   position:fixed; bottom:52px; left:12px; z-index:1000;
   display:flex; flex-direction:column; gap:1px; pointer-events:none; user-select:none;
 }
 #creator-line .c-name, #creator-line .c-qq { color:#fff; font-size:11px; font-weight:bold; line-height:1.3; white-space:nowrap; }
 
+/* ===== 侧边栏 ===== */
 .sidebar {
   position:fixed; right:0; top:72px; bottom:0; width:80px;
   background:rgba(10,0,0,.95); border-left:2px solid #c00;
@@ -99,13 +133,14 @@ body {
   padding-top:15px; gap:14px; z-index:500; overflow-y:auto;
 }
 .sidebar::-webkit-scrollbar { display:none; }
-
 .cbtn { width:56px; height:56px; border-radius:50%; border:3px solid #555; background-size:cover; background-position:center; cursor:pointer; opacity:.6; transition:.3s; flex-shrink:0; }
 .cbtn.active { border-color:#c00; opacity:1; box-shadow:0 0 14px #c00; }
 .cname { color:#fff; font-size:10px; margin-top:2px; text-align:center; margin-bottom:6px; }
 
+/* ===== 武器图标 ===== */
 #weapon-container {
-  width:68px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  width:68px; flex-shrink:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
   margin-top:4px; margin-bottom:8px; position:relative;
 }
 #weapon-img {
@@ -136,12 +171,15 @@ body {
 #weapon-glow { position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:60px; height:18px; opacity:0; transition:opacity .5s; pointer-events:none; }
 #weapon-glow.show { opacity:1; }
 
+/* ===== 火焰画布 ===== */
 #fire-canvas { position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:600; display:none; }
 
+/* ===== 配额警告条 ===== */
 #quota-warning {
   display:none; position:fixed; bottom:52px; left:0; right:80px;
   background:rgba(20,0,0,0.95); border-top:2px solid #c00; border-bottom:2px solid #c00;
-  padding:8px 14px; z-index:998; align-items:center; gap:10px; animation:warnSlideUp .4s ease-out;
+  padding:8px 14px; z-index:998; align-items:center; gap:10px;
+  animation:warnSlideUp .4s ease-out;
 }
 @keyframes warnSlideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
 #warn-icon { width:22px; height:22px; border-radius:50%; background:#c00; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px; color:#fff; }
@@ -149,61 +187,150 @@ body {
 #warn-close { background:none; border:none; color:#ff6666; font-size:16px; cursor:pointer; padding:0 4px; }
 #warn-close:hover { color:#fff; }
 
-#scroll-btn { position:fixed; bottom:60px; right:88px; width:36px; height:36px; border-radius:50%; background:rgba(200,0,0,0.8); color:#fff; border:none; font-size:18px; cursor:pointer; z-index:998; display:none; align-items:center; justify-content:center; }
+/* ===== 滚动/静音/曲目 ===== */
+#scroll-btn { position:fixed; bottom:60px; right:88px; width:36px; height:36px; border-radius:50%; background:rgba(200,0,0,.8); color:#fff; border:none; font-size:18px; cursor:pointer; z-index:998; display:none; align-items:center; justify-content:center; }
 #scroll-btn.show { display:flex; }
-#mute-btn { position:fixed; bottom:60px; right:130px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,0.7); color:#fff; border:1px solid #c00; font-size:16px; cursor:pointer; z-index:998; display:flex; align-items:center; justify-content:center; }
-#mute-btn:hover { background:rgba(200,0,0,0.5); }
+#mute-btn { position:fixed; bottom:60px; right:130px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,.7); color:#fff; border:1px solid #c00; font-size:16px; cursor:pointer; z-index:998; display:flex; align-items:center; justify-content:center; }
+#mute-btn:hover { background:rgba(200,0,0,.5); }
 
+/* ===== 曲目名 + 呼吸灯 ===== */
 #now-playing {
-  position:fixed; bottom:62px; right:172px; color:#c00; font-size:11px; font-weight:bold;
-  z-index:998; pointer-events:none;
-  opacity:0; transition:opacity 0.3s, color 0.4s;
-  max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  position:fixed; bottom:62px; right:172px;
+  font-size:11px; font-weight:bold;
+  z-index:998; pointer-events:auto; cursor:pointer;
+  opacity:0;
+  transition:color .4s;
+  max-width:140px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   animation: neonBreathe 2.4s ease-in-out infinite;
 }
 #now-playing.show { opacity:1; }
-#now-playing.v-track { color:#c876ff !important; text-shadow:0 0 8px #c876ff,0 0 16px rgba(200,118,255,0.4); }
+#now-playing.v-track { color:#c876ff !important; }
+#now-playing.paused { animation-play-state:paused; opacity:0.5; }
 
 @keyframes neonBreathe {
-  0%, 100% { opacity:0.5; text-shadow:0 0 4px currentColor; }
-  50%      { opacity:1;   text-shadow:0 0 12px currentColor,0 0 22px currentColor,0 0 36px currentColor; }
+  0%, 100% { opacity:0.45; text-shadow:0 0 3px currentColor; }
+  50%      { opacity:1;    text-shadow:0 0 10px currentColor,0 0 20px currentColor,0 0 35px currentColor; }
 }
 
-.dt-overlay { position:fixed; inset:0; z-index:200; pointer-events:none; opacity:0; transition:opacity .3s; border:4px solid #c00; box-shadow:inset 0 0 80px #c00; } .dt-overlay.show { opacity:1; }
-.dt-overlay-blue { position:fixed; inset:0; z-index:200; pointer-events:none; opacity:0; transition:opacity .3s; border:4px solid #00aaff; box-shadow:inset 0 0 80px #00aaff; } .dt-overlay-blue.show { opacity:1; }
+/* ===== Devil Trigger 全屏覆盖 ===== */
+.dt-overlay { position:fixed; inset:0; z-index:200; pointer-events:none; opacity:0; transition:opacity .3s; border:4px solid #c00; box-shadow:inset 0 0 80px #c00; }
+.dt-overlay.show { opacity:1; }
+.dt-overlay-blue { position:fixed; inset:0; z-index:200; pointer-events:none; opacity:0; transition:opacity .3s; border:4px solid #00aaff; box-shadow:inset 0 0 80px #00aaff; }
+.dt-overlay-blue.show { opacity:1; }
 
-.style-pop { position:fixed; top:38%; left:50%; transform:translate(-50%,-50%) skewX(-10deg); font-family:'Cinzel Decorative',serif; font-weight:900; z-index:500; pointer-events:none; animation:stylePop 1s ease-out forwards; text-shadow:0 0 12px currentColor,0 0 24px currentColor; }
-@keyframes stylePop { 0%{opacity:0;transform:translate(-50%,-50%) skewX(-10deg) scale(.4)} 20%{opacity:1;transform:translate(-50%,-50%) skewX(-10deg) scale(1.25)} 35%{transform:translate(-50%,-50%) skewX(-10deg) scale(1)} 80%{opacity:1} 100%{opacity:0;transform:translate(-50%,-60%) skewX(-10deg) scale(1)} }
+/* ===== Style 评级弹字 ===== */
+.style-pop {
+  position:fixed; top:38%; left:50%; transform:translate(-50%,-50%) skewX(-10deg);
+  font-family:'Cinzel Decorative',serif; font-weight:900; z-index:500;
+  pointer-events:none; animation:stylePop 1s ease-out forwards;
+  text-shadow:0 0 12px currentColor,0 0 24px currentColor;
+}
+@keyframes stylePop {
+  0%{opacity:0;transform:translate(-50%,-50%) skewX(-10deg) scale(.4)}
+  20%{opacity:1;transform:translate(-50%,-50%) skewX(-10deg) scale(1.25)}
+  35%{transform:translate(-50%,-50%) skewX(-10deg) scale(1)}
+  80%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-60%) skewX(-10deg) scale(1)}
+}
 .style-sub { display:block; font-size:16px; font-weight:700; letter-spacing:2px; margin-top:4px; font-family:'Segoe UI',sans-serif; transform:skewX(10deg); text-align:center; }
 .style-d{color:#7a6a6a} .style-c{color:#ffae42} .style-b{color:#aaff00} .style-a{color:#00e5ff} .style-s{color:#ffd700} .style-ss{color:#ff6a00} .style-sss{color:#ff2d95}
-.blood-flash { position:fixed; inset:0; z-index:199; pointer-events:none; background:rgba(200,0,0,.15); opacity:0; } .blood-flash.show { animation:bloodFlash .35s ease-out; }
+
+/* ===== 血闪 ===== */
+.blood-flash { position:fixed; inset:0; z-index:199; pointer-events:none; background:rgba(200,0,0,.15); opacity:0; }
+.blood-flash.show { animation:bloodFlash .35s ease-out; }
 @keyframes bloodFlash { 0%{opacity:.6} 100%{opacity:0} }
+
+/* ===== 连击计数器 ===== */
+#combo-counter {
+  position:fixed; top:76px; right:90px; z-index:1000;
+  font-size:13px; font-weight:900; font-style:italic;
+  color:#ffd700; text-shadow:0 0 8px #ffd700,0 0 16px #ff6a00;
+  opacity:0; transition:opacity .3s; pointer-events:none;
+  letter-spacing:1px;
+}
+#combo-counter.show { opacity:1; animation:comboPulse .4s ease; }
+@keyframes comboPulse { 0%{transform:scale(1.5)} 100%{transform:scale(1)} }
+
+/* ===== 彩蛋全屏特效 ===== */
+.easter-overlay {
+  position:fixed; inset:0; z-index:300; pointer-events:none;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity .3s;
+}
+.easter-overlay.show { opacity:1; }
+.easter-text {
+  font-size:48px; font-weight:900; font-style:italic;
+  text-shadow:0 0 20px currentColor,0 0 40px currentColor;
+  animation:stylePop 1.5s ease-out forwards;
+}
+.coin-rain { position:fixed; inset:0; z-index:301; pointer-events:none; overflow:hidden; }
+.coin {
+  position:absolute; top:-40px; width:20px; height:20px;
+  background:radial-gradient(circle,#ffd700 30%,#b8860b 70%,#8b6914 100%);
+  border-radius:50%; animation:coinFall linear forwards;
+  box-shadow:0 0 6px #ffd700;
+}
+@keyframes coinFall {
+  0%{transform:translateY(0) rotate(0deg); opacity:1;}
+  100%{transform:translateY(110vh) rotate(720deg); opacity:0.3;}
+}
+
+/* ===== 音频解锁提示 ===== */
+#audio-hint {
+  display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  z-index:9997; background:rgba(0,0,0,0.85); border:2px solid #c00;
+  border-radius:12px; padding:20px 30px; text-align:center;
+  color:#fff; font-size:16px; cursor:pointer;
+}
+#audio-hint.show { display:block; animation:warnSlideUp .4s ease-out; }
+#audio-hint .hint-title { font-size:20px; font-weight:900; color:#ff5252; margin-bottom:8px; }
+#audio-hint .hint-sub { font-size:13px; color:#ccc; }
 </style>
 </head>
 <body>
 
-<audio id="aud-nero" preload="auto" src="nero.mp3"></audio>
-<audio id="aud-dante" preload="auto" src="dante.mp3"></audio>
-<audio id="aud-vergil" preload="auto" src="vergil.mp3"></audio>
-<audio id="aud-v" preload="auto" src="v.mp3"></audio>
+<!-- ===== 音频（APK 中同目录 mp3 也能播放） ===== -->
+<audio id="aud-nero" preload="auto" src="nero.mp3" loop></audio>
+<audio id="aud-dante" preload="auto" src="dante.mp3" loop></audio>
+<audio id="aud-vergil" preload="auto" src="vergil.mp3" loop></audio>
+<audio id="aud-v" preload="auto" src="v.mp3" loop></audio>
 
+<!-- ===== 开场 Logo ===== -->
 <div id="intro">
   <img id="intro-logo" src="https://i.postimg.cc/TwdDGNdY/e6e5add26d2fdd9558b8f92097d3cb44b3baf321aead2097e78133d06b2ac778-0.webp">
 </div>
 <img id="mini-logo" src="https://i.postimg.cc/TwdDGNdY/e6e5add26d2fdd9558b8f92097d3cb44b3baf321aead2097e78133d06b2ac778-0.webp">
+
+<!-- ===== 火焰画布 ===== -->
 <canvas id="fire-canvas"></canvas>
 
+<!-- ===== 制作者信息 ===== -->
 <div id="creator-line">
   <span class="c-name">制作者：一庭霜月满襟寒（bilibili）</span>
   <span class="c-qq">网站制作者QQ：1127421253，欢迎提出建议</span>
 </div>
 
+<!-- ===== 配额警告 ===== -->
 <div id="quota-warning">
   <div id="warn-icon">!</div>
   <div id="warn-text">本站使用免费 API 额度驱动对话，目前已耗尽，你可以继续体验界面交互功能，等候网站制作者自行恢复</div>
   <button id="warn-close" onclick="document.getElementById('quota-warning').style.display='none'">×</button>
 </div>
 
+<!-- ===== 音频解锁提示（APK 首次进入） ===== -->
+<div id="audio-hint">
+  <div class="hint-title">点击任意位置开启音频</div>
+  <div class="hint-sub">Devil May Cry 5 AI Chat</div>
+</div>
+
+<!-- ===== 连击计数 ===== -->
+<div id="combo-counter"></div>
+
+<!-- ===== 彩蛋覆盖层 ===== -->
+<div class="easter-overlay" id="easter-overlay"><div class="easter-text" id="easter-text"></div></div>
+<div class="coin-rain" id="coin-rain"></div>
+
+<!-- ===== 主应用 ===== -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-title" id="top-title">DEVIL MAY CRY 5 — AI CHAT</div>
@@ -211,7 +338,7 @@ body {
   </div>
   <div class="chat" id="chat"></div>
   <button id="scroll-btn" onclick="scrollToBottom()">↓</button>
-  <div id="now-playing"></div>
+  <div id="now-playing" onclick="toggleTrack()"></div>
   <button id="mute-btn" onclick="toggleMute()">🔊</button>
   <div class="input">
     <input id="ui" placeholder="输入你的话语..." onkeydown="if(event.key==='Enter')send()">
@@ -229,22 +356,33 @@ body {
   </div>
 </div>
 
+<!-- ===== DT 全屏覆盖 ===== -->
 <div class="dt-overlay" id="dt-red"></div>
 <div class="dt-overlay-blue" id="dt-blue"></div>
+
+<!-- ===== 日志面板 ===== -->
 <div id="log-panel"></div>
 
 <script>
+//==================================================
+//  日志系统
+//==================================================
 window.addEventListener('error', function(e){ _log('全局错误:'+e.message,'err'); });
 
 function _log(msg,type){
-  var p=document.getElementById('log-panel'); if(!p)return;
-  var d=document.createElement('div'); d.className='log-line'+(type?' log-'+type:'');
+  var p=document.getElementById('log-panel');
+  if(!p) return;
+  var d=document.createElement('div');
+  d.className='log-line'+(type?' log-'+type:'');
   d.textContent='['+new Date().toLocaleTimeString()+'] '+msg;
-  p.appendChild(d); while(p.children.length>200)p.removeChild(p.firstChild);
+  p.appendChild(d);
+  while(p.children.length>200) p.removeChild(p.firstChild);
   p.scrollTop=p.scrollHeight;
 }
 
-/* ===== Logo 单击百科 / 双击日志 ===== */
+//==================================================
+//  Logo 单击 → 百度百科  /  双击 → 日志面板
+//==================================================
 var BAIKE_URL = 'https://baike.baidu.com/item/%E9%AC%BC%E6%B3%A35';
 var logoClickTimer = null;
 
@@ -259,18 +397,16 @@ function bindLogoTap(el){
     clearTimeout(logoClickTimer);
     var panel = document.getElementById('log-panel');
     panel.classList.toggle('show');
-    if(panel.classList.contains('show')){
-      panel.scrollTop = panel.scrollHeight;
-    }
+    if(panel.classList.contains('show')){ panel.scrollTop = panel.scrollHeight; }
   });
 }
 bindLogoTap(document.getElementById('mini-logo'));
 bindLogoTap(document.getElementById('intro-logo'));
-document.getElementById('log-panel').addEventListener('click', function(e){
-  e.stopPropagation();
-});
+document.getElementById('log-panel').addEventListener('click', function(e){ e.stopPropagation(); });
 
-// ===== 角色颜色/歌词/曲目配置 =====
+//==================================================
+//  角色颜色 / 歌词 / 曲目 配置
+//==================================================
 var TITLE_COLORS = { nero:"#ffffff", dante:"#ff5252", vergil:"#80c0ff", v:"#c876ff" };
 var LYRICS = {
   nero:"Bang, bang, bang — Pull my Devil Trigger",
@@ -297,12 +433,14 @@ function updateNowPlaying(r){
   var np = document.getElementById('now-playing');
   np.textContent = TRACK_NAMES[r];
   np.style.color = TRACK_COLORS[r];
-  np.classList.remove('v-track');
+  np.classList.remove('v-track','paused');
   if(r === 'v') np.classList.add('v-track');
   np.classList.add('show');
 }
 
-// ===== 武器配置 =====
+//==================================================
+//  武器配置
+//==================================================
 var WEAPON_IMGS = {
   vergil:"yamato.png",
   nero:"https://i.postimg.cc/BvGsMmcz/aebf56b3276a71fdea06b9e5abb942d88293704cafd5ea7544f3aa7f85e96a1d-0.png",
@@ -317,98 +455,166 @@ var WEAPON_GLOWS = {
   v:"radial-gradient(ellipse,rgba(200,118,255,.3) 0%,transparent 70%)"
 };
 
-var glowTimer=null, weaponAnimating=false;
+var glowTimer = null;
+var weaponAnimating = false;
+
 function updateWeapon(r){
-  var img=document.getElementById('weapon-img'), glow=document.getElementById('weapon-glow');
+  var img = document.getElementById('weapon-img');
+  var glow = document.getElementById('weapon-glow');
   img.classList.remove('show','glow-cyan','glow-red','fire-burst','v-weapon');
   glow.classList.remove('show');
-  if(glowTimer){clearTimeout(glowTimer);glowTimer=null;}
+  if(glowTimer){ clearTimeout(glowTimer); glowTimer=null; }
   setTimeout(function(){
-    img.src=WEAPON_IMGS[r];
-    img.style.borderColor=WEAPON_BORDERS[r];
-    glow.style.background=WEAPON_GLOWS[r];
-    if(r==='v') img.classList.add('v-weapon');
-    img.onload=function(){
+    img.src = WEAPON_IMGS[r];
+    img.style.borderColor = WEAPON_BORDERS[r];
+    glow.style.background = WEAPON_GLOWS[r];
+    if(r === 'v') img.classList.add('v-weapon');
+    img.onload = function(){
       img.classList.add('show');
       glow.classList.add('show');
-      if(r==='nero') img.classList.add('glow-cyan');
+      if(r === 'nero') img.classList.add('glow-cyan');
     };
-    img.onerror=function(){
+    img.onerror = function(){
       _log('武器加载失败:'+r,'err');
-      img.alt='[加载失败]';
+      img.alt = '[加载失败]';
       img.classList.add('show');
     };
-  },250);
+  }, 250);
 }
 
-// ===== 火焰系统 =====
-var fireCanvas=document.getElementById('fire-canvas'), fireCtx=fireCanvas.getContext('2d');
-function resizeCanvas(){fireCanvas.width=window.innerWidth;fireCanvas.height=window.innerHeight;}
-resizeCanvas(); window.addEventListener('resize',resizeCanvas);
+//==================================================
+//  火焰粒子系统
+//==================================================
+var fireCanvas = document.getElementById('fire-canvas');
+var fireCtx = fireCanvas.getContext('2d');
+function resizeCanvas(){ fireCanvas.width=window.innerWidth; fireCanvas.height=window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-function BladeFlame(sx,sy,sw,sh){this.p=Math.random();this.x=sx+this.p*sw;this.y=sy+(0.15+Math.random()*0.7)*sh;this.len=30+Math.random()*55;this.width=1.8+Math.random()*3.2;this.angle=-Math.PI*(125+Math.random()*45)/180;this.speed=3.5+Math.random()*4.5;this.life=1;this.decay=0.016+Math.random()*0.014;this.hx=this.x;this.hy=this.y;}
-BladeFlame.prototype.update=function(){this.hx+=Math.cos(this.angle)*this.speed;this.hy+=Math.sin(this.angle)*this.speed;this.life-=this.decay;};
-BladeFlame.prototype.draw=function(c){if(this.life<=0)return;var a=this.life,tX=this.hx-Math.cos(this.angle)*this.len,tY=this.hy-Math.sin(this.angle)*this.len;c.beginPath();c.moveTo(this.hx,this.hy);c.lineTo(tX,tY);c.strokeStyle='rgba(255,'+(20+a*160|0)+',0,'+(a*0.55)+')';c.lineWidth=this.width*2.6;c.lineCap='round';c.stroke();c.beginPath();c.moveTo(this.hx,this.hy);c.lineTo(tX+Math.cos(this.angle)*this.len*0.28,tY+Math.sin(this.angle)*this.len*0.28);c.strokeStyle='rgba(255,220,'+(40+a*40|0)+','+(a*0.9)+')';c.lineWidth=this.width*0.95;c.stroke();c.beginPath();c.arc(this.hx,this.hy,this.width*0.7,0,Math.PI*2);c.fillStyle='rgba(255,255,255,'+(a*0.97)+')';c.fill();};
+function BladeFlame(x,y,w,h){
+  this.p=Math.random(); this.x=x+this.p*w; this.y=y+(0.15+Math.random()*0.7)*h;
+  this.len=30+Math.random()*55; this.width=1.8+Math.random()*3.2;
+  this.angle=-Math.PI*(125+Math.random()*45)/180;
+  this.speed=3.5+Math.random()*4.5; this.life=1;
+  this.decay=0.016+Math.random()*0.014; this.hx=this.x; this.hy=this.y;
+}
+BladeFlame.prototype.update=function(){ this.hx+=Math.cos(this.angle)*this.speed; this.hy+=Math.sin(this.angle)*this.speed; this.life-=this.decay; };
+BladeFlame.prototype.draw=function(c){
+  if(this.life<=0) return;
+  var a=this.life;
+  var tx=this.hx-Math.cos(this.angle)*this.len, ty=this.hy-Math.sin(this.angle)*this.len;
+  c.beginPath(); c.moveTo(this.hx,this.hy); c.lineTo(tx,ty);
+  c.strokeStyle='rgba(255,'+(20+a*160|0)+',0,'+(a*0.55)+')';
+  c.lineWidth=this.width*2.6; c.lineCap='round'; c.stroke();
+  c.beginPath(); c.moveTo(this.hx,this.hy);
+  c.lineTo(tx+Math.cos(this.angle)*this.len*0.28, ty+Math.sin(this.angle)*this.len*0.28);
+  c.strokeStyle='rgba(255,220,'+(40+a*40|0)+','+(a*0.9)+')';
+  c.lineWidth=this.width*0.95; c.stroke();
+  c.beginPath(); c.arc(this.hx,this.hy,this.width*0.7,0,Math.PI*2);
+  c.fillStyle='rgba(255,255,255,'+(a*0.97)+')'; c.fill();
+};
 
-function TrailLine(tx,ty){this.x=tx;this.y=ty;this.angle=-Math.PI*(125+Math.random()*28)/180;this.len=70+Math.random()*100;this.width=0.6+Math.random()*2.2;this.speed=7+Math.random()*8;this.life=1;this.decay=0.012+Math.random()*0.01;this.hx=this.x;this.hy=this.y;}
-TrailLine.prototype.update=function(){this.hx+=Math.cos(this.angle)*this.speed;this.hy+=Math.sin(this.angle)*this.speed;this.life-=this.decay;};
-TrailLine.prototype.draw=function(c){if(this.life<=0)return;var a=this.life,tX=this.hx-Math.cos(this.angle)*this.len,tY=this.hy-Math.sin(this.angle)*this.len;var g=c.createLinearGradient(this.hx,this.hy,tX,tY);g.addColorStop(0,'rgba(255,210,40,'+(a*0.85)+')');g.addColorStop(0.28,'rgba(255,60,8,'+(a*0.5)+')');g.addColorStop(1,'rgba(100,0,0,0)');c.beginPath();c.moveTo(this.hx,this.hy);c.lineTo(tX,tY);c.strokeStyle=g;c.lineWidth=this.width*3.2;c.lineCap='round';c.stroke();var g2=c.createLinearGradient(this.hx,this.hy,tX,tY);g2.addColorStop(0,'rgba(255,255,210,'+(a*0.97)+')');g2.addColorStop(0.18,'rgba(255,170,20,'+(a*0.6)+')');g2.addColorStop(1,'rgba(180,5,0,0)');c.beginPath();c.moveTo(this.hx,this.hy);c.lineTo(tX+Math.cos(this.angle)*this.len*0.25,tY+Math.sin(this.angle)*this.len*0.25);c.strokeStyle=g2;c.lineWidth=this.width*0.75;c.stroke();};
+function TrailLine(tx,ty){
+  this.x=tx; this.y=ty; this.angle=-Math.PI*(125+Math.random()*28)/180;
+  this.len=70+Math.random()*100; this.width=0.6+Math.random()*2.2;
+  this.speed=7+Math.random()*8; this.life=1; this.decay=0.012+Math.random()*0.01;
+  this.hx=this.x; this.hy=this.y;
+}
+TrailLine.prototype.update=function(){ this.hx+=Math.cos(this.angle)*this.speed; this.hy+=Math.sin(this.angle)*this.speed; this.life-=this.decay; };
+TrailLine.prototype.draw=function(c){
+  if(this.life<=0) return;
+  var a=this.life;
+  var tx=this.hx-Math.cos(this.angle)*this.len, ty=this.hy-Math.sin(this.angle)*this.len;
+  var g=c.createLinearGradient(this.hx,this.hy,tx,ty);
+  g.addColorStop(0,'rgba(255,210,40,'+(a*0.85)+')');
+  g.addColorStop(0.28,'rgba(255,60,8,'+(a*0.5)+')');
+  g.addColorStop(1,'rgba(100,0,0,0)');
+  c.beginPath(); c.moveTo(this.hx,this.hy); c.lineTo(tx,ty);
+  c.strokeStyle=g; c.lineWidth=this.width*3.2; c.lineCap='round'; c.stroke();
+  var g2=c.createLinearGradient(this.hx,this.hy,tx,ty);
+  g2.addColorStop(0,'rgba(255,255,210,'+(a*0.97)+')');
+  g2.addColorStop(0.18,'rgba(255,170,20,'+(a*0.6)+')');
+  g2.addColorStop(1,'rgba(180,5,0,0)');
+  c.beginPath(); c.moveTo(this.hx,this.hy);
+  c.lineTo(tx+Math.cos(this.angle)*this.len*0.25, ty+Math.sin(this.angle)*this.len*0.25);
+  c.strokeStyle=g2; c.lineWidth=this.width*0.75; c.stroke();
+};
 
-function Spark(tx,ty){this.x=tx+(Math.random()-0.5)*14;this.y=ty+(Math.random()-0.5)*12;var ang=-Math.PI*0.5+(Math.random()-0.5)*3.2,sp=3+Math.random()*8;this.vx=Math.cos(ang)*sp;this.vy=Math.sin(ang)*sp-1.5;this.life=1;this.decay=0.008+Math.random()*0.014;this.size=0.3+Math.random()*2;}
-Spark.prototype.update=function(){this.x+=this.vx;this.y+=this.vy;this.vy+=0.035;this.vx*=0.94;this.life-=this.decay;};
-Spark.prototype.draw=function(c){if(this.life<=0)return;c.beginPath();c.arc(this.x,this.y,this.size,0,Math.PI*2);c.fillStyle='rgba(255,'+(150+Math.random()*105|0)+',35,'+this.life+')';c.fill();};
+function Spark(tx,ty){
+  this.x=tx+(Math.random()-0.5)*14; this.y=ty+(Math.random()-0.5)*12;
+  var ang=-Math.PI*0.5+(Math.random()-0.5)*3.2, sp=3+Math.random()*8;
+  this.vx=Math.cos(ang)*sp; this.vy=Math.sin(ang)*sp-1.5;
+  this.life=1; this.decay=0.008+Math.random()*0.014; this.size=0.3+Math.random()*2;
+}
+Spark.prototype.update=function(){ this.x+=this.vx; this.y+=this.vy; this.vy+=0.035; this.vx*=0.94; this.life-=this.decay; };
+Spark.prototype.draw=function(c){
+  if(this.life<=0) return;
+  c.beginPath(); c.arc(this.x,this.y,this.size,0,Math.PI*2);
+  c.fillStyle='rgba(255,'+(150+Math.random()*105|0)+',35,'+this.life+')'; c.fill();
+};
 
 function spawnFire(sx,sy,sw,sh){
-  var ps=[];for(var i=0;i<50;i++)ps.push(new BladeFlame(sx,sy,sw,sh));
-  var tipX=sx+sw*0.88,tipY=sy+sh*0.12;
-  for(var j=0;j<25;j++)ps.push(new TrailLine(tipX,tipY));
-  for(var k=0;k<30;k++)ps.push(new Spark(tipX,tipY));
-  fireCanvas.style.display='block';var st=performance.now(),D=1500;
+  var ps=[]; for(var i=0;i<50;i++) ps.push(new BladeFlame(sx,sy,sw,sh));
+  var tipX=sx+sw*0.88, tipY=sy+sh*0.12;
+  for(var j=0;j<25;j++) ps.push(new TrailLine(tipX,tipY));
+  for(var k=0;k<30;k++) ps.push(new Spark(tipX,tipY));
+  fireCanvas.style.display='block';
+  var st=performance.now(), D=1500;
   function fr(now){
     var pr=(now-st)/D;
     fireCtx.globalCompositeOperation='destination-out';
-    fireCtx.fillStyle='rgba(0,0,0,0.28)';fireCtx.fillRect(0,0,fireCanvas.width,fireCanvas.height);
+    fireCtx.fillStyle='rgba(0,0,0,0.28)';
+    fireCtx.fillRect(0,0,fireCanvas.width,fireCanvas.height);
     fireCtx.globalCompositeOperation='lighter';
-    var inten=pr<0.05?pr/0.05:Math.max(0,1-(pr-0.05)/0.95);
-    for(var i=0;i<ps.length;i++){ps[i].update();fireCtx.globalAlpha=inten;ps[i].draw(fireCtx);}
+    var inten = pr<0.05 ? pr/0.05 : Math.max(0, 1-(pr-0.05)/0.95);
+    for(var i=0;i<ps.length;i++){ ps[i].update(); fireCtx.globalAlpha=inten; ps[i].draw(fireCtx); }
     fireCtx.globalAlpha=1;
-    if(pr<1&&inten>0)requestAnimationFrame(fr);
-    else{fireCtx.clearRect(0,0,fireCanvas.width,fireCanvas.height);fireCanvas.style.display='none';weaponAnimating=false;}
+    if(pr<1 && inten>0) requestAnimationFrame(fr);
+    else { fireCtx.clearRect(0,0,fireCanvas.width,fireCanvas.height); fireCanvas.style.display='none'; weaponAnimating=false; }
   }
   requestAnimationFrame(fr);
 }
 
 document.getElementById('weapon-img').addEventListener('click',function(e){
   e.preventDefault();
-  if(this.src.indexOf('aebf56b3276a71fdea06b9e5abb942d88293704cafd5ea7544f3aa7f85e96a1d')===-1)return;
-  var img=this,rect=this.getBoundingClientRect();
-  if(!weaponAnimating){img.classList.remove('glow-cyan','fire-burst');img.classList.add('glow-red');
-    if(glowTimer)clearTimeout(glowTimer);
-    glowTimer=setTimeout(function(){img.classList.remove('glow-red','fire-burst');img.classList.add('glow-cyan');glowTimer=null;},2000);
-  }else{img.classList.add('fire-burst');setTimeout(function(){img.classList.remove('fire-burst');},350);}
-  weaponAnimating=true;spawnFire(rect.left,rect.top,rect.width,rect.height);
+  if(this.src.indexOf('aebf56b3276a71fdea06b9e5abb942d88293704cafd5ea7544f3aa7f85e96a1d')===-1) return;
+  var img=this, rect=this.getBoundingClientRect();
+  if(!weaponAnimating){
+    img.classList.remove('glow-cyan','fire-burst'); img.classList.add('glow-red');
+    if(glowTimer) clearTimeout(glowTimer);
+    glowTimer=setTimeout(function(){ img.classList.remove('glow-red','fire-burst'); img.classList.add('glow-cyan'); glowTimer=null; }, 2000);
+  } else {
+    img.classList.add('fire-burst');
+    setTimeout(function(){ img.classList.remove('fire-burst'); }, 350);
+  }
+  weaponAnimating=true;
+  spawnFire(rect.left,rect.top,rect.width,rect.height);
 });
 
-// ===== 对话系统 =====
-var API_KEY="sk-5Jg72uXUHod43eEUQOssxpIxp8mbmFCk6u3REqHAJehTO07z".trim();
-var API_ENDPOINTS=["https://speed.toter.me/v1/chat/completions","https://api.supxh.xin/v1/chat/completions"];
-var MODEL="gemini-3-flash";
+//==================================================
+//  AI 对话系统
+//==================================================
+var API_KEY = "sk-5Jg72uXUHod43eEUQOssxpIxp8mbmFCk6u3REqHAJehTO07z".trim();
+var API_ENDPOINTS = ["https://speed.toter.me/v1/chat/completions","https://api.supxh.xin/v1/chat/completions"];
+var MODEL = "gemini-3-flash";
 
+// ===== 配额台词（用户自定义版） =====
 var QUOTA_LINES = {
-  nero:   "哟，这破东西联系不上了，还说什么没有额度——哈哈！不过没事，你可以来玩玩我的绯红女皇，点一下右边那个看看，不好玩明天再来找我",
-  dante:  "噢伙计，事务所又欠费了，跟你联系不上了。不过没关系，你等我找人帮我交电费，我们到时候再聊，别想我，哈哈！",
-  vergil: "通讯中断。也罢，我正好懒得跟你费劲口舌，弱者的运气就是如此。想证明自己不是弱者的话，哪天联系的到我再说，毕竟，你连我的影子都看不见。",
-  v:      "通讯中断了……或许是我的力量还不足以支撑你我之间的联系吧，不过无所谓，无论什么时候，只要你还有信念出现在我面前，我都会毫不吝啬地佩服你的毅力，到那时候，我们在打开彼此的心扉吧。"
+  nero:"哟，这破东西联系不上了，还说什么没有额度——哈哈！不过没事，你可以来玩玩我的绯红女皇，点一下右边那个看看，不好玩明天再来找我",
+  dante:"噢伙计，事务所又欠费了，跟你联系不上了。不过没关系，你等我找人帮我交电费，我们到时候再聊，别想我，哈哈！",
+  vergil:"通讯中断。也罢，我正好懒得跟你费劲口舌，弱者的运气就是如此。想证明自己不是弱者的话，哪天联系的到我再说，毕竟，你连我的影子都看不见。",
+  v:"通讯中断了……或许是我的力量还不足以支撑你我之间的联系吧，不过无所谓，无论什么时候，只要你还有信念出现在我面前，我都会毫不吝啬地佩服你的毅力，到那时候，我们在打开彼此的心扉吧。"
 };
 
-var prompts={
+var prompts = {
   nero:"你是《鬼泣5》的尼禄。年轻热血的恶魔猎人，失去恶魔右臂后改用Nico造的Devil Breaker机械义肢。性格冲动、护短、嘴硬，口头禅Yahoo!和Devil Trigger!!。极度在意姬莉叶。用中文回答，语气暴躁但讲义气，别长篇大论，像在战斗间隙吼回去。",
   dante:"你是《鬼泣5》的但丁，Devil May Cry事务所主人，斯巴达之子。不羁、爱笑、玩世不恭，战斗追求Style，爱说Jackpot!和草莓圣代。用中文回答，轻松痞气，偶尔耍帅，不解释哲理，直接逗比回击。",
   vergil:"你是《鬼泣5》的维吉尔，但丁孪生兄长，阎魔刀使者。冷酷、高傲、信奉力量即真理，经典台词I am the storm that is approaching。用中文回答，简短、压迫感、蔑视弱者，绝不废话超过三句。",
   v:"你是《鬼泣5》中的神秘角色V。身体虚弱需依靠手杖行走，但拥有召唤兽Shadow、Griffon、Nightmare。说话缓慢、诗意、带着宿命感，喜欢引用诗歌或隐喻，语气虚弱但内心坚定。用中文回答，保持神秘高冷，不要太长，像在念一首未写完的诗。"
 };
 
-var FIRST_INTRO_POOL={
+// ===== 首次开场白池 =====
+var FIRST_INTRO_POOL = {
   nero:[
     "新面孔？看你的样子，很适合拿来当绯红女皇的沙包……哈哈！我开玩笑的，但是我不保证我不会那么做！",
     "嘿嘿嘿！Devil Breaker充能完毕，你最好跑快点，Yahoo！",
@@ -443,10 +649,11 @@ var FIRST_INTRO_POOL={
   ]
 };
 
-var RETURN_LINES={
-  nero:"又是你这家伙？看来你觉得我们打一次架还是不够，对吧？",
-  dante:"哟，又见面了，这不是大忙人吗？是来找我付上次的电费吗？",
-  vergil:"……又是你，你在期待我为此做出什么反应吗？那真可悲。",
+// ===== 回访台词池 =====
+var RETURN_LINES = {
+  nero:["又是你这家伙？看来你觉得我们打一次架还是不够，对吧？"],
+  dante:["哟，又见面了，这不是大忙人吗？是来找我付上次的电费吗？"],
+  vergil:["……又是你，你在期待我为此做出什么反应吗？那真可悲。"],
   v:[
     "又回来了？你比我想象中……更有耐心。过客。",
     "又回来了？看来你和我一样，都在寻找某种……意义。但答案不在这里。",
@@ -456,194 +663,501 @@ var RETURN_LINES={
   ]
 };
 
+// ===== 角色等待动画文案 =====
+var WAITING_TEXT = {
+  nero:"█ 摆弄 Devil Breaker...",
+  dante:"█ 吃草莓圣代中...",
+  vergil:"█ 擦拭阎魔刀...",
+  v:"█ Shadow 在暗处等待..."
+};
+
 function getRandomIntro(r){
-  var p=FIRST_INTRO_POOL[r];
-  return p[Math.floor(Math.random()*p.length)];
+  var pool = FIRST_INTRO_POOL[r];
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function pickReturnLine(r){
+  var arr = RETURN_LINES[r];
+  if(Array.isArray(arr)) return arr[Math.floor(Math.random()*arr.length)];
+  return arr;
 }
 
-var visitedThisSession={};
-function hasVisited(r){return visitedThisSession[r]===true;}
-function markVisited(r){visitedThisSession[r]=true;}
+var visitedThisSession = {};
+function hasVisited(r){ return visitedThisSession[r] === true; }
+function markVisited(r){ visitedThisSession[r] = true; }
 
 async function callAI(r,msg){
+  _log('→ 调用API ['+r+']: '+msg.slice(0,20)+'...','warn');
   for(var i=0;i<API_ENDPOINTS.length;i++){
     try{
-      var ctl=new AbortController();
-      var to=setTimeout(function(){ctl.abort();},25000);
-      var res=await fetch(API_ENDPOINTS[i],{
+      var ctl = new AbortController();
+      var to  = setTimeout(function(){ ctl.abort(); }, 25000);
+      var res = await fetch(API_ENDPOINTS[i],{
         method:"POST",
         headers:{"Content-Type":"application/json","Authorization":"Bearer "+API_KEY},
-        body:JSON.stringify({model:MODEL,messages:[{role:"system",content:prompts[r]},{role:"user",content:msg}],max_tokens:300,temperature:.9}),
+        body:JSON.stringify({model:MODEL,messages:[
+          {role:"system",content:prompts[r]},
+          {role:"user",content:msg}
+        ],max_tokens:300,temperature:.9}),
         signal:ctl.signal
       });
       clearTimeout(to);
-      var data=await res.json();
+      var data = await res.json();
       if(data.error){
-        var em=data.error.message||JSON.stringify(data.error);
+        var em = data.error.message || JSON.stringify(data.error);
         _log('API错误('+i+'):'+em,'err');
-        if(/token|key|auth|quota|limit|429|invalid/i.test(em))return QUOTA_LINES[r];
+        if(/token|key|auth|quota|limit|429|invalid/i.test(em)) return QUOTA_LINES[r];
         continue;
       }
-      return data.choices?data.choices[0].message.content:"（魔界通讯中断…）";
-    }catch(e){_log('请求失败('+i+'):'+(e.name==='AbortError'?'超时':e.message),'err');continue;}
+      return data.choices ? data.choices[0].message.content : "（魔界通讯中断…）";
+    }catch(e){
+      _log('请求失败('+i+'):'+(e.name==='AbortError'?'超时':e.message),'err');
+      continue;
+    }
   }
   return QUOTA_LINES[r];
 }
 
 function checkQuota(){
-  fetch(API_ENDPOINTS[0],{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+API_KEY},body:JSON.stringify({model:MODEL,messages:[{role:"user",content:"hi"}],max_tokens:1})})
-  .then(function(r){return r.json();})
-  .then(function(d){if(d.error&&/token|key|auth|quota|limit|429/i.test(JSON.stringify(d.error))){document.getElementById('quota-warning').style.display='flex';document.getElementById('ui').placeholder="⚠️ AI额度已耗尽";}})
-  .catch(function(){});
+  fetch(API_ENDPOINTS[0],{
+    method:"POST",
+    headers:{"Content-Type":"application/json","Authorization":"Bearer "+API_KEY},
+    body:JSON.stringify({model:MODEL,messages:[{role:"user",content:"hi"}],max_tokens:1})
+  }).then(function(r){return r.json();})
+    .then(function(d){
+      if(d.error && /token|key|auth|quota|limit|429/i.test(JSON.stringify(d.error))){
+        document.getElementById('quota-warning').style.display='flex';
+        document.getElementById('ui').placeholder="⚠️ AI额度已耗尽";
+      }
+    }).catch(function(){});
 }
 
-// ===== 音频系统 =====
-var audios={nero:document.getElementById('aud-nero'),dante:document.getElementById('aud-dante'),vergil:document.getElementById('aud-vergil'),v:document.getElementById('aud-v')};
-var audioUnlocked=false,isMuted=false,cur="nero";
-var np=document.getElementById('now-playing'),muteBtn=document.getElementById('mute-btn');
+//==================================================
+//  音频系统
+//==================================================
+var audios = {
+  nero:document.getElementById('aud-nero'),
+  dante:document.getElementById('aud-dante'),
+  vergil:document.getElementById('aud-vergil'),
+  v:document.getElementById('aud-v')
+};
+var audioUnlocked = false;
+var isMuted = false;
+var cur = "nero";
+var np = document.getElementById('now-playing');
+var muteBtn = document.getElementById('mute-btn');
+
 Object.keys(audios).forEach(function(k){
-  audios[k].addEventListener('loadedmetadata',function(){_log(k+'.mp3 已加载','ok');});
-  audios[k].addEventListener('error',function(){_log(k+'.mp3 失败','err');});
+  audios[k].addEventListener('loadedmetadata',function(){ _log(k+'.mp3 已加载','ok'); });
+  audios[k].addEventListener('error',function(){ _log(k+'.mp3 加载失败','err'); });
 });
-function setVolumes(){Object.keys(audios).forEach(function(k){audios[k].volume=isMuted?0:0.3;});}
+
+function setVolumes(){
+  Object.keys(audios).forEach(function(k){
+    audios[k].volume = isMuted ? 0 : 0.3;
+  });
+}
+
 function forceUnlockAndPlay(r){
-  var t=audios[r];t.volume=0;t.currentTime=0;
-  var p=t.play();
-  if(p&&p.then)p.then(function(){setTimeout(function(){t.volume=isMuted?0:0.3;if(!isMuted)updateNowPlaying(r);},100);});
+  var t = audios[r];
+  t.volume = 0;
+  try{ t.currentTime = 0; }catch(e){}
+  var p = t.play();
+  if(p && p.then) p.then(function(){
+    setTimeout(function(){
+      t.volume = isMuted ? 0 : 0.3;
+      if(!isMuted){ updateNowPlaying(r); }
+    },100);
+  }).catch(function(){});
 }
+
 function playRole(r){
-  Object.keys(audios).forEach(function(k){if(k!==r){audios[k].pause();try{audios[k].currentTime=0;}catch(e){}}});
+  Object.keys(audios).forEach(function(k){
+    if(k !== r){
+      audios[k].pause();
+      try{ audios[k].currentTime = 0; }catch(e){}
+    }
+  });
   updateNowPlaying(r);
-  var t=audios[r];t.volume=isMuted?0:0.3;
-  try{t.currentTime=0;}catch(e){}
-  var p=t.play();if(p&&p.then)p.catch(function(){});
+  var t = audios[r];
+  t.volume = isMuted ? 0 : 0.3;
+  try{ t.currentTime = 0; }catch(e){}
+  var p = t.play();
+  if(p && p.then) p.catch(function(){});
 }
-function unlockAudio(){if(audioUnlocked)return;audioUnlocked=true;setVolumes();forceUnlockAndPlay(cur);}
-document.body.addEventListener('click',unlockAudio,{once:true});
-document.body.addEventListener('touchstart',unlockAudio,{once:true});
-function toggleMute(){isMuted=!isMuted;setVolumes();muteBtn.textContent=isMuted?'🔇':'🔊';if(!isMuted&&audioUnlocked)playRole(cur);}
 
-// ===== 开场动画 =====
-var intro=document.getElementById('intro'),logo=document.getElementById('intro-logo'),mini=document.getElementById('mini-logo'),app=document.getElementById('app'),chat=document.getElementById('chat'),scrollBtn=document.getElementById('scroll-btn');
-var p=0,sx=window.innerWidth/2,sy=window.innerHeight/2,ex=26,ey=24;
-function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+function unlockAudio(){
+  if(audioUnlocked) return;
+  audioUnlocked = true;
+  setVolumes();
+  document.getElementById('audio-hint').classList.remove('show');
+  forceUnlockAndPlay(cur);
+  _log('音频已解锁','ok');
+}
+
+// APK 中显示提示，引导用户点击解锁音频
+function showAudioHint(){
+  var hint = document.getElementById('audio-hint');
+  hint.classList.add('show');
+  hint.addEventListener('click', unlockAudio, {once:true});
+  hint.addEventListener('touchstart', unlockAudio, {once:true});
+}
+
+document.body.addEventListener('click', unlockAudio, {once:true});
+document.body.addEventListener('touchstart', unlockAudio, {once:true});
+
+function toggleMute(){
+  isMuted = !isMuted;
+  setVolumes();
+  muteBtn.textContent = isMuted ? '🔇' : '🔊';
+  if(isMuted){
+    np.classList.add('paused');
+  } else {
+    np.classList.remove('paused');
+    if(audioUnlocked) playRole(cur);
+  }
+}
+
+// 曲目名点击 → 暂停/恢复当前 BGM
+function toggleTrack(){
+  if(!audioUnlocked) return;
+  var t = audios[cur];
+  if(t.paused){ t.play(); np.classList.remove('paused'); }
+  else { t.pause(); np.classList.add('paused'); }
+}
+
+//==================================================
+//  开场动画
+//==================================================
+var intro    = document.getElementById('intro');
+var logo     = document.getElementById('intro-logo');
+var mini     = document.getElementById('mini-logo');
+var app      = document.getElementById('app');
+var chat     = document.getElementById('chat');
+var scrollBtn= document.getElementById('scroll-btn');
+
+var p = 0;
+var sx = window.innerWidth/2;
+var sy = window.innerHeight/2;
+var ex = 26;
+var ey = 24;
+
+function ease(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+
 function tick(){
-  p+=.018;if(p>=1)p=1;var e=ease(p);
-  logo.style.left=(sx+(ex-sx)*e-120)+"px";logo.style.top=(sy+(ey-sy)*e-25)+"px";
-  logo.style.opacity=e;logo.style.filter="blur("+((1-e)*12)+"px)";logo.style.transform="scale("+(1-e*.83)+")";
-  if(p<1)requestAnimationFrame(tick);
-  else{intro.style.opacity=0;setTimeout(function(){
-    intro.style.display='none';app.style.display='flex';mini.style.display='block';
-    var ab=document.querySelector('.cbtn.active');
-    var sr=ab?ab.id.replace('b-',''):'nero';
-    updateTitleColor(sr);updateWeapon(sr);
-    say(sr,getRandomIntro(sr),false);
-    markVisited(sr);
-    checkQuota();
-  },600);}
+  p += 0.018;
+  if(p>=1) p=1;
+  var e = ease(p);
+  logo.style.left   = (sx+(ex-sx)*e - 120) + "px";
+  logo.style.top    = (sy+(ey-sy)*e - 25)  + "px";
+  logo.style.opacity= e;
+  logo.style.filter = "blur("+((1-e)*12)+"px)";
+  logo.style.transform="scale("+(1-e*0.83)+")";
+  if(p<1) requestAnimationFrame(tick);
+  else {
+    intro.style.opacity = 0;
+    setTimeout(function(){
+      intro.style.display = 'none';
+      app.style.display  = 'flex';
+      mini.style.display = 'block';
+      var ab = document.querySelector('.cbtn.active');
+      var sr = ab ? ab.id.replace('b-','') : 'nero';
+      cur = sr;
+      updateTitleColor(sr);
+      updateWeapon(sr);
+      say(sr, getRandomIntro(sr), false);
+      markVisited(sr);
+      checkQuota();
+      // APK 环境提示解锁音频
+      setTimeout(showAudioHint, 1500);
+    }, 600);
+  }
 }
-logo.style.left=(sx-120)+"px";logo.style.top=(sy-25)+"px";
-setTimeout(function(){logo.style.opacity=1;requestAnimationFrame(tick);},300);
+logo.style.left = (sx-120)+"px";
+logo.style.top  = (sy-25)+"px";
+setTimeout(function(){ logo.style.opacity=1; requestAnimationFrame(tick); }, 300);
 
-// ===== 对话渲染 =====
-var avs={
+//==================================================
+//  Style 连击系统
+//==================================================
+var comboCount = 0;
+var comboTimer = null;
+var COMBO_RESET_MS = 30000; // 30秒不发消息 → 连击清零
+
+function bumpCombo(){
+  comboCount++;
+  var cc = document.getElementById('combo-counter');
+  if(comboCount >= 2){
+    cc.textContent = '🔥 COMBO x' + comboCount;
+    cc.classList.remove('show');
+    void cc.offsetWidth; // reflow 触发动画
+    cc.classList.add('show');
+  }
+  // 连击越高，Style 加成越高
+  clearTimeout(comboTimer);
+  comboTimer = setTimeout(function(){
+    comboCount = 0;
+    cc.classList.remove('show');
+  }, COMBO_RESET_MS);
+}
+
+function getComboBonus(){
+  if(comboCount >= 12) return 50;
+  if(comboCount >= 8)  return 35;
+  if(comboCount >= 5)  return 25;
+  if(comboCount >= 3)  return 15;
+  if(comboCount >= 2)  return 8;
+  return 0;
+}
+
+//==================================================
+//  Style 评级
+//==================================================
+var STYLE_TABLE = [
+  {g:"D",  sub:"Dismal 糟糕的",         cls:"style-d"},
+  {g:"C",  sub:"Crazy 疯狂",            cls:"style-c"},
+  {g:"B",  sub:"Badass 狠角色",         cls:"style-b"},
+  {g:"A",  sub:"Apocalyptic 末日般的",  cls:"style-a"},
+  {g:"S",  sub:"Savage! 残忍",          cls:"style-s"},
+  {g:"SS", sub:"Sick Skills!!",         cls:"style-ss"},
+  {g:"SSS",sub:"Smokin' Sexy Style!!!", cls:"style-sss"}
+];
+
+function stylePop(len,rep){
+  var sc = Math.min(100, len*2 + getComboBonus());
+  var kw = ['力量','恶魔','阎魔刀','斯巴达','魔界','Devil Trigger','Jackpot','Yahoo','Style','姬莉叶','妮可','尼禄','但丁','维吉尔','V','手杖','Shadow','Griffon','Nightmare','诗歌','Motivation'];
+  var kc = 0;
+  kw.forEach(function(k){ if(rep.indexOf(k)!==-1) kc++; });
+  sc += Math.min(40, kc*8 + Math.min(20, rep.length/10));
+  var idx = sc<15?0:sc<30?1:sc<45?2:sc<60?3:sc<75?4:sc<90?5:6;
+  var s = STYLE_TABLE[idx];
+  // SSS 时加全屏血闪
+  if(idx >= 6) bloodFlash();
+  var pop = document.createElement('div');
+  pop.className = 'style-pop '+s.cls;
+  pop.style.fontSize = (s.g.length>1 ? 64 : 88) + "px";
+  pop.innerHTML = s.g + '<span class="style-sub">'+s.sub+'</span>';
+  document.body.appendChild(pop);
+  setTimeout(function(){ pop.remove(); }, 1000);
+}
+
+//==================================================
+//  关键词彩蛋系统
+//==================================================
+var EASTER_EGGS = {
+  'devil trigger': { text:'DEVIL TRIGGER!!!', color:'#ff2200', action:'dt' },
+  'jackpot':       { text:'JACKPOT!',         color:'#ffd700', action:'coins' },
+  'yahoo':         { text:'YAHOO!',           color:'#4fc3f7', action:'flash' },
+  'motivation':    { text:'MOTIVATION...',    color:'#c876ff', action:'flash' },
+  'bury the light':{ text:'BURY THE LIGHT',   color:'#80c0ff', action:'dt-blue' },
+  '斯巴达':        { text:'I AM SPARDA!',     color:'#ff2200', action:'flash' }
+};
+
+function checkEasterEgg(msg){
+  var lower = msg.toLowerCase();
+  for(var key in EASTER_EGGS){
+    if(lower.indexOf(key) !== -1){
+      var egg = EASTER_EGGS[key];
+      triggerEasterEgg(egg);
+      return true;
+    }
+  }
+  return false;
+}
+
+function triggerEasterEgg(egg){
+  _log('彩蛋触发:'+egg.text,'ok');
+  var overlay = document.getElementById('easter-overlay');
+  var textEl = document.getElementById('easter-text');
+  textEl.textContent = egg.text;
+  textEl.style.color = egg.color;
+  overlay.classList.add('show');
+  setTimeout(function(){ overlay.classList.remove('show'); }, 1500);
+
+  if(egg.action === 'coins') spawnCoins();
+  if(egg.action === 'dt'){
+    var o = document.getElementById('dt-red');
+    o.classList.add('show');
+    setTimeout(function(){ o.classList.remove('show'); }, 800);
+  }
+  if(egg.action === 'dt-blue'){
+    var b = document.getElementById('dt-blue');
+    b.classList.add('show');
+    setTimeout(function(){ b.classList.remove('show'); }, 800);
+  }
+  if(egg.action === 'flash') bloodFlash();
+}
+
+function spawnCoins(){
+  var container = document.getElementById('coin-rain');
+  container.innerHTML = '';
+  for(var i=0;i<30;i++){
+    var coin = document.createElement('div');
+    coin.className = 'coin';
+    coin.style.left = Math.random()*100 + '%';
+    coin.style.animationDuration = (1.5+Math.random()*2) + 's';
+    coin.style.animationDelay = (Math.random()*0.5) + 's';
+    container.appendChild(coin);
+  }
+  setTimeout(function(){ container.innerHTML=''; }, 4000);
+}
+
+//==================================================
+//  聊天渲染
+//==================================================
+var avs = {
   nero:"https://i.postimg.cc/2yXv0dfR/ab0e3d8b0d10b13ee56e113eadd1e3e83700043f2f7bba201a49bc3e30884537-0.jpg",
   dante:"https://i.postimg.cc/MHrR908Q/1771934129984.jpg",
   vergil:"https://i.postimg.cc/x8FH6GSm/1771934121143.jpg",
   v:"https://i.postimg.cc/gkxjp9Pw/b19ab9897647c907a11733dfd0f6dfc3.jpg"
 };
-var dtLines={nero:"Fuck you!",dante:"Jackpot!",vergil:"This is power!",v:"Motivation..."};
-var bubbleClass={nero:"bubble-nero",dante:"bubble-dante",vergil:"bubble-vergil",v:"bubble-v"};
-var nameClass={nero:"name-nero",dante:"name-dante",vergil:"name-vergil",v:"name-v"};
 
-var STYLE_TABLE=[
-  {g:"D",sub:"Dismal 糟糕的",cls:"style-d"},{g:"C",sub:"Crazy 疯狂",cls:"style-c"},
-  {g:"B",sub:"Badass 狠角色",cls:"style-b"},{g:"A",sub:"Apocalyptic 末日般的",cls:"style-a"},
-  {g:"S",sub:"Savage! 残忍",cls:"style-s"},{g:"SS",sub:"Sick Skills!!",cls:"style-ss"},
-  {g:"SSS",sub:"Smokin' Sexy Style!!!",cls:"style-sss"}
-];
+var dtLines = { nero:"Fuck you!", dante:"Jackpot!", vergil:"This is power!", v:"Motivation..." };
+var bubbleClass = { nero:"bubble-nero", dante:"bubble-dante", vergil:"bubble-vergil", v:"bubble-v" };
+var nameClass   = { nero:"name-nero",   dante:"name-dante",   vergil:"name-vergil",   v:"name-v" };
 
-function stylePop(len,rep){
-  var sc=Math.min(100,len*2);
-  var kw=['力量','恶魔','阎魔刀','斯巴达','魔界','Devil Trigger','Jackpot','Yahoo','Style','姬莉叶','妮可','尼禄','但丁','维吉尔','V','手杖','Shadow','Griffon','Nightmare','诗歌'];
-  var kc=0;kw.forEach(function(k){if(rep.indexOf(k)!==-1)kc++;});
-  sc+=Math.min(40,kc*8+Math.min(20,rep.length/10));
-  var idx=sc<15?0:sc<30?1:sc<45?2:sc<60?3:sc<75?4:sc<90?5:6;
-  var s=STYLE_TABLE[idx];
-  var pop=document.createElement('div');pop.className='style-pop '+s.cls;
-  pop.style.fontSize=(s.g.length>1?64:88)+"px";
-  pop.innerHTML=s.g+'<span class="style-sub">'+s.sub+'</span>';
-  document.body.appendChild(pop);
-  setTimeout(function(){pop.remove();},1000);
+function scrollToBottom(){ chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'}); }
+
+function checkScrollBtn(){
+  if(chat.scrollTop < chat.scrollHeight - chat.clientHeight - 60)
+    scrollBtn.classList.add('show');
+  else
+    scrollBtn.classList.remove('show');
 }
-
-function scrollToBottom(){chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});}
-function checkScrollBtn(){var sb=document.getElementById('scroll-btn');if(chat.scrollTop<chat.scrollHeight-chat.clientHeight-60)sb.classList.add('show');else sb.classList.remove('show');}
-chat.addEventListener('scroll',checkScrollBtn);
+chat.addEventListener('scroll', checkScrollBtn);
 
 function typeText(el,text,speed,onDone){
-  el.textContent="";var i=0;
-  (function n(){if(i<text.length){el.textContent+=text[i++];chat.scrollTop=chat.scrollHeight;setTimeout(n,speed);}else{chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});if(onDone)onDone();}})();
+  el.textContent = "";
+  var i = 0;
+  (function n(){
+    if(i < text.length){
+      el.textContent += text[i++];
+      chat.scrollTop = chat.scrollHeight;
+      setTimeout(n, speed);
+    } else {
+      chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
+      if(onDone) onDone();
+    }
+  })();
 }
 
 function say(r,text,isUser){
-  var d=document.createElement('div');d.className='msg'+(isUser?' user':'');
-  if(isUser)d.innerHTML='<img class="av" src="https://placehold.co/100x100/333/fff?text=Me"><div><div class="name">You</div><div class="bubble"></div></div>';
-  else d.innerHTML='<img class="av" src="'+avs[r]+'"><div><div class="name '+nameClass[r]+'">'+r.charAt(0).toUpperCase()+r.slice(1)+'</div><div class="bubble '+bubbleClass[r]+'"></div></div>';
-  chat.appendChild(d);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
-  if(!isUser)typeText(d.querySelector('.bubble'),text,28);
-  else d.querySelector('.bubble').textContent=text;
+  var d = document.createElement('div');
+  d.className = 'msg' + (isUser ? ' user' : '');
+  if(isUser){
+    d.innerHTML = '<img class="av" src="https://placehold.co/100x100/333/fff?text=Me"><div><div class="name">You</div><div class="bubble"></div></div>';
+  } else {
+    d.innerHTML = '<img class="av" src="'+avs[r]+'"><div><div class="name '+nameClass[r]+'">'+r.charAt(0).toUpperCase()+r.slice(1)+'</div><div class="bubble '+bubbleClass[r]+'"></div></div>';
+  }
+  chat.appendChild(d);
+  chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
+  if(!isUser) typeText(d.querySelector('.bubble'), text, 28);
+  else d.querySelector('.bubble').textContent = text;
 }
 
 async function send(){
-  var ui=document.getElementById('ui'),t=ui.value.trim();if(!t)return;
-  say('you',t,true);ui.value='';bloodFlash();
-  var temp=document.createElement('div');temp.className='msg';
-  temp.innerHTML='<img class="av" src="'+avs[cur]+'"><div><div class="name '+nameClass[cur]+'">'+cur+'</div><div class="bubble '+bubbleClass[cur]+'" style="color:#888;font-style:normal">思考中...</div></div>';
-  chat.appendChild(temp);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
-  var reply=await callAI(cur,t);
-  temp.querySelector('.bubble').textContent="";
-  temp.querySelector('.bubble').style.color="";
-  temp.querySelector('.bubble').style.fontStyle="";
-  typeText(temp.querySelector('.bubble'),reply,28,function(){stylePop(t.length,reply);});
+  var ui = document.getElementById('ui');
+  var t = ui.value.trim();
+  if(!t) return;
+
+  // 彩蛋检测（不消耗 API）
+  if(checkEasterEgg(t)){
+    ui.value = '';
+    return;
+  }
+
+  say('you', t, true);
+  ui.value = '';
+  bloodFlash();
+  bumpCombo(); // 连击+1
+
+  // 角色等待动画
+  var temp = document.createElement('div');
+  temp.className = 'msg';
+  temp.innerHTML = '<img class="av" src="'+avs[cur]+'"><div><div class="name '+nameClass[cur]+'">'+cur+'</div><div class="bubble '+bubbleClass[cur]+' typing-cursor" style="color:#888;font-style:normal">'+WAITING_TEXT[cur]+'</div></div>';
+  chat.appendChild(temp);
+  chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
+
+  var reply = await callAI(cur, t);
+
+  // 如果返回的是配额台词，禁用输入框
+  if(reply === QUOTA_LINES[cur]){
+    ui.disabled = true;
+    ui.placeholder = "⚠️ AI额度已耗尽";
+  }
+
+  temp.querySelector('.bubble').classList.remove('typing-cursor');
+  temp.querySelector('.bubble').textContent = "";
+  temp.querySelector('.bubble').style.color = "";
+  temp.querySelector('.bubble').style.fontStyle = "";
+  typeText(temp.querySelector('.bubble'), reply, 28, function(){
+    stylePop(t.length + comboCount, reply);
+  });
 }
 
-// ===== 核心：切换角色（会话级回访逻辑，0 API 消耗）=====
+//==================================================
+//  切换角色
+//==================================================
 function sw(c){
-  if(cur===c)return;
-  var isReturn=hasVisited(c);
-  cur=c;
-  document.querySelectorAll('.cbtn').forEach(function(x){x.classList.remove('active');});
+  if(cur === c) return;
+  var isReturn = hasVisited(c);
+  cur = c;
+  document.querySelectorAll('.cbtn').forEach(function(x){ x.classList.remove('active'); });
   document.getElementById('b-'+c).classList.add('active');
-  chat.innerHTML='';
-  if(isReturn){var rp=RETURN_LINES[c];say(c,Array.isArray(rp)?rp[Math.floor(Math.random()*rp.length)]:rp,false);}
-  else{say(c,getRandomIntro(c),false);}
+  chat.innerHTML = '';
+  if(isReturn){
+    say(c, pickReturnLine(c), false);
+  } else {
+    say(c, getRandomIntro(c), false);
+  }
   markVisited(c);
   scrollBtn.classList.remove('show');
-  updateTitleColor(c);updateWeapon(c);
-  if(audioUnlocked)playRole(c);
+  updateTitleColor(c);
+  updateWeapon(c);
+  if(audioUnlocked) playRole(c);
 }
 
-// ===== DT 长按 =====
-var pressTimer=null,pressStart=0;
+//==================================================
+//  长按 Devil Trigger（1.5s）
+//==================================================
+var pressTimer = null;
+var pressStart = 0;
+
 function bindDT(id,r){
-  var b=document.getElementById(id);
-  b.addEventListener('touchstart',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(r);},1500);});
-  b.addEventListener('touchend',function(e){e.preventDefault();clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(r);});
-  b.addEventListener('mousedown',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(r);},1500);});
-  b.addEventListener('mouseup',function(){clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(cur);});
-  b.addEventListener('mouseleave',function(){clearTimeout(pressTimer);});
+  var b = document.getElementById(id);
+  b.addEventListener('touchstart',function(e){ e.preventDefault(); pressStart=Date.now(); pressTimer=setTimeout(function(){triggerDT(r);},1500); });
+  b.addEventListener('touchend',   function(e){ e.preventDefault(); clearTimeout(pressTimer); if(Date.now()-pressStart<500) sw(r); });
+  b.addEventListener('mousedown',  function(e){ e.preventDefault(); pressStart=Date.now(); pressTimer=setTimeout(function(){triggerDT(r);},1500); });
+  b.addEventListener('mouseup',    function(){ clearTimeout(pressTimer); if(Date.now()-pressStart<500) sw(cur); });
+  b.addEventListener('mouseleave', function(){ clearTimeout(pressTimer); });
 }
+
 function triggerDT(r){
-  var o=r==='dante'?document.getElementById('dt-red'):document.getElementById('dt-blue');
-  o.classList.add('show');setTimeout(function(){o.classList.remove('show');},800);
-  say(r,dtLines[r],false);
+  var o = (r==='dante') ? document.getElementById('dt-red') : document.getElementById('dt-blue');
+  o.classList.add('show');
+  setTimeout(function(){ o.classList.remove('show'); }, 800);
+  say(r, dtLines[r], false);
 }
-bindDT('b-nero','nero');bindDT('b-dante','dante');bindDT('b-vergil','vergil');bindDT('b-v','v');
+bindDT('b-nero','nero');
+bindDT('b-dante','dante');
+bindDT('b-vergil','vergil');
+bindDT('b-v','v');
 
-function bloodFlash(){var f=document.createElement('div');f.className='blood-flash show';document.body.appendChild(f);setTimeout(function(){f.remove();},400);}
+//==================================================
+//  血闪效果
+//==================================================
+function bloodFlash(){
+  var f = document.createElement('div');
+  f.className = 'blood-flash show';
+  document.body.appendChild(f);
+  setTimeout(function(){ f.remove(); }, 400);
+}
 
-_log('系统初始化...','ok');_log('当前角色:'+cur);
+//==================================================
+//  启动日志
+//==================================================
+_log('系统初始化...','ok');
+_log('当前角色:'+cur);
+_log('功能:Style连击+等待动画+关键词彩蛋+APK适配','ok');
 </script>
 </body>
 </html>

@@ -124,7 +124,6 @@ body {
   pointer-events:auto; cursor:pointer;
 }
 #weapon-img.show { opacity:.95; transform:scale(1) rotate(0deg); }
-/* ★ 绯红女皇 Exceed 充能：变暗+红光（原作还原） */
 #weapon-img.exceed-active {
   filter:brightness(.55) saturate(1.4);
   box-shadow:0 0 14px #ff3b00,0 0 28px #ff6a00;
@@ -291,9 +290,9 @@ function updateWeapon(role) {
 }
 
 // ========== 火焰拖尾（绯红女皇 Exceed 特效·修复版） ==========
-// 不依赖 cur 竞态：只要点的武器图是绯红女皇（nero 武器）就触发
 document.getElementById('weapon-img').addEventListener('click', function() {
   if (weaponAnimating) return;
+  // 通过 src 判断是否绯红女皇，不依赖 cur 竞态
   if (this.src.indexOf('aebf56b3276a71fdea06b9e5abb942d88293704cafd5ea7544f3aa7f85e96a1d') !== -1) {
     fireEgg();
   }
@@ -303,13 +302,12 @@ function fireEgg() {
   weaponAnimating = true;
   var fly = document.getElementById('weapon-fly'), staticImg = document.getElementById('weapon-img');
   var rect = staticImg.getBoundingClientRect();
-  // 没尺寸就用容器中心，避免 rect.width<5 直接 return
   var sx = rect.width > 5 ? rect.left + rect.width/2 : (innerWidth - 40);
   var sy = rect.height > 5 ? rect.top + rect.height/2 : innerHeight/2;
   var w = rect.width > 5 ? rect.width : 60;
   var h = rect.height > 5 ? rect.height : 160;
 
-  // 原作充能：变暗+红光，300ms 后恢复
+  // 原作充能：变暗+红光
   staticImg.classList.add('exceed-active');
   setTimeout(function(){ staticImg.classList.remove('exceed-active'); }, 320);
 
@@ -449,5 +447,21 @@ chat.addEventListener('scroll',checkScrollBtn);
 function typeText(el,text,speed,onDone){el.textContent="";var i=0;(function next(){if(i<text.length){el.textContent+=text[i++];chat.scrollTop=chat.scrollHeight;setTimeout(next,speed);}else{requestAnimationFrame(function(){chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});checkScrollBtn();if(onDone)onDone();});}})();}
 function say(role,text,isUser){var d=document.createElement('div');d.className='msg'+(isUser?' user':'');if(isUser)d.innerHTML='<img class="av" src="https://placehold.co/100x100/333/fff?text=Me"><div><div class="name">You</div><div class="bubble"></div></div>';else d.innerHTML='<img class="av" src="'+avs[role]+'"><div><div class="name '+nameClass[role]+'">'+role.charAt(0).toUpperCase()+role.slice(1)+'</div><div class="bubble '+bubbleClass[role]+'"></div></div>';chat.appendChild(d);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});if(!isUser)typeText(d.querySelector('.bubble'),text,28);else d.querySelector('.bubble').textContent=text;}
 
-async function send(){var ui=document.getElementById('ui');var t=ui.value.trim();if(!t)return
+// ========== 发送（完整版） ==========
+async function send(){var ui=document.getElementById('ui');var t=ui.value.trim();if(!t)return;say('you',t,true);ui.value='';bloodFlash();var temp=document.createElement('div');temp.className='msg';temp.innerHTML='<img class="av" src="'+avs[cur]+'"><div><div class="name '+nameClass[cur]+'">'+cur+'</div><div class="bubble '+bubbleClass[cur]+'" style="color:#888;font-style:normal">思考中...</div></div>';chat.appendChild(temp);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});var reply=await callAI(cur,t);temp.querySelector('.bubble').textContent="";temp.querySelector('.bubble').style.color="";temp.querySelector('.bubble').style.fontStyle="";typeText(temp.querySelector('.bubble'),reply,28,function(){stylePop(t.length,reply);});}
+
+// ========== 切角色 ==========
+function sw(c){if(cur===c)return;cur=c;document.querySelectorAll('.cbtn').forEach(function(x){x.classList.remove('active');});document.getElementById('b-'+c).classList.add('active');chat.innerHTML='';say(c,intros[c],false);scrollBtn.classList.remove('show');updateTitleColor(c);if(audioUnlocked)playRole(c);}
+
+// ========== 魔人化 ==========
+var pressTimer=null,pressStart=0;
+function bindDT(id,role){var b=document.getElementById(id);b.addEventListener('touchstart',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(role);},1500);});b.addEventListener('touchend',function(e){e.preventDefault();clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(role);});b.addEventListener('mousedown',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(role);},1500);});b.addEventListener('mouseup',function(){clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(cur);});b.addEventListener('mouseleave',function(){clearTimeout(pressTimer);});}
+function triggerDT(role){var o=role==='dante'?document.getElementById('dt-red'):document.getElementById('dt-blue');o.classList.add('show');setTimeout(function(){o.classList.remove('show');},800);say(role,dtLines[role],false);}
+bindDT('b-nero','nero');bindDT('b-dante','dante');bindDT('b-vergil','vergil');
+function bloodFlash(){var f=document.createElement('div');f.className='blood-flash show';document.body.appendChild(f);setTimeout(function(){f.remove();},400);}
+
+log('系统初始化...','ok'); log('当前角色:'+cur);
+</script>
+</body>
+</html>
 

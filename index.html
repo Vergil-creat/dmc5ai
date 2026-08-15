@@ -772,7 +772,8 @@ function sw(c){
   visitedThisSession[c]=true;
   markVisited(c);
   checkAchievements();
-  scrollBtn.classList.remove('show');
+  var scrollBtn=document.getElementById('scroll-btn');
+  if(scrollBtn)scrollBtn.classList.remove('show');
   updateTitleColor(c);
   updateWeapon(c);
   document.getElementById('ui').placeholder=getRandomPlaceholder(c);
@@ -911,6 +912,19 @@ function startApp(){
   bindLongPressDT('b-dante','dante');
   bindLongPressDT('b-vergil','vergil');
   bindLongPressDT('b-v','v');
+  // 修复1：首次用户交互解锁音频，之后切角色音乐才能正常切换
+  var _unlockDone=false;
+  function _doUnlock(){
+    if(_unlockDone)return;
+    _unlockDone=true;
+    audioUnlocked=true;
+    setVolumes();
+    _log('音频已解锁','ok');
+    tryPlay(sr);
+  }
+  document.addEventListener('click',_doUnlock,{once:true});
+  document.addEventListener('touchstart',_doUnlock,{once:true,passive:true});
+  document.addEventListener('keydown',_doUnlock,{once:true});
   if(!IS_GUEST){
     say(sr,getRandomIntro(sr),false);visitedThisSession[sr]=true;
     setTimeout(function(){tryPlay(sr);},1500);
@@ -955,4 +969,6 @@ document.addEventListener('keydown',function(e){
 </script>
 </body>
 </html>
+
+
 

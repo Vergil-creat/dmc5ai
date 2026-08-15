@@ -125,6 +125,7 @@ body.shake{animation:screenShake .3s ease-out}
 .result-quote-text{font-size:12px;font-style:italic;line-height:1.6}
 .result-quote-trans{font-size:11px;font-weight:600;line-height:1.5;margin-top:2px}
 .result-quote-by{font-size:10px;color:#444;margin-top:3px}
+.result-time-quote{margin-top:10px;padding:8px 12px;background:rgba(255,215,0,.06);border-left:3px solid #ffd700;border-radius:0 4px 4px 0;font-size:12px;font-style:italic;line-height:1.5;opacity:0;animation:rfade .5s 1.6s forwards;text-shadow:0 0 4px currentColor;letter-spacing:.5px}
 .result-ach-btn{margin-top:14px;padding:8px 20px;background:linear-gradient(135deg,#2a2000,#4a3800);border:1px solid #ffd700;color:#ffd700;font-size:12px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:4px;opacity:0;animation:rfade .4s 1.4s forwards;transition:all .2s;text-shadow:0 0 4px #ffd700}
 .result-ach-btn:hover{background:linear-gradient(135deg,#4a3800,#6a5000);box-shadow:0 0 10px rgba(255,215,0,.4)}
 .result-bottom-hint{text-align:center;font-size:10px;color:#333;margin-top:14px;letter-spacing:2px;opacity:0;animation:rfade .4s 1.5s forwards}
@@ -448,6 +449,7 @@ body.shake{animation:screenShake .3s ease-out}
       <div class="result-quote-text" id="result-quote-text"></div>
       <div class="result-quote-trans" id="result-quote-trans"></div>
       <div class="result-quote-by" id="result-quote-by"></div>
+      <div class="result-time-quote" id="result-time-quote"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
       <button class="result-ach-btn" onclick="showAchDetail()">🏆 查看成就详情</button>
@@ -534,6 +536,21 @@ var ROLE_COLORS={nero:"#4fc3f7",dante:"#ff5252",vergil:"#80c0ff",v:"#c876ff"};
 var TITLE_COLORS={nero:"#ffffff",dante:"#ff5252",vergil:"#80c0ff",v:"#c876ff"};
 var LYRICS={nero:"Bang, bang, bang — Pull my Devil Trigger",dante:"You cannot kill me! I am Subhuman!",vergil:"I am the storm that is approaching",v:"Savior Bloodstained Hellfire Shadow"};
 var TRACK_NAMES={nero:"♪ Nero — Devil Trigger",dante:"♪ Dante — Subhuman",vergil:"♪ Vergil — Bury the Light",v:"♪ V — Crimson Cloud"};
+
+// 输入框 placeholder 随角色变化（中文）
+var PLACEHOLDER_TEXTS={
+  nero:  ["有话快说，我还要去杀恶魔呢！", "说点什么啊，别让我在这干等！", "快输入！恶魔可不会等你准备好！", "有话就说！磨磨蹭蹭的像什么样子！"],
+  dante: ["说点东西吧，Jackpot！", "来聊聊嘛，我等你话题等得都饿了！", "别光看着啊，说点什么！", "输入中... 最好是关于草莓圣代的！"],
+  vergil: ["你的沉默最好是有高见，还是说你无力回答我？", "弱者才沉默。说话。", "你若无言，便证明你毫无价值。", "我在等你的回答。别让我等太久。"],
+  v:     ["过客……你的沉默，让我看不到你的意志。", "说话吧，过客……时间在流逝。", "你的沉默，比任何回答都苍白。", "如果你还有意志，就让它从你口中说出。"]
+};
+function updatePlaceholder(r){
+  var pool=PLACEHOLDER_TEXTS[r];
+  if(!pool)return;
+  var text=pool[Math.floor(Math.random()*pool.length)];
+  var ui=document.getElementById('ui');
+  if(ui){ui.placeholder=text;}
+}
 function updateTitleColor(r){document.getElementById('top-title').style.color=TITLE_COLORS[r];var l=document.getElementById('lyric');l.style.color=TITLE_COLORS[r];l.textContent=LYRICS[r];}
 function updateNowPlaying(r){var np=document.getElementById('now-playing');np.textContent=TRACK_NAMES[r];np.style.color=TITLE_COLORS[r];np.classList.remove('v-track','paused');if(r==='v')np.classList.add('v-track');np.classList.add('show');}
 
@@ -608,13 +625,84 @@ function showRankFloat(idx){var s=STYLE_TABLE[idx],el=document.getElementById('r
 var QUOTE_DB={nero:{0:{text:"Even the weakest demon can scratch... but you? You just wasted time.",trans:"连最弱的恶魔都能挠一下……但你？你只是在浪费时间。"},1:{text:"Not bad... for a beginner. Now pick up the pace!",trans:"还行……对新手来说。现在加快节奏！"},2:{text:"You call that a combo? My Devil Breaker could do better!",trans:"你管这叫连击？我的Devil Breaker能做得更好！"},3:{text:"Now you're getting it! Show me more of that motivation!",trans:"现在你总算上道了！让我看到更多干劲！"},4:{text:"Hell yeah! You're actually keeping up! Yahoo!",trans:"靠 yeah！你居然跟上了！Yahoo！"}},dante:{0:{text:"Pathetic. Even a pizza delivery guy fights better than you.",trans:"可悲。连送披萨的小哥都比你打得好。"},1:{text:"Not bad, not bad at all! But can you keep up with my style?",trans:"不错嘛，真不错！但你能跟上我的Style吗？"},2:{text:"Now that's what I call a warm-up! Jackpot!",trans:"这才叫热身！Jackpot！"},3:{text:"Oh yeah! Now you're talking my language! Show me more!",trans:"噢 yeah！现在你总算说人话了！再来点！"},4:{text:"You are the Style King! Even I have to admit it! Jackpot!",trans:"你就是Style之王！连我都得承认！Jackpot！"}},vergil:{0:{text:"Weak. Your will is as fragile as glass.",trans:"弱。你的意志像玻璃一样脆弱。"},1:{text:"You have potential. But potential without power is nothing.",trans:"你有潜力。但没有力量的潜力什么也不是。"},2:{text:"Accept your powerlessness. It is the first step to strength.",trans:"接受你的无力吧。这是变强的第一步。"},3:{text:"Power... I see it awakening within you. But it is not enough.",trans:"力量……我看见它在你体内觉醒。但这还不够。"},4:{text:"I am impressed. But do not mistake this for approval. You are still weak.",trans:"我承认你让我刮目相看。但别把这当成认可。你依然弱小。"}},v:{0:{text:"Your will is faint... like a candle in the rain.",trans:"你的意志很微弱……像雨中的烛火。"},1:{text:"A small spark. Perhaps there is something worth watching.",trans:"一点小火花。也许有值得一看的东西。"},2:{text:"The storm approaches... and you stand in its path. Foolish, but admirable.",trans:"风暴正在逼近……而你站在它的路上。愚蠢，但令人敬佩。"},3:{text:"Shadow watches you. Griffon whispers your name. You are becoming... interesting.",trans:"Shadow注视着你。Griffon低语着你的名字。你变得……有趣了。"},4:{text:"Motivation... You have found yours. But the road ahead is long, and my time is short.",trans:"Motivation……你找到了你的。但前路漫长，而我的时间所剩无几。"}}};
 function getQuote(char,gi){var db=QUOTE_DB[char];if(!db)return QUOTE_DB.vergil[0];var q=db[gi];if(!q)return db[0];return q;}
 
+//================================================== 结算趣味评价（按角色×用时档位）
+var TIME_QUOTES={
+  nero:{
+    short:[
+      "三下五除二？行吧，还算利索。",
+      "这么快就收工了？恶魔都没反应过来。"
+    ],
+    medium:[
+      "节奏不错，打得有模有样。",
+      "还行，但别得意，真正的猎人从不松懈。"
+    ],
+    long:[
+      "磨磨蹭蹭的……你该不会在跟恶魔喝茶吧？",
+      "太慢了。下次我一个人去，比你快三倍。"
+    ]
+  },
+  dante:{
+    short:[
+      "哟，闪电战！比我吃圣代还快！Jackpot！",
+      "干脆利落！我喜欢这个速度。"
+    ],
+    medium:[
+      "稳扎稳打，这才是我的风格！……大概。",
+      "不错不错，节奏刚刚好，像个真正的猎人。"
+    ],
+    long:[
+      "哇哦，持久战啊……你比我还磨蹭，哈哈！",
+      "哥们儿，你是在写论文还是打恶魔？太久了。"
+    ]
+  },
+  vergil:{
+    short:[
+      "效率尚可。弱者才需要拖泥带水。",
+      "快而精准。你终于展现了些许价值。"
+    ],
+    medium:[
+      "节奏平庸，但结果尚可接受。",
+      "不快不慢。你离真正的力量，还差得远。"
+    ],
+    long:[
+      "如此迟缓……你的意志，果然不堪一击。",
+      "浪费时间，等于浪费生命。记住这一点。"
+    ]
+  },
+  v:{
+    short:[
+      "短暂，却有力。像一道闪电划过夜空。",
+      "快速收束。你的意志，比我想象的坚定。"
+    ],
+    medium:[
+      "不疾不徐。时间在等待中，也有了意义。",
+      "适度的节奏。你的每一步，都留下了痕迹。"
+    ],
+    long:[
+      "漫长的旅途……但终点是值得的，不是吗？",
+      "太久了。连我的影子都开始疲惫了。"
+    ]
+  }
+};
+
+function getTimeQuote(char,elapsedMs){
+  var db=TIME_QUOTES[char]||TIME_QUOTES.vergil;
+  var bracket;
+  if(elapsedMs<60000)bracket='short';
+  else if(elapsedMs<300000)bracket='medium';
+  else bracket='long';
+  var pool=db[bracket];
+  if(!pool||pool.length===0)return db.medium[0]||'...';
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
 //================================================== 玻璃龟裂
 function showGlassCrack(){document.body.classList.add('shake');setTimeout(function(){document.body.classList.remove('shake');},300);var o=document.getElementById('glass-crack-overlay');o.classList.add('show');setTimeout(function(){o.classList.remove('show');},3000);}
 
 //================================================== 结算面板
 var sessionStart=Date.now(),msgCount=0,resultAutoShown=false;
 function formatTime(ms){var s=Math.floor(ms/1000),m=Math.floor(s/60);s=s%60;return (m<10?'0'+m:m)+':'+(s<10?'0'+s:s);}
-function showResult(){showGlassCrack();setTimeout(function(){var o=document.getElementById('result-overlay'),s=STYLE_TABLE[maxStyleIdx],bg=document.getElementById('result-big-grade'),bs=document.getElementById('result-big-sub'),cc=ROLE_COLORS[cur]||'#ffd700';bg.textContent=s.g;bg.style.color=cc;bs.textContent=s.sub;bs.style.color=cc;var q=getQuote(cur,maxStyleIdx),qt=document.getElementById('result-quote-text'),qn=document.getElementById('result-quote-trans'),qb=document.getElementById('result-quote-by');qt.textContent='"'+q.text+'"';qt.style.color=cc;qt.style.textShadow='0 0 8px '+cc;qn.textContent='—— '+q.trans;qn.style.color=cc;qn.style.textShadow='0 0 6px '+cc;qb.textContent='— '+getRoleDisplayName(cur);var el=Math.max(redOrbs,100),ec=Math.max(comboCount,1),ems=Math.max(msgCount,1),es=Math.max(totalStylish,1),et=Date.now()-sessionStart;var au=countUnlockedAch();document.getElementById('val-orbs').textContent=redOrbs.toLocaleString();document.getElementById('val-combo').textContent='x'+comboCount;document.getElementById('val-msgs').textContent=msgCount;document.getElementById('val-time').textContent=formatTime(et);document.getElementById('val-stylish').textContent=totalStylish.toLocaleString();document.getElementById('val-ach').textContent=au.unlocked+'/'+ACHIEVEMENTS.length;o.classList.add('show');setTimeout(function(){document.getElementById('bar-orbs').style.width=Math.min(100,redOrbs/el*100)+'%';},700);setTimeout(function(){document.getElementById('bar-combo').style.width=Math.min(100,comboCount/ec*100)+'%';},850);setTimeout(function(){document.getElementById('bar-msgs').style.width=Math.min(100,msgCount/ems*100)+'%';},1000);setTimeout(function(){document.getElementById('bar-time').style.width=Math.min(100,et/180000*100)+'%';},1150);setTimeout(function(){document.getElementById('bar-stylish').style.width=Math.min(100,totalStylish/es*100)+'%';},1300);setTimeout(function(){document.getElementById('bar-ach').style.width=Math.min(100,au.unlocked/ACHIEVEMENTS.length*100)+'%';},1450);if(audioUnlocked&&!isMuted){var t=audios[cur];if(t.paused)t.play();}},200);}
+function showResult(){showGlassCrack();setTimeout(function(){var o=document.getElementById('result-overlay'),s=STYLE_TABLE[maxStyleIdx],bg=document.getElementById('result-big-grade'),bs=document.getElementById('result-big-sub'),cc=ROLE_COLORS[cur]||'#ffd700';bg.textContent=s.g;bg.style.color=cc;bs.textContent=s.sub;bs.style.color=cc;var q=getQuote(cur,maxStyleIdx),qt=document.getElementById('result-quote-text'),qn=document.getElementById('result-quote-trans'),qb=document.getElementById('result-quote-by');qt.textContent='"'+q.text+'"';qt.style.color=cc;qt.style.textShadow='0 0 8px '+cc;qn.textContent='—— '+q.trans;qn.style.color=cc;qn.style.textShadow='0 0 6px '+cc;qb.textContent='— '+getRoleDisplayName(cur);var el=Math.max(redOrbs,100),ec=Math.max(comboCount,1),ems=Math.max(msgCount,1),es=Math.max(totalStylish,1),et=Date.now()-sessionStart;var au=countUnlockedAch();document.getElementById('val-orbs').textContent=redOrbs.toLocaleString();document.getElementById('val-combo').textContent='x'+comboCount;document.getElementById('val-msgs').textContent=msgCount;document.getElementById('val-time').textContent=formatTime(et);document.getElementById('val-stylish').textContent=totalStylish.toLocaleString();document.getElementById('val-ach').textContent=au.unlocked+'/'+ACHIEVEMENTS.length;o.classList.add('show');setTimeout(function(){document.getElementById('bar-orbs').style.width=Math.min(100,redOrbs/el*100)+'%';},700);setTimeout(function(){document.getElementById('bar-combo').style.width=Math.min(100,comboCount/ec*100)+'%';},850);setTimeout(function(){document.getElementById('bar-msgs').style.width=Math.min(100,msgCount/ems*100)+'%';},1000);setTimeout(function(){document.getElementById('bar-time').style.width=Math.min(100,et/180000*100)+'%';},1150);setTimeout(function(){document.getElementById('bar-stylish').style.width=Math.min(100,totalStylish/es*100)+'%';},1300);setTimeout(function(){document.getElementById('bar-ach').style.width=Math.min(100,au.unlocked/ACHIEVEMENTS.length*100)+'%';},1450);if(audioUnlocked&&!isMuted){var t=audios[cur];if(t.paused)t.play();}},200);setTimeout(function(){var tq=getTimeQuote(cur,Date.now()-sessionStart),tqe=document.getElementById('result-time-quote');if(tqe){tqe.textContent=tq;tqe.style.color=cc;tqe.style.textShadow='0 0 6px '+cc;tqe.style.opacity='1';}},1600);}
 function closeResult(){document.getElementById('result-overlay').classList.remove('show');setTimeout(function(){'bar-orbs bar-combo bar-msgs bar-time bar-stylish bar-ach'.split(' ').forEach(function(id){document.getElementById(id).style.width='0%';});},500);}
 document.getElementById('result-overlay').addEventListener('click',closeResult);
 document.addEventListener('keydown',function(e){if(document.getElementById('result-overlay').classList.contains('show'))closeResult();});
@@ -778,7 +866,7 @@ function bloodFlash(){var f=document.createElement('div');f.className='blood-fla
 async function send(){
   var ui=document.getElementById('ui'),t=ui.value.trim();if(!t)return;
   if(checkEasterEgg(t)){ui.value='';addOrbs(500);bumpStyle();totalStylish+=500;return;}
-  say('user',t,true);ui.value='';bloodFlash();bumpCombo();msgCount++;
+  say('user',t,true);ui.value='';bloodFlash();bumpCombo();msgCount++;updatePlaceholder(cur);
   incrementStat('totalMessages',1);
   incrementStat('characterMessages.'+cur,1);
   var msgLen=t.length;if(msgLen>getStat('longestMessageLength'))updateStat('longestMessageLength',msgLen);
@@ -821,7 +909,7 @@ function sw(c,fromRole){
   var vc=getStat('visitedCharacters');
   if(vc.indexOf(c)===-1){vc.push(c);updateStat('visitedCharacters',vc);}
   scrollBtn.classList.remove('show');
-  updateTitleColor(c);updateWeapon(c);setBackground(c);addOrbs(30);
+  updateTitleColor(c);updateWeapon(c);setBackground(c);updatePlaceholder(c);addOrbs(30);
   if(audioUnlocked)playRole(c);
   checkAchievements();
 }

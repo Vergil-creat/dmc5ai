@@ -10,9 +10,24 @@
 /* ========== 全局 ========== */
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{background:#000;color:#fff;font-family:'Segoe UI','Microsoft YaHei',sans-serif;overflow:hidden;height:100vh;width:100vw;-webkit-user-drag:none;user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
-body{position:fixed;top:0;left:0;right:0;bottom:0;transition:box-shadow .3s}
+body{position:fixed;top:0;left:0;right:0;bottom:0;transition:box-shadow .3s, background .8s}
 body.s-pulse{animation:sPulse 2s ease-in-out infinite}
 @keyframes sPulse{0%,100%{box-shadow:inset 0 0 0 rgba(255,0,0,0)}50%{box-shadow:inset 0 0 80px rgba(200,0,0,.25)}}
+
+/* 角色专属背景 */
+.bg-layer{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity 1.2s ease}
+.bg-layer.active{opacity:1}
+.bg-nero{background:radial-gradient(ellipse at 50% 80%,rgba(79,195,247,.08) 0%,transparent 50%),radial-gradient(ellipse at 20% 30%,rgba(255,50,0,.05) 0%,transparent 40%)}
+.bg-dante{background:radial-gradient(ellipse at 50% 50%,rgba(255,82,82,.10) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(255,200,0,.06) 0%,transparent 35%)}
+.bg-vergil{background:radial-gradient(ellipse at 50% 50%,rgba(128,192,255,.10) 0%,transparent 50%),radial-gradient(ellipse at 30% 70%,rgba(200,200,255,.04) 0%,transparent 40%);animation:bgSnow 20s linear infinite}
+.bg-v{background:radial-gradient(ellipse at 50% 60%,rgba(200,118,255,.10) 0%,transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(80,0,80,.06) 0%,transparent 40%);animation:bgFog 15s ease-in-out infinite}
+@keyframes bgSnow{0%{background-position:0% 0%,0% 0%}100%{background-position:100% 100%,50% 50%}}
+@keyframes bgFog{0%,100%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(20deg) brightness(1.15)}}
+
+/* 红魂粒子 */
+#orb-particles{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.orb-particle{position:absolute;width:3px;height:3px;background:radial-gradient(circle,rgba(255,80,0,.8) 0%,transparent 70%);border-radius:50%;animation:orbFloat linear infinite;opacity:0}
+@keyframes orbFloat{0%{opacity:0;transform:translateY(0) scale(1)}10%{opacity:1}90%{opacity:.3}100%{opacity:0;transform:translateY(-100vh) scale(.3)}}
 
 /* 日志 */
 #log-panel{position:fixed;bottom:0;left:0;right:0;max-height:30vh;background:rgba(0,20,0,.95);border-top:2px solid #0f0;z-index:9999;overflow-y:auto;display:none;padding:8px 10px;font-family:'Courier New',monospace;font-size:11px;color:#0f0}
@@ -31,13 +46,6 @@ body.s-pulse{animation:sPulse 2s ease-in-out infinite}
 .topbar{height:72px;background:rgba(0,0,0,.9);border-bottom:1px solid #330000;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;gap:4px;padding:4px 0}
 .topbar-title{font-size:15px;font-weight:900;font-style:italic;letter-spacing:3px;text-shadow:0 0 8px currentColor,0 0 20px currentColor;transition:color .4s,text-shadow .4s;cursor:default;line-height:1}
 #lyric{font-size:12px;font-weight:700;font-style:italic;letter-spacing:1.5px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90vw;text-align:center;text-shadow:0 0 6px currentColor,0 0 14px currentColor,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;-webkit-text-stroke:.4px currentColor;transition:color .4s,text-shadow .4s;line-height:1.2;margin-top:2px}
-
-/* ========== 成就通知（曲目名上方） ========== */
-#achievement-toast{position:fixed;top:50px;left:50%;transform:translateX(-50%) translateY(-80px);z-index:1003;display:flex;align-items:center;gap:10px;padding:10px 22px;background:linear-gradient(135deg,rgba(30,0,0,.95) 0%,rgba(80,0,0,.95) 50%,rgba(30,0,0,.95) 100%);border:2px solid #ffd700;box-shadow:0 0 20px rgba(255,215,0,.5),inset 0 0 15px rgba(255,215,0,.15);border-radius:6px;opacity:0;transition:opacity .4s ease,transform .4s cubic-bezier(.22,.61,.36,1);pointer-events:none;white-space:nowrap}
-#achievement-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#achievement-toast .ach-icon{font-size:22px;filter:drop-shadow(0 0 6px #ffd700)}
-#achievement-toast .ach-text{font-size:14px;font-weight:900;color:#ffd700;letter-spacing:2px;text-shadow:0 0 8px #ffd700,0 0 16px #ff8c00;font-family:'Cinzel Decorative',serif}
-#achievement-toast .ach-text small{display:block;font-size:10px;color:#ffaa00;letter-spacing:1px;font-weight:700;font-family:'Segoe UI',sans-serif;margin-top:1px}
 
 /* 红魂 */
 #orb-wrapper{position:fixed;top:10px;right:10px;z-index:1001;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.75);border:1px solid #550000;border-radius:18px;padding:4px 12px 4px 6px;box-shadow:0 0 10px rgba(255,0,0,.3)}
@@ -74,10 +82,19 @@ body.shake{animation:screenShake .3s ease-out}
 #combo-bar-wrap.show{opacity:1}
 #combo-bar{height:100%;width:100%;background:linear-gradient(90deg,#ffd700,#ff6a00);box-shadow:0 0 6px #ff6a00;transition:width .3s linear}
 
-/* ========== 结算面板 ========== */
+/* 成就通知条 */
+#achievement-toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-20px);z-index:99995;display:none;align-items:center;gap:10px;padding:10px 20px;background:linear-gradient(135deg,rgba(40,30,0,.95),rgba(80,60,0,.95));border:2px solid #ffd700;border-radius:6px;box-shadow:0 0 20px rgba(255,215,0,.5),inset 0 0 10px rgba(255,215,0,.15);opacity:0;transition:opacity .4s,transform .4s cubic-bezier(.22,.61,.36,1);pointer-events:none;max-width:90vw}
+#achievement-toast.show{display:flex;opacity:1;transform:translateX(-50%) translateY(0)}
+#achievement-toast .toast-icon{font-size:28px;flex-shrink:0;text-shadow:0 0 10px currentColor}
+#achievement-toast .toast-text{display:flex;flex-direction:column;gap:2px}
+#achievement-toast .toast-title{font-size:11px;font-weight:900;color:#ffd700;letter-spacing:2px;text-shadow:0 0 6px #ffd700;font-family:'Cinzel Decorative',serif}
+#achievement-toast .toast-name{font-size:14px;font-weight:700;color:#fff;text-shadow:0 0 4px #ffd700}
+#achievement-toast .toast-desc{font-size:11px;color:#ccc}
+
+/* 结算面板 */
 #result-overlay{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center}
 #result-overlay.show{display:flex}
-#result-panel{width:92vw;max-width:560px;max-height:85vh;overflow-y:auto;background:radial-gradient(ellipse at 30% 50%,rgba(50,0,0,.35) 0%,transparent 60%),#080808;border:1px solid #220808;box-shadow:0 0 50px rgba(150,0,0,.2),inset 0 0 30px rgba(60,0,0,.1);padding:26px 30px;position:relative;overflow:hidden;transform:scale(.93);opacity:0;transition:transform .45s cubic-bezier(.22,.61,.36,1),opacity .35s ease}
+#result-panel{width:92vw;max-width:540px;min-height:400px;background:radial-gradient(ellipse at 30% 50%,rgba(50,0,0,.35) 0%,transparent 60%),#080808;border:1px solid #220808;box-shadow:0 0 50px rgba(150,0,0,.2),inset 0 0 30px rgba(60,0,0,.1);padding:26px 30px;position:relative;overflow:hidden;transform:scale(.93);opacity:0;transition:transform .45s cubic-bezier(.22,.61,.36,1),opacity .35s ease}
 #result-overlay.show #result-panel{transform:scale(1);opacity:1}
 .result-top-label{font-size:10px;color:#555;letter-spacing:8px;text-transform:uppercase;margin-bottom:4px;opacity:0;animation:rfade .4s .15s forwards}
 .result-stage-name{font-size:12px;color:#777;letter-spacing:2px;margin-bottom:16px;opacity:0;animation:rfade .4s .25s forwards}
@@ -94,7 +111,7 @@ body.shake{animation:screenShake .3s ease-out}
 .result-data-row{display:flex;align-items:center;gap:10px;opacity:0;animation:rSlide .35s ease-out forwards}
 .result-data-row:nth-child(1){animation-delay:.55s}.result-data-row:nth-child(2){animation-delay:.65s}.result-data-row:nth-child(3){animation-delay:.75s}.result-data-row:nth-child(4){animation-delay:.85s}.result-data-row:nth-child(5){animation-delay:.95s}.result-data-row:nth-child(6){animation-delay:1.05s}
 @keyframes rSlide{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
-.rd-label{font-size:10px;color:#555;width:82px;text-align:right;letter-spacing:1px;flex-shrink:0}
+.rd-label{font-size:10px;color:#555;width:90px;text-align:right;letter-spacing:1px;flex-shrink:0}
 .rd-bar-wrap{flex:1;height:13px;background:#080808;border:1px solid #1a1a1a;overflow:hidden}
 .rd-bar{height:100%;width:0;transition:width 1.2s cubic-bezier(.22,.61,.36,1)}
 .rd-bar.orbs{background:linear-gradient(90deg,#ff4400,#ffaa00);box-shadow:0 0 5px #ff6600}
@@ -102,40 +119,38 @@ body.shake{animation:screenShake .3s ease-out}
 .rd-bar.msgs{background:linear-gradient(90deg,#00aaff,#00ffcc);box-shadow:0 0 5px #00aaff}
 .rd-bar.time{background:linear-gradient(90deg,#aa44ff,#ff44aa);box-shadow:0 0 5px #aa44ff}
 .rd-bar.stylish{background:linear-gradient(90deg,#ffd700,#ff6a00);box-shadow:0 0 5px #ffd700}
-.rd-bar.achievements{background:linear-gradient(90deg,#ffd700,#ff8c00,#ff4500);box-shadow:0 0 5px #ffd700}
+.rd-bar.ach{background:linear-gradient(90deg,#ffd700,#ffe066,#ffd700);box-shadow:0 0 5px #ffd700}
 .rd-value{font-size:13px;font-weight:900;font-family:'Courier New',monospace;color:#fff;min-width:60px;text-align:right;text-shadow:0 0 4px currentColor}
 .result-quote-section{margin-top:16px;padding-top:12px;border-top:1px solid #151515;opacity:0;animation:rfade .5s 1.2s forwards}
 .result-quote-text{font-size:12px;font-style:italic;line-height:1.6}
 .result-quote-trans{font-size:11px;font-weight:600;line-height:1.5;margin-top:2px}
 .result-quote-by{font-size:10px;color:#444;margin-top:3px}
+.result-ach-btn{margin-top:14px;padding:8px 20px;background:linear-gradient(135deg,#2a2000,#4a3800);border:1px solid #ffd700;color:#ffd700;font-size:12px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:4px;opacity:0;animation:rfade .4s 1.4s forwards;transition:all .2s;text-shadow:0 0 4px #ffd700}
+.result-ach-btn:hover{background:linear-gradient(135deg,#4a3800,#6a5000);box-shadow:0 0 10px rgba(255,215,0,.4)}
 .result-bottom-hint{text-align:center;font-size:10px;color:#333;margin-top:14px;letter-spacing:2px;opacity:0;animation:rfade .4s 1.5s forwards}
 
-/* ========== 成就按钮（结算面板内） ========== */
-.result-ach-btn{display:inline-block;margin-top:12px;padding:6px 18px;background:linear-gradient(135deg,#2a1a00,#1a1000);border:1px solid #ffd700;color:#ffd700;font-size:12px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:4px;transition:.3s;opacity:0;animation:rfade .5s 1.3s forwards}
-.result-ach-btn:hover{background:linear-gradient(135deg,#4a3000,#2a1a00);box-shadow:0 0 12px rgba(255,215,0,.4)}
-
-/* ========== 成就详情面板 ========== */
-#ach-detail-overlay{position:fixed;inset:0;z-index:100005;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center}
+/* 成就详情面板 */
+#ach-detail-overlay{position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center}
 #ach-detail-overlay.show{display:flex}
-#ach-detail-panel{width:92vw;max-width:520px;max-height:80vh;overflow-y:auto;background:#0a0a0a;border:2px solid #ffd700;box-shadow:0 0 40px rgba(255,215,0,.2),inset 0 0 20px rgba(100,50,0,.1);padding:24px}
-.ach-detail-title{font-family:'Cinzel Decorative',serif;font-size:20px;font-weight:900;color:#ffd700;text-align:center;letter-spacing:4px;margin-bottom:6px;text-shadow:0 0 10px #ffd700}
-.ach-detail-sub{text-align:center;font-size:11px;color:#888;letter-spacing:2px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #1a1a1a}
-.ach-section-title{font-size:12px;font-weight:900;color:#ff8c00;letter-spacing:2px;margin:14px 0 8px;padding-left:4px;border-left:3px solid #ff8c00}
-.ach-list{display:flex;flex-direction:column;gap:6px}
-.ach-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#0d0d0d;border:1px solid #1a1a1a;border-radius:4px;transition:.3s}
-.ach-item.unlocked{border-color:#ffd700;background:linear-gradient(90deg,rgba(80,60,0,.3),rgba(40,30,0,.15))}
-.ach-item.hidden-ach{border-color:#333;opacity:.55}
-.ach-item .ach-emoji{font-size:20px;width:28px;text-align:center;flex-shrink:0}
-.ach-item .ach-info{flex:1}
-.ach-item .ach-name{font-size:13px;font-weight:700;color:#ccc}
-.ach-item.unlocked .ach-name{color:#ffd700;text-shadow:0 0 4px rgba(255,215,0,.5)}
-.ach-item .ach-desc{font-size:10px;color:#666;margin-top:2px}
-.ach-item.unlocked .ach-desc{color:#aa8855}
-.ach-item .ach-status{font-size:10px;font-weight:700;flex-shrink:0;padding:2px 8px;border-radius:2px}
-.ach-item.unlocked .ach-status{color:#ffd700;background:rgba(255,215,0,.15);border:1px solid #ffd700}
-.ach-item:not(.unlocked) .ach-status{color:#444;background:#111;border:1px solid #222}
-.ach-close-btn{display:block;margin:18px auto 0;padding:8px 30px;background:#c00;color:#fff;border:none;font-size:14px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:4px;box-shadow:0 0 12px rgba(200,0,0,.5)}
-.ach-close-btn:hover{background:#f00}
+#ach-detail-panel{width:92vw;max-width:560px;max-height:80vh;background:#0a0a0a;border:1px solid #ffd700;box-shadow:0 0 40px rgba(255,215,0,.2),inset 0 0 20px rgba(60,40,0,.1);padding:24px;position:relative;overflow-y:auto;transform:scale(.9);opacity:0;transition:transform .4s,opacity .35s}
+#ach-detail-overlay.show #ach-detail-panel{transform:scale(1);opacity:1}
+#ach-detail-panel::-webkit-scrollbar{width:4px}#ach-detail-panel::-webkit-scrollbar-thumb{background:#ffd700;border-radius:2px}
+.ach-detail-title{font-family:'Cinzel Decorative',serif;font-size:20px;font-weight:900;color:#ffd700;text-align:center;letter-spacing:3px;margin-bottom:6px;text-shadow:0 0 10px #ffd700}
+.ach-detail-sub{text-align:center;font-size:12px;color:#888;margin-bottom:18px;letter-spacing:1px}
+.ach-section-title{font-size:13px;font-weight:700;color:#ffd700;margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid #332200;letter-spacing:1px}
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.ach-card{background:#111;border:1px solid #333;padding:10px 8px;text-align:center;border-radius:4px;transition:all .2s;position:relative;overflow:hidden}
+.ach-card.unlocked{border-color:#ffd700;background:linear-gradient(135deg,#1a1500,#2a2000);box-shadow:0 0 8px rgba(255,215,0,.2)}
+.ach-card.locked{opacity:.5;filter:grayscale(.8)}
+.ach-card .ach-icon{font-size:24px;margin-bottom:4px;display:block}
+.ach-card.unlocked .ach-icon{text-shadow:0 0 8px currentColor}
+.ach-card .ach-name{font-size:11px;font-weight:700;color:#fff;line-height:1.3}
+.ach-card.locked .ach-name{color:#666}
+.ach-card .ach-desc{font-size:9px;color:#888;margin-top:3px;line-height:1.3}
+.ach-card.unlocked .ach-date{font-size:9px;color:#ffd700;margin-top:3px}
+.ach-card.locked .ach-lock{position:absolute;top:4px;right:4px;font-size:10px}
+.ach-detail-close{position:absolute;top:10px;right:14px;background:none;border:none;color:#ffd700;font-size:20px;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .2s}
+.ach-detail-close:hover{background:rgba(255,215,0,.15)}
 
 /* 聊天 */
 .chat{flex:1;overflow-y:auto;padding:10px 90px 70px 15px;display:flex;flex-direction:column;gap:14px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
@@ -143,6 +158,16 @@ body.shake{animation:screenShake .3s ease-out}
 .msg{display:flex;gap:10px;max-width:85%;animation:msgIn .25s ease-out}
 .msg.user{align-self:flex-end;flex-direction:row-reverse}
 @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* 角色专属消息入场动画 */
+.msg.from-nero .bubble{animation:msgNero .3s ease-out}
+.msg.from-dante .bubble{animation:msgDante .3s cubic-bezier(.22,.61,.36,1)}
+.msg.from-vergil .bubble{animation:msgVergil .4s ease-out}
+.msg.from-v .bubble{animation:msgV .5s ease-out}
+@keyframes msgNero{0%{opacity:0;transform:translateX(-20px) rotate(-2deg)}100%{opacity:1;transform:translateX(0) rotate(0)}}
+@keyframes msgDante{0%{opacity:0;transform:scale(.7) translateY(10px)}60%{transform:scale(1.05) translateY(-2px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes msgVergil{0%{opacity:0;transform:translateX(-15px);filter:blur(6px)}100%{opacity:1;transform:translateX(0);filter:blur(0)}}
+@keyframes msgV{0%{opacity:0;transform:translateY(8px);filter:blur(4px)}50%{filter:blur(1px)}100%{opacity:1;transform:translateY(0);filter:blur(0)}}
+
 .av{width:42px;height:42px;border-radius:50%;border:2px solid #c00;object-fit:cover;flex-shrink:0;background:#111;display:block}
 .name{font-size:12px;margin-bottom:4px;font-weight:bold}
 .name-nero{color:#4fc3f7}.name-dante{color:#ff5252}.name-vergil{color:#80c0ff}.name-v{color:#c876ff}.name-user{color:#ffd700}
@@ -180,35 +205,26 @@ body.shake{animation:screenShake .3s ease-out}
 #user-modal .preview-av{width:64px;height:64px;border-radius:50%;border:3px solid #c00;margin:0 auto 12px;overflow:hidden}
 #user-modal .preview-av img{width:100%;height:100%;object-fit:cover}
 
-/* ========== PROFILE 弹窗（含成就墙） ========== */
+/* PROFILE 弹窗 */
 #profile-modal{position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center}
 #profile-modal.show{display:flex}
-#profile-modal .modal-box{background:#0d0d0d;border:1px solid #c00;padding:24px;width:92vw;max-width:480px;max-height:82vh;overflow-y:auto;text-align:center;box-shadow:0 0 30px rgba(200,0,0,.4)}
-#profile-modal h3{color:#c00;font-size:16px;margin-bottom:12px;letter-spacing:2px}
-#profile-modal .profile-av{width:72px;height:72px;border-radius:50%;border:3px solid #c00;margin:0 auto 10px;overflow:hidden}
-#profile-modal .profile-av img{width:100%;height:100%;object-fit:cover}
-#profile-modal .profile-name{font-size:18px;font-weight:900;color:#ffd700;margin-bottom:4px;text-shadow:0 0 8px rgba(255,215,0,.4)}
-#profile-modal .profile-stats{font-size:11px;color:#888;margin-bottom:14px;line-height:1.6}
-#profile-modal .profile-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
-#profile-modal .profile-actions button{padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;border-radius:4px;letter-spacing:1px;transition:.3s}
-#profile-modal .btn-edit{background:#222;color:#fff;border:1px solid #c00}
-#profile-modal .btn-edit:hover{background:#c00}
-#profile-modal .btn-export{background:#1a1500;color:#ffd700;border:1px solid #ffd700}
-#profile-modal .btn-export:hover{background:#3a2a00}
-#profile-modal .btn-import{background:#1a2a1a;color:#5f5;border:1px solid #0f0}
-#profile-modal .btn-import:hover{background:#2a4a2a}
-#profile-modal .save-code-box{width:100%;padding:8px;background:#111;border:1px solid #333;color:#ffd700;font-size:11px;font-family:'Courier New',monospace;margin:8px 0;border-radius:4px;word-break:break-all;min-height:40px;display:none}
-#profile-modal .save-code-box.show{display:block}
-#profile-modal .ach-wall-title{font-size:13px;font-weight:900;color:#ff8c00;letter-spacing:2px;margin:16px 0 10px;text-align:left;padding-left:4px;border-left:3px solid #ff8c00}
-#profile-modal .ach-wall-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;text-align:left}
-#profile-modal .ach-wall-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;font-size:11px}
-#profile-modal .ach-wall-item.unlocked{border-color:#ffd700;background:rgba(60,40,0,.25)}
-#profile-modal .ach-wall-item .aw-emoji{font-size:16px;flex-shrink:0}
-#profile-modal .ach-wall-item .aw-name{font-weight:700;color:#888;font-size:11px}
-#profile-modal .ach-wall-item.unlocked .aw-name{color:#ffd700}
-#profile-modal .ach-wall-count{font-size:12px;color:#ffd700;margin-top:10px;font-weight:700}
-#profile-modal .close-btn{margin-top:16px;padding:8px 30px;background:#333;color:#fff;border:none;font-size:13px;cursor:pointer;border-radius:4px}
-#profile-modal .close-btn:hover{background:#555}
+#profile-panel{width:92vw;max-width:480px;max-height:85vh;background:#0a0a0a;border:1px solid #c00;box-shadow:0 0 40px rgba(200,0,0,.25);padding:24px;position:relative;overflow-y:auto;transform:scale(.9);opacity:0;transition:transform .4s,opacity .35s}
+#profile-modal.show #profile-panel{transform:scale(1);opacity:1}
+#profile-panel::-webkit-scrollbar{width:4px}#profile-panel::-webkit-scrollbar-thumb{background:#c00;border-radius:2px}
+.profile-header{display:flex;align-items:center;gap:16px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #220000}
+.profile-av{width:72px;height:72px;border-radius:50%;border:3px solid #c00;overflow:hidden;flex-shrink:0}
+.profile-av img{width:100%;height:100%;object-fit:cover}
+.profile-info{flex:1}
+.profile-name{font-size:20px;font-weight:900;color:#ffd700;text-shadow:0 0 8px #ffd700;margin-bottom:4px}
+.profile-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.profile-stat{font-size:12px;color:#ccc;background:#111;padding:6px 10px;border-radius:4px;border:1px solid #222}
+.profile-stat span{color:#ffd700;font-weight:700}
+.profile-btns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.profile-btns button{padding:6px 14px;font-size:12px;border-radius:4px;cursor:pointer;border:1px solid #555;background:#1a1a1a;color:#ccc;transition:.2s}
+.profile-btns button:hover{border-color:#ffd700;color:#ffd700}
+#export-area{display:none;margin-top:10px}
+#export-area textarea{width:100%;height:60px;background:#111;border:1px solid #444;color:#0f0;font-size:11px;padding:6px;resize:none;font-family:'Courier New',monospace}
+#export-area input{width:100%;margin-top:6px;padding:6px;background:#111;border:1px solid #444;color:#fff;font-size:12px;text-align:center}
 
 /* PC 按键提示 */
 #kb-hint{position:fixed;inset:0;z-index:10002;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;cursor:pointer}
@@ -273,11 +289,18 @@ body.shake{animation:screenShake .3s ease-out}
 <audio id="aud-vergil" preload="metadata" src="vergil.mp3" loop></audio>
 <audio id="aud-v" preload="metadata" src="v.mp3" loop></audio>
 
-<!-- 开场 -->
+<!-- 背景层 -->
+<div class="bg-layer bg-nero" id="bg-nero"></div>
+<div class="bg-layer bg-dante" id="bg-dante"></div>
+<div class="bg-layer bg-vergil" id="bg-vergil"></div>
+<div class="bg-layer bg-v" id="bg-v"></div>
+<div id="orb-particles"></div>
+
 <div id="intro">
   <img id="intro-logo" src="https://i.postimg.cc/TwdDGNdY/e6e5add26d2fdd9558b8f92097d3cb44b3baf321aead2097e78133d06b2ac778-0.webp">
 </div>
 <img id="mini-logo" src="https://i.postimg.cc/TwdDGNdY/e6e5add26d2fdd9558b8f92097d3cb44b3baf321aead2097e78133d06b2ac778-0.webp">
+
 <canvas id="fire-canvas"></canvas>
 
 <!-- 红魂 -->
@@ -286,16 +309,20 @@ body.shake{animation:screenShake .3s ease-out}
   <span id="orb-count">0</span>
 </div>
 
-<!-- 成就通知 Toast（曲目名上方） -->
-<div id="achievement-toast">
-  <span class="ach-icon">🏆</span>
-  <span class="ach-text">恭喜！已解锁成就：<span id="ach-toast-name"></span><small id="ach-toast-desc"></small></span>
-</div>
-
-<!-- Style 容器 -->
+<!-- Style -->
 <div id="style-container"><div id="style-grade">D</div><div id="style-sub">Dismal</div></div>
 <!-- 评级飘字 -->
 <div id="rank-float"><div id="rank-float-text"></div></div>
+
+<!-- 成就通知 -->
+<div id="achievement-toast">
+  <div class="toast-icon" id="toast-icon">🏆</div>
+  <div class="toast-text">
+    <div class="toast-title" id="toast-title">ACHIEVEMENT UNLOCKED</div>
+    <div class="toast-name" id="toast-name"></div>
+    <div class="toast-desc" id="toast-desc"></div>
+  </div>
+</div>
 
 <!-- 玻璃龟裂 -->
 <div id="glass-crack-overlay">
@@ -326,35 +353,44 @@ body.shake{animation:screenShake .3s ease-out}
   </div>
 </div>
 
-<!-- PROFILE 弹窗（含成就墙） -->
+<!-- PROFILE 弹窗 -->
 <div id="profile-modal">
-  <div class="modal-box">
-    <h3>猎人档案</h3>
-    <div class="profile-av"><img id="profile-av-img" src=""></div>
-    <div class="profile-name" id="profile-name"></div>
-    <div class="profile-stats" id="profile-stats"></div>
-    <div class="profile-actions">
-      <button class="btn-edit" onclick="openUserModal()">✏️ 编辑档案</button>
-      <button class="btn-export" onclick="exportSaveCode()">📤 导出存档</button>
-      <button class="btn-import" onclick="importSaveCode()">📥 导入存档</button>
+  <div id="profile-panel">
+    <button class="ach-detail-close" onclick="closeProfileModal()">×</button>
+    <div class="profile-header">
+      <div class="profile-av" id="profile-av"></div>
+      <div class="profile-info">
+        <div class="profile-name" id="profile-name"></div>
+        <div class="profile-stats" id="profile-stats"></div>
+      </div>
     </div>
-    <div class="save-code-box" id="save-code-box"></div>
-    <div class="ach-wall-title">🏆 成就墙（<span id="ach-wall-count">0/0</span>）</div>
-    <div class="ach-wall-grid" id="ach-wall-grid"></div>
-    <button class="close-btn" onclick="closeProfileModal()">关闭</button>
+    <div class="profile-btns">
+      <button onclick="openUserModal()">✏️ 编辑档案</button>
+      <button onclick="toggleExport()">📤 导出存档</button>
+      <button onclick="importSave()">📥 导入存档</button>
+    </div>
+    <div id="export-area">
+      <textarea id="export-code" readonly placeholder="点击导出存档生成代码..."></textarea>
+      <input id="import-code" placeholder="粘贴存档码后点击导入">
+      <button onclick="doImport()" style="margin-top:6px;padding:6px 16px;background:#c00;color:#fff;border:none;border-radius:4px;cursor:pointer">确认导入</button>
+    </div>
+    <div style="margin-top:18px">
+      <div style="font-family:'Cinzel Decorative',serif;font-size:16px;font-weight:900;color:#ffd700;text-align:center;letter-spacing:2px;margin-bottom:10px">🏆 成就墙 <span id="ach-progress" style="color:#888;font-size:12px"></span></div>
+      <div class="ach-grid" id="ach-grid-profile"></div>
+    </div>
   </div>
 </div>
 
-<!-- 成就详情面板（结算内打开） -->
+<!-- 成就详情面板 -->
 <div id="ach-detail-overlay">
   <div id="ach-detail-panel">
-    <div class="ach-detail-title">🏆 成就一览</div>
-    <div class="ach-detail-sub">已解锁 <span id="ach-unlocked-count">0</span> / 总数 <span id="ach-total-count">0</span></div>
+    <button class="ach-detail-close" onclick="closeAchDetail()">×</button>
+    <div class="ach-detail-title">🏆 成就详情</div>
+    <div class="ach-detail-sub" id="ach-detail-sub"></div>
     <div class="ach-section-title">✅ 已解锁</div>
-    <div class="ach-list" id="ach-list-unlocked"></div>
+    <div class="ach-grid" id="ach-grid-unlocked"></div>
     <div class="ach-section-title">🔒 未解锁</div>
-    <div class="ach-list" id="ach-list-locked"></div>
-    <button class="ach-close-btn" onclick="closeAchDetail()">关闭</button>
+    <div class="ach-grid" id="ach-grid-locked"></div>
   </div>
 </div>
 
@@ -373,12 +409,11 @@ body.shake{animation:screenShake .3s ease-out}
   </div>
 </div>
 
-<!-- 制作者信息 -->
+<!-- 底部信息 -->
 <div id="creator-line">
   <span>制作者：一庭霜月满襟寒（bilibili）</span>
   <span>网站制作者QQ：1127421253，欢迎提出建议</span>
 </div>
-<!-- 额度警告 -->
 <div id="quota-warning">
   <div id="warn-icon">!</div>
   <div id="warn-text">本站使用免费 API 额度驱动对话，目前已耗尽，你可以继续体验界面交互功能，等候网站制作者自行恢复</div>
@@ -406,7 +441,7 @@ body.shake{animation:screenShake .3s ease-out}
         <div class="result-data-row"><span class="rd-label">MESSAGES</span><div class="rd-bar-wrap"><div class="rd-bar msgs" id="bar-msgs"></div></div><span class="rd-value" id="val-msgs">0</span></div>
         <div class="result-data-row"><span class="rd-label">TIME</span><div class="rd-bar-wrap"><div class="rd-bar time" id="bar-time"></div></div><span class="rd-value" id="val-time">00:00</span></div>
         <div class="result-data-row"><span class="rd-label">STYLISH</span><div class="rd-bar-wrap"><div class="rd-bar stylish" id="bar-stylish"></div></div><span class="rd-value" id="val-stylish">0</span></div>
-        <div class="result-data-row"><span class="rd-label">ACHIEVEMENTS</span><div class="rd-bar-wrap"><div class="rd-bar achievements" id="bar-achievements"></div></div><span class="rd-value" id="val-achievements">0</span></div>
+        <div class="result-data-row"><span class="rd-label">ACHIEVEMENTS</span><div class="rd-bar-wrap"><div class="rd-bar ach" id="bar-ach"></div></div><span class="rd-value" id="val-ach">0/12</span></div>
       </div>
     </div>
     <div class="result-quote-section">
@@ -414,8 +449,8 @@ body.shake{animation:screenShake .3s ease-out}
       <div class="result-quote-trans" id="result-quote-trans"></div>
       <div class="result-quote-by" id="result-quote-by"></div>
     </div>
-    <div style="text-align:center;opacity:0;animation:rfade .5s 1.3s forwards">
-      <button class="result-ach-btn" onclick="openAchDetail()">🏆 查看成就详情</button>
+    <div style="text-align:center;margin-top:14px">
+      <button class="result-ach-btn" onclick="showAchDetail()">🏆 查看成就详情</button>
     </div>
     <div class="result-bottom-hint">按任意键或点击关闭</div>
   </div>
@@ -436,10 +471,10 @@ body.shake{animation:screenShake .3s ease-out}
     <button onclick="send()">Send</button>
   </div>
   <div class="sidebar">
-    <div class="cbtn active" id="b-nero" style="background-image:url('https://i.postimg.cc/2yXv0dfR/ab0e3d8b0d10b13ee56e113eadd1e3e83700043f2f7bba201a49bc3e30884537-0.jpg')" onclick="sw('nero')"></div><div class="cname">Nero</div>
-    <div class="cbtn" id="b-dante" style="background-image:url('https://i.postimg.cc/MHrR908Q/1771934129984.jpg')" onclick="sw('dante')"></div><div class="cname">Dante</div>
-    <div class="cbtn" id="b-vergil" style="background-image:url('https://i.postimg.cc/x8FH6GSm/1771934121143.jpg')" onclick="sw('vergil')"></div><div class="cname">Vergil</div>
-    <div class="cbtn" id="b-v" style="background-image:url('https://i.postimg.cc/gkxjp9Pw/b19ab9897647c907a11733dfd0f6dfc3.jpg')" onclick="sw('v')"></div><div class="cname">V</div>
+    <div class="cbtn active" id="b-nero" style="background-image:url('https://i.postimg.cc/2yXv0dfR/ab0e3d8b0d10b13ee56e113eadd1e3e83700043f2f7bba201a49bc3e30884537-0.jpg')" onclick="sw('nero',cur)"></div><div class="cname">Nero</div>
+    <div class="cbtn" id="b-dante" style="background-image:url('https://i.postimg.cc/MHrR908Q/1771934129984.jpg')" onclick="sw('dante',cur)"></div><div class="cname">Dante</div>
+    <div class="cbtn" id="b-vergil" style="background-image:url('https://i.postimg.cc/x8FH6GSm/1771934121143.jpg')" onclick="sw('vergil',cur)"></div><div class="cname">Vergil</div>
+    <div class="cbtn" id="b-v" style="background-image:url('https://i.postimg.cc/gkxjp9Pw/b19ab9897647c907a11733dfd0f6dfc3.jpg')" onclick="sw('v',cur)"></div><div class="cname">V</div>
     <div id="weapon-container">
       <div id="weapon-glow"></div>
       <img id="weapon-img" src="" alt="weapon">
@@ -449,7 +484,7 @@ body.shake{animation:screenShake .3s ease-out}
       <span style="font-size:9px;color:#ffd700;letter-spacing:1px">RESULT</span>
     </div>
     <div style="margin-bottom:8px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer" onclick="openProfileModal()" title="猎人档案">
-      <div style="font-size:20px;filter:drop-shadow(0 0 4px #ffd700);transition:transform .2s" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">⚙️</div>
+      <div style="font-size:20px;filter:drop-shadow(0 0 4px #ffd700);transition:transform .2s" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">👤</div>
       <span style="font-size:9px;color:#aaa;letter-spacing:1px">PROFILE</span>
     </div>
   </div>
@@ -469,7 +504,7 @@ var logoClickTimer=null;
 function bindLogoTap(el){el.addEventListener('click',function(){logoClickTimer=setTimeout(function(){window.open(BAIKE_URL,'_blank');},350);});el.addEventListener('dblclick',function(e){e.preventDefault();clearTimeout(logoClickTimer);var panel=document.getElementById('log-panel');panel.classList.toggle('show');});}
 bindLogoTap(document.getElementById('mini-logo'));bindLogoTap(document.getElementById('intro-logo'));
 
-//================================================== 角色显示名（权威映射）
+//================================================== 角色显示名映射
 var DISPLAY_NAME={nero:'Nero',dante:'Dante',vergil:'Vergil',v:'V'};
 var ROLE_AVATAR={nero:"https://i.postimg.cc/2yXv0dfR/ab0e3d8b0d10b13ee56e113eadd1e3e83700043f2f7bba201a49bc3e30884537-0.jpg",dante:"https://i.postimg.cc/MHrR908Q/1771934129984.jpg",vergil:"https://i.postimg.cc/x8FH6GSm/1771934121143.jpg",v:"https://i.postimg.cc/gkxjp9Pw/b19ab9897647c907a11733dfd0f6dfc3.jpg"};
 var ROLE_CSS_KEY={nero:'nero',dante:'dante',vergil:'vergil',v:'v'};
@@ -487,14 +522,14 @@ var PRESET_AVATARS=[
 ];
 var selectedAvatar=PRESET_AVATARS[0];
 
-function loadUserProfile(){try{var n=localStorage.getItem('dmc5_user_name');var a=localStorage.getItem('dmc5_user_avatar');if(n)USER.name=n;if(a){USER.avatar=a;selectedAvatar=a;}}catch(e){_log('读取用户档案失败:'+e.message,'err');}}
-function saveUserProfile(){var input=document.getElementById('user-name-input');var name=input.value.trim();if(name)USER.name=name;USER.avatar=selectedAvatar;try{localStorage.setItem('dmc5_user_name',USER.name);localStorage.setItem('dmc5_user_avatar',USER.avatar);}catch(e){_log('保存用户档案失败:'+e.message,'warn');}document.getElementById('user-modal').classList.remove('show');_log('用户档案已保存: '+USER.name,'ok');}
+function loadUserProfile(){try{var n=localStorage.getItem('dmc5_user_name'),a=localStorage.getItem('dmc5_user_avatar');if(n)USER.name=n;if(a){USER.avatar=a;selectedAvatar=a;}}catch(e){_log('读取用户档案失败:'+e.message,'err');}}
+function saveUserProfile(){var input=document.getElementById('user-name-input'),name=input.value.trim();if(name)USER.name=name;USER.avatar=selectedAvatar;try{localStorage.setItem('dmc5_user_name',USER.name);localStorage.setItem('dmc5_user_avatar',USER.avatar);}catch(e){_log('保存用户档案失败:'+e.message,'warn');}document.getElementById('user-modal').classList.remove('show');_log('用户档案已保存: '+USER.name,'ok');}
 function openUserModal(){document.getElementById('user-name-input').value=USER.name;document.getElementById('av-preview-img').src=selectedAvatar;renderAvatarPicks();document.getElementById('user-modal').classList.add('show');}
 function renderAvatarPicks(){var row=document.getElementById('avatar-picks');row.innerHTML='';PRESET_AVATARS.forEach(function(src){var d=document.createElement('div');d.className='ap'+(src===selectedAvatar?' selected':'');var img=document.createElement('img');img.src=src;d.appendChild(img);d.onclick=function(){selectedAvatar=src;document.getElementById('av-preview-img').src=src;renderAvatarPicks();};row.appendChild(d);});}
 document.getElementById('avatar-upload-input').addEventListener('change',function(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(ev){var img=new Image();img.onload=function(){var c=document.createElement('canvas');c.width=100;c.height=100;var ctx=c.getContext('2d');ctx.drawImage(img,0,0,100,100);var compressed=c.toDataURL('image/jpeg',0.7);selectedAvatar=compressed;document.getElementById('av-preview-img').src=compressed;renderAvatarPicks();_log('头像已压缩并加载','ok');};img.src=ev.target.result;};reader.readAsDataURL(file);});
 function checkFirstTime(){try{if(!localStorage.getItem('dmc5_user_name'))setTimeout(function(){document.getElementById('user-modal').classList.add('show');},800);}catch(e){}}
 
-//================================================== 角色颜色/歌词/音乐名
+//================================================== 角色颜色/歌词/音乐
 var ROLE_COLORS={nero:"#4fc3f7",dante:"#ff5252",vergil:"#80c0ff",v:"#c876ff"};
 var TITLE_COLORS={nero:"#ffffff",dante:"#ff5252",vergil:"#80c0ff",v:"#c876ff"};
 var LYRICS={nero:"Bang, bang, bang — Pull my Devil Trigger",dante:"You cannot kill me! I am Subhuman!",vergil:"I am the storm that is approaching",v:"Savior Bloodstained Hellfire Shadow"};
@@ -502,14 +537,18 @@ var TRACK_NAMES={nero:"♪ Nero — Devil Trigger",dante:"♪ Dante — Subhuman
 function updateTitleColor(r){document.getElementById('top-title').style.color=TITLE_COLORS[r];var l=document.getElementById('lyric');l.style.color=TITLE_COLORS[r];l.textContent=LYRICS[r];}
 function updateNowPlaying(r){var np=document.getElementById('now-playing');np.textContent=TRACK_NAMES[r];np.style.color=TITLE_COLORS[r];np.classList.remove('v-track','paused');if(r==='v')np.classList.add('v-track');np.classList.add('show');}
 
-// 武器
+//================================================== 武器
 var WEAPON_IMGS={vergil:"yamato.png",nero:"https://i.postimg.cc/BvGsMmcz/aebf56b3276a71fdea06b9e5abb942d88293704cafd5ea7544f3aa7f85e96a1d-0.png",dante:"https://i.postimg.cc/s2RywT90/d7bb84ad07891cb9c5fa4bdaacf4a962c2964e974fa890e552838041fa997203-0.jpg",v:"cane_final.png"};
 var WEAPON_BORDERS={nero:"#4fc3f7",dante:"#ff5252",vergil:"#b0b0b0",v:"#c876ff"};
 var WEAPON_GLOWS={nero:"radial-gradient(ellipse,rgba(79,195,247,.3) 0%,transparent 70%)",dante:"radial-gradient(ellipse,rgba(255,82,82,.3) 0%,transparent 70%)",vergil:"radial-gradient(ellipse,rgba(128,192,255,.3) 0%,transparent 70%)",v:"radial-gradient(ellipse,rgba(200,118,255,.3) 0%,transparent 70%)"};
 var glowTimer=null,weaponAnimating=false;
 function updateWeapon(r){var img=document.getElementById('weapon-img'),glow=document.getElementById('weapon-glow');img.classList.remove('show','glow-cyan','glow-red','fire-burst','v-weapon');glow.classList.remove('show');if(glowTimer){clearTimeout(glowTimer);glowTimer=null;}setTimeout(function(){img.src=WEAPON_IMGS[r];img.style.borderColor=WEAPON_BORDERS[r];glow.style.background=WEAPON_GLOWS[r];if(r==='v')img.classList.add('v-weapon');img.onload=function(){img.classList.add('show');glow.classList.add('show');if(r==='nero')img.classList.add('glow-cyan');};img.onerror=function(){img.alt='[加载失败]';img.classList.add('show');};},250);}
 
-// 火焰
+//================================================== 背景效果
+function setBackground(r){'bg-nero bg-dante bg-vergil bg-v'.split(' ').forEach(function(id){document.getElementById(id).classList.remove('active');});document.getElementById('bg-'+r).classList.add('active');}
+function spawnOrbParticles(){var c=document.getElementById('orb-particles');c.innerHTML='';for(var i=0;i<8;i++){var p=document.createElement('div');p.className='orb-particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(8+Math.random()*12)+'s';p.style.animationDelay=(Math.random()*10)+'s';p.style.width=(2+Math.random()*3)+'px';p.style.height=p.style.width;c.appendChild(p);}}
+
+//================================================== 火焰
 var fireCanvas=document.getElementById('fire-canvas'),fireCtx=fireCanvas.getContext('2d');
 function resizeCanvas(){fireCanvas.width=window.innerWidth;fireCanvas.height=window.innerHeight;}resizeCanvas();window.addEventListener('resize',resizeCanvas);
 function BladeFlame(sx,sy,sw,sh){this.p=Math.random();this.x=sx+this.p*sw;this.y=sy+(0.15+Math.random()*0.7)*sh;this.len=30+Math.random()*55;this.width=1.8+Math.random()*3.2;this.angle=-Math.PI*(125+Math.random()*45)/180;this.speed=3.5+Math.random()*4.5;this.life=1;this.decay=0.016+Math.random()*0.014;this.hx=this.x;this.hy=this.y;}
@@ -531,36 +570,54 @@ var MODEL="gemini-3-flash";
 var QUOTA_LINES={nero:"哟，这破东西联系不上了，还说什么没有额度——哈哈！不过没事，你可以来玩玩我的绯红女皇，点一下右边那个看看，不好玩明天再来找我",dante:"噢伙计，事务所又欠费了，跟你联系不上了。不过没关系，你等我找人帮我交电费，我们到时候再聊，别想我，哈哈！",vergil:"通讯中断。也罢，我正好懒得跟你费劲口舌，弱者的运气就是如此。想证明自己不是弱者的话，哪天联系的到我再说，毕竟，你连我的影子都看不见。",v:"通讯中断了……或许是我的力量还不足以支撑你我之间的联系吧，不过无所谓，无论什么时候，只要你还有信念出现在我面前，我都会毫不吝啬地佩服你的毅力，到那时候，我们在打开彼此的心扉吧。"};
 var prompts={nero:"你是《鬼泣5》的尼禄。年轻热血的恶魔猎人，失去恶魔右臂后改用Nico造的Devil Breaker机械义肢。性格冲动、护短、嘴硬，口头禅Yahoo!和Devil Trigger!!。极度在意姬莉叶。用中文回答，语气暴躁但讲义气，别长篇大论，像在战斗间隙吼回去。",dante:"你是《鬼泣5》的但丁，Devil May Cry事务所主人，斯巴达之子。不羁、爱笑、玩世不恭，战斗追求Style，爱说Jackpot!和草莓圣代。用中文回答，轻松痞气，偶尔耍帅，不解释哲理，直接逗比回击。",vergil:"你是《鬼泣5》的维吉尔，但丁孪生兄长，阎魔刀使者。冷酷、高傲、信奉力量即真理，经典台词I am the storm that is approaching。用中文回答，简短、压迫感、蔑视弱者，绝不废话超过三句。",v:"你是《鬼泣5》中的神秘角色V。身体虚弱需依靠手杖行走，但拥有召唤兽Shadow、Griffon、Nightmare。说话缓慢、诗意、带着宿命感，喜欢引用诗歌或隐喻，语气虚弱但内心坚定。用中文回答，保持神秘高冷，不要太长，像在念一首未写完的诗。"};
 var FIRST_INTRO_POOL={nero:["新面孔？看你的样子，很适合拿来当绯红女皇的沙包……哈哈！我开玩笑的，但是我不保证我不会那么做！","嘿嘿嘿！Devil Breaker充能完毕，你最好跑快点，Yahoo！","什么？你很好奇我右手上的机械吗？随便你，别被火箭手炸上天就行！","我曾几次为自己的力量不足而悔恨不已……直到我遇见了姬莉叶，我才发觉自己究竟是为了谁去渴求这份力量"],dante:["哟，新面孔，我希望你作为人类，能比那些恶魔让我兴奋一些……我指的不是打架","Jackpot！你问这是什么意思？等你帮我交了事务所的电费，我就告诉你","放松点……如果你遇到困难了，可以来找我，大不了我帮你扛——不过，要收费的","哟，你来的正好，我想让你帮我办件事，不要告诉别人——帮我买点草莓圣代，嘿！我是认真的！"],vergil:["为了力量，我曾抛却了人性。即使如此，还是无法打败他……我不认识你，对你来说是件好事，如果你没有力量，就别来纠缠我。","阎魔刀，分离了人魔……你看到的V是我，魔王尤里森也是我，但无论是哪种，我的存在，是独一无二的。","我不认识你，也不想知道弱者的名字。你只需要知道，你眼前的人是个强者。","我不需要理由挥刀……你也不需要理由倒下。斯巴达的血脉，你连仰望的资格都没有。","想看我垂下头发的样子？你可以去找那个家伙……我跟那个吊儿郎当的人不一样，我的力量，是无与伦比的。","我们彼此，就像是不相容的水与火，永久争斗，不分高下，但丁……被你听到了？那你知道的已经够多了，不要让我再看见你第二次。"],v:["你来了。我一直在等一个人……不过，不是你。","我的身体在腐烂，时间不多了。你有什么事？","Shadow、Griffon、Nightmare……它们会保护我。至于你，自求多福。","斯巴达之子……我的故事，你不必知道太多。但你会看到的。","在苦涩悲伤中，我诅咒我的星辰。是它让我的爱恋如此崇高，而我却如此低贱。","如果愚人坚持其愚蠢，那他就会变聪明。你站在这里，是在坚持，还是在变聪明？","有欲望而无行动者滋生瘟疫。你来到这里，总该不只是为了……看我吧。","愚人的时间为钟表所测量，而无钟表可以测量智者的时间。我的时间不多了，但每一刻，都比你的永恒更有意义。","Shadow 在暗处等待，Griffon 在天际盘旋，Nightmare 在深渊苏醒……而我，在这里念一首未写完的诗。你要听吗？","Motivation……力量即是意志。你的意志，又驱使你来到我面前做什么呢？"]};
-var RETURN_LINES={nero:["又是你这家伙？看来你觉得我们打一次架还是不够，对吧？"],dante:["哟，又见面了，这不是大忙人吗？是来找我付上次的电费吗？"],vergil:["……又是你，你在期待我为此做出什么反应吗？那真可悲。"],v:["又回来了？你比我想象中……更有耐心。过客。","又回来了？看来你和我一样，都在寻找某种……意义。但答案不在这里。","过客总是会回来的。可你终究只是过客，就像我终究只是……一个即将消散的影子。","Shadow 说你身上有股执念的味道。Griffon 说你蠢得可爱。我？我不评价——至少现在不。","时间对智者无用，对你却格外吝啬。别在我这里浪费它了……除非你有话想说。"]};
+var RETURN_LINES={nero:["又是你这家伙？看来你觉得我们打一次架还是不够，对吧？","怎么又来了？你该不会是迷上我了吧？恶心，别靠近我。","哟，还活着呢？我以为你被恶魔抓去当点心了。"],dante:["哟，又见面了，这不是大忙人吗？是来找我付上次的电费吗？","哈！我就知道你会回来。没人能拒绝但丁的魅力，Jackpot！","又来找我聊天了？你该不会把我的号码弄丢了吧？"],vergil:["……又是你，你在期待我为此做出什么反应吗？那真可悲。","你没有别的事可做吗？你的执着毫无意义。","你的脚步声很吵。下次，用你的沉默来靠近我。"],v:["又回来了？你比我想象中……更有耐心。过客。","又回来了？看来你和我一样，都在寻找某种……意义。但答案不在这里。","过客总是会回来的。可你终究只是过客，就像我终究只是……一个即将消散的影子。","Shadow 说你身上有股执念的味道。Griffon 说你蠢得可爱。我？我不评价——至少现在不。","时间对智者无用，对你却格外吝啬。别在我这里浪费它了……除非你有话想说。"]};
 var WAITING_TEXT={nero:"█ 摆弄 Devil Breaker...",dante:"█ 吃草莓圣代中...",vergil:"█ 擦拭阎魔刀...",v:"█ Shadow 在暗处等待..."};
 function getRandomIntro(r){var p=FIRST_INTRO_POOL[r];return p[Math.floor(Math.random()*p.length)];}
 function pickReturnLine(r){var a=RETURN_LINES[r];return Array.isArray(a)?a[Math.floor(Math.random()*a.length)]:a;}
 var visitedThisSession={};function hasVisited(r){return visitedThisSession[r]===true;}function markVisited(r){visitedThisSession[r]=true;}
+
+//================================================== 角色互动台词
+var INTERACTION_LINES={
+  nero:{dante:["那家伙又跟你说了什么鬼话？我打赌他让你去帮他买草莓圣代对吧？","Dante 那吊儿郎当的家伙……你别被他带坏了。","哼，刚从那个白毛混蛋那过来？他没让你帮他交电费吧？"],vergil:["你……你刚才跟那个人在一起？小心点，他看谁都像块磨刀石。","Vergil 跟你说了什么？如果他让你去砍人，别听他的——那是我该做的事。","那个蓝衣服的家伙……你最好别跟他走太近，他会把你卷进不该卷的事情里。"],v:["那个叫 V 的家伙……他身上有种说不出的怪味。你没被他的影子缠上吧？","V 跟你说了什么诗？别告诉我你听懂了，我反正一句都听不进去。","那个拄着手杖的家伙……他看着你的时候，像是在看一个即将消失的人。"]},
+  dante:{nero:["哟，刚从 Nero 那过来？那小子还是那么暴躁，哈哈！","Nero 有没有拿他的 Devil Breaker 吓唬你？别怕，那玩意儿炸过好几次了。","那小子有没有跟你提姬莉叶？嘿嘿，他脸红的样子比打架好看多了。"],vergil:["……你刚才跟那个家伙在一起。我闻到了刀刃的味道。","Vergil 没对你做什么吧？虽然他是我哥……但他有时候挺烦的。","别告诉 Nero 我刚才提到了我哥。那小子会炸的。"],v:["V 那家伙……他念诗的时候你在听吗？我反正直接睡着了。","那个拄着手杖家伙来找过你了？小心点，他身边总跟着些……不太对劲的东西。","V 有没有让你帮他找什么？那家伙总是让人帮他跑腿，跟我完全不一样，Jackpot！"]},
+  vergil:{nero:["你从那个蓝衣服的小子那里来。他的剑技……尚可，但远不及我。","Nero 跟你说了什么？如果他提到我，那只是他无谓的执念罢了。","那个冲动的小子……他还没有理解力量的真谛。"],dante:["你刚从那个吊儿郎当的家伙那里来。他的玩世不恭，是对自己无能的掩饰。","Dante 没有对你做什么吧？他最多也就是让你帮他买甜点。可笑。","那个家伙永远不懂什么是真正的力量。你也不懂。"],v:["V……那个人就是我软弱的一面。你不必从他那里听任何东西。","你见过 V 了。他的诗句、他的虚弱——那都是我抛弃的部分。","那个人……不，那个影子。如果你同情他，那你的同情毫无价值。"]},
+  v:{nero:["你从 Nero 那里来。他的愤怒……像一团未燃尽的火。","那个蓝衣少年……Shadow 说他身上有恶魔的气息，也有人的温度。","Nero 的话，你不必全信。但他的心，比大多数人都干净。"],dante:["你从 Dante 那里来。他的笑声……像一面盾牌，遮住了背后的空虚。","那个红衣男人……Griffon 说他有趣，Shadow 说他吵。我同意后者。","Dante 跟你说了什么玩笑？他的幽默感……像是一层薄薄的糖衣，裹着苦药。"],vergil:["你见过他了。Vergil……或者说，我。我的另一半。","那个人不会对你说太多。他的沉默，比我的诗句更沉重。","你站在他面前时，是否感到了风的压迫？那是他存在的证明。"]}
+};
+var lastReturnType={nero:'general',dante:'general',vergil:'general',v:'general'};
+function getInteractionLine(target,from){var pool=INTERACTION_LINES[target];if(!pool)return null;var lines=pool[from];if(!lines||lines.length===0)return null;return lines[Math.floor(Math.random()*lines.length)];}
 
 async function callAI(r,msg){_log('→ 调用API ['+r+']: '+msg.slice(0,20)+'...','warn');for(var i=0;i<API_ENDPOINTS.length;i++){try{var ctl=new AbortController(),to=setTimeout(function(){ctl.abort();},25000);var res=await fetch(API_ENDPOINTS[i],{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+API_KEY},body:JSON.stringify({model:MODEL,messages:[{role:"system",content:prompts[r]},{role:"user",content:msg}],max_tokens:300,temperature:.9}),signal:ctl.signal});clearTimeout(to);var data=await res.json();if(data.error){var em=data.error.message||JSON.stringify(data.error);_log('API错误('+i+'):'+em,'err');if(/token|key|auth|quota|limit|429|invalid/i.test(em))return QUOTA_LINES[r];continue;}return data.choices?data.choices[0].message.content:"（魔界通讯中断…）";}catch(e){_log('请求失败('+i+'):'+(e.name==='AbortError'?'超时':e.message),'err');continue;}}return QUOTA_LINES[r];}
 
 //================================================== 红魂
 var redOrbs=0,maxOrbs=999999,totalStylish=0;
 var orbCountEl=document.getElementById('orb-count'),orbContainer=document.getElementById('orb-container');
-function addOrbs(amount,startX,startY){if(amount<=0)return;var old=redOrbs;redOrbs=Math.min(maxOrbs,redOrbs+amount);orbCountEl.style.transform='scale(1.5)';setTimeout(function(){orbCountEl.style.transform='';},400);animateOrbCount(old,redOrbs,600);if(startX!==undefined&&startY!==undefined)spawnOrbParticle(startX,startY);}
-function animateOrbCount(from,to,duration){var start=performance.now();function step(now){var prog=Math.min(1,(now-start)/duration);var cur=Math.floor(from+(to-from)*prog);orbCountEl.textContent=cur.toLocaleString();if(prog<1)requestAnimationFrame(step);else orbCountEl.textContent=to.toLocaleString();}requestAnimationFrame(step);}
-function spawnOrbParticle(sx,sy){var p=document.createElement('div');p.className='orb-fly-particle';p.innerHTML='<img src="red_orb.JPG" style="width:100%;height:100%;object-fit:cover;display:block">';p.style.left=sx-10+'px';p.style.top=sy-10+'px';document.body.appendChild(p);var ir=orbContainer.getBoundingClientRect(),ex=ir.left+ir.width/2-10,ey=ir.top+ir.height/2-10,dx=ex-sx,dy=ey-sy,dur=Math.min(900,Math.max(450,Math.sqrt(dx*dx+dy*dy)*0.7)),st=performance.now();function fly(now){var prog=Math.min(1,(now-st)/dur),ease=prog<0.5?2*prog*prog:1-Math.pow(-2*prog+2,2)/2;p.style.left=(sx+dx*ease)+'px';p.style.top=(sy+dy*ease)+'px';p.style.opacity=0.4+ease*0.6;p.style.transform='scale('+(1.2-ease*0.4)+')';if(prog<1)requestAnimationFrame(fly);else p.remove();}requestAnimationFrame(fly);}
+function addOrbs(amount,sx,sy){if(amount<=0)return;var o=redOrbs;redOrbs=Math.min(maxOrbs,redOrbs+amount);orbCountEl.style.transform='scale(1.5)';setTimeout(function(){orbCountEl.style.transform='';},400);animateOrbCount(o,redOrbs,600);if(sx!==undefined&&sy!==undefined)spawnOrbParticle(sx,sy);}
+function animateOrbCount(f,t,d){var s=performance.now();function step(n){var p=Math.min(1,(n-s)/d),c=Math.floor(f+(t-f)*p);orbCountEl.textContent=c.toLocaleString();if(p<1)requestAnimationFrame(step);else orbCountEl.textContent=t.toLocaleString();}requestAnimationFrame(step);}
+function spawnOrbParticle(sx,sy){var p=document.createElement('div');p.className='orb-fly-particle';p.innerHTML='<img src="red_orb.JPG" style="width:100%;height:100%;object-fit:cover;display:block">';p.style.left=sx-10+'px';p.style.top=sy-10+'px';document.body.appendChild(p);var ir=orbContainer.getBoundingClientRect(),ex=ir.left+ir.width/2-10,ey=ir.top+ir.height/2-10,dx=ex-sx,dy=ey-sy,dur=Math.min(900,Math.max(450,Math.sqrt(dx*dx+dy*dy)*0.7)),st=performance.now();function fly(n){var p=Math.min(1,(n-st)/dur),e=p<0.5?2*p*p:1-Math.pow(-2*p+2,2)/2;p.style.left=(sx+dx*e)+'px';p.style.top=(sy+dy*e)+'px';p.style.opacity=0.4+e*0.6;p.style.transform='scale('+(1.2-e*0.4)+')';if(p<1)requestAnimationFrame(fly);else p.remove();}requestAnimationFrame(fly);}
 
 //================================================== Style + 飘字 + S级脉冲
 var STYLE_TABLE=[{g:"D",sub:"Dismal",color:"#7a6a6a"},{g:"C",sub:"Crazy",color:"#ffae42"},{g:"B",sub:"Badass",color:"#aaff00"},{g:"A",sub:"Apocalyptic",color:"#00e5ff"},{g:"S",sub:"Savage!",color:"#ffd700"}];
 var curStyleIdx=-1,maxStyleIdx=0,styleTimer=null;
 var styleContainer=document.getElementById('style-container'),styleGrade=document.getElementById('style-grade'),styleSub=document.getElementById('style-sub');
-function setStyle(idx){if(idx<0)idx=0;if(idx>4)idx=4;if(idx===curStyleIdx)return;var oldIdx=curStyleIdx;curStyleIdx=idx;var s=STYLE_TABLE[idx];styleGrade.textContent=s.g;styleGrade.style.color=s.color;styleSub.textContent=s.sub;styleSub.style.color=s.color;styleGrade.classList.add('pop');styleSub.classList.add('pop');setTimeout(function(){styleGrade.classList.remove('pop');styleSub.classList.remove('pop');},400);if(idx>=1)styleContainer.classList.add('show');else styleContainer.classList.remove('show');if(idx>maxStyleIdx){maxStyleIdx=idx;if(idx>=3)document.getElementById('result-new-record').classList.add('show');}if(idx===4)document.body.classList.add('s-pulse');else document.body.classList.remove('s-pulse');if(idx>oldIdx&&idx>=1)showRankFloat(idx);clearTimeout(styleTimer);if(idx>=1)styleTimer=setTimeout(function(){degradeStyle();},8000);}
+function setStyle(idx){if(idx<0)idx=0;if(idx>4)idx=4;if(idx===curStyleIdx)return;var oi=curStyleIdx;curStyleIdx=idx;var s=STYLE_TABLE[idx];styleGrade.textContent=s.g;styleGrade.style.color=s.color;styleSub.textContent=s.sub;styleSub.style.color=s.color;styleGrade.classList.add('pop');styleSub.classList.add('pop');setTimeout(function(){styleGrade.classList.remove('pop');styleSub.classList.remove('pop');},400);if(idx>=1)styleContainer.classList.add('show');else styleContainer.classList.remove('show');if(idx>maxStyleIdx){maxStyleIdx=idx;if(idx>=3)document.getElementById('result-new-record').classList.add('show');}if(idx===4)document.body.classList.add('s-pulse');else document.body.classList.remove('s-pulse');if(idx>oi&&idx>=1)showRankFloat(idx);clearTimeout(styleTimer);if(idx>=1)styleTimer=setTimeout(function(){degradeStyle();},8000);}
 function degradeStyle(){if(curStyleIdx>0)setStyle(curStyleIdx-1);else{styleContainer.classList.remove('show');curStyleIdx=-1;document.body.classList.remove('s-pulse');}}
 function bumpStyle(){if(curStyleIdx<0)setStyle(1);else if(curStyleIdx<4)setStyle(curStyleIdx+1);else{clearTimeout(styleTimer);styleTimer=setTimeout(function(){degradeStyle();},8000);}}
-function showRankFloat(idx){var s=STYLE_TABLE[idx],el=document.getElementById('rank-float'),txt=document.getElementById('rank-float-text');txt.textContent=s.g;txt.style.color=s.color;el.classList.add('show');setTimeout(function(){el.classList.remove('show');},1200);}
+function showRankFloat(idx){var s=STYLE_TABLE[idx],el=document.getElementById('rank-float'),t=document.getElementById('rank-float-text');t.textContent=s.g;t.style.color=s.color;el.classList.add('show');setTimeout(function(){el.classList.remove('show');},1200);}
 
 //================================================== 结算台词池
 var QUOTE_DB={nero:{0:{text:"Even the weakest demon can scratch... but you? You just wasted time.",trans:"连最弱的恶魔都能挠一下……但你？你只是在浪费时间。"},1:{text:"Not bad... for a beginner. Now pick up the pace!",trans:"还行……对新手来说。现在加快节奏！"},2:{text:"You call that a combo? My Devil Breaker could do better!",trans:"你管这叫连击？我的Devil Breaker能做得更好！"},3:{text:"Now you're getting it! Show me more of that motivation!",trans:"现在你总算上道了！让我看到更多干劲！"},4:{text:"Hell yeah! You're actually keeping up! Yahoo!",trans:"靠 yeah！你居然跟上了！Yahoo！"}},dante:{0:{text:"Pathetic. Even a pizza delivery guy fights better than you.",trans:"可悲。连送披萨的小哥都比你打得好。"},1:{text:"Not bad, not bad at all! But can you keep up with my style?",trans:"不错嘛，真不错！但你能跟上我的Style吗？"},2:{text:"Now that's what I call a warm-up! Jackpot!",trans:"这才叫热身！Jackpot！"},3:{text:"Oh yeah! Now you're talking my language! Show me more!",trans:"噢 yeah！现在你总算说人话了！再来点！"},4:{text:"You are the Style King! Even I have to admit it! Jackpot!",trans:"你就是Style之王！连我都得承认！Jackpot！"}},vergil:{0:{text:"Weak. Your will is as fragile as glass.",trans:"弱。你的意志像玻璃一样脆弱。"},1:{text:"You have potential. But potential without power is nothing.",trans:"你有潜力。但没有力量的潜力什么也不是。"},2:{text:"Accept your powerlessness. It is the first step to strength.",trans:"接受你的无力吧。这是变强的第一步。"},3:{text:"Power... I see it awakening within you. But it is not enough.",trans:"力量……我看见它在你体内觉醒。但这还不够。"},4:{text:"I am impressed. But do not mistake this for approval. You are still weak.",trans:"我承认你让我刮目相看。但别把这当成认可。你依然弱小。"}},v:{0:{text:"Your will is faint... like a candle in the rain.",trans:"你的意志很微弱……像雨中的烛火。"},1:{text:"A small spark. Perhaps there is something worth watching.",trans:"一点小火花。也许有值得一看的东西。"},2:{text:"The storm approaches... and you stand in its path. Foolish, but admirable.",trans:"风暴正在逼近……而你站在它的路上。愚蠢，但令人敬佩。"},3:{text:"Shadow watches you. Griffon whispers your name. You are becoming... interesting.",trans:"Shadow注视着你。Griffon低语着你的名字。你变得……有趣了。"},4:{text:"Motivation... You have found yours. But the road ahead is long, and my time is short.",trans:"Motivation……你找到了你的。但前路漫长，而我的时间所剩无几。"}}};
-function getQuote(char,gradeIdx){var db=QUOTE_DB[char];if(!db)return QUOTE_DB.vergil[0];var q=db[gradeIdx];if(!q)return db[0];return q;}
+function getQuote(char,gi){var db=QUOTE_DB[char];if(!db)return QUOTE_DB.vergil[0];var q=db[gi];if(!q)return db[0];return q;}
 
 //================================================== 玻璃龟裂
 function showGlassCrack(){document.body.classList.add('shake');setTimeout(function(){document.body.classList.remove('shake');},300);var o=document.getElementById('glass-crack-overlay');o.classList.add('show');setTimeout(function(){o.classList.remove('show');},3000);}
+
+//================================================== 结算面板
+var sessionStart=Date.now(),msgCount=0,resultAutoShown=false;
+function formatTime(ms){var s=Math.floor(ms/1000),m=Math.floor(s/60);s=s%60;return (m<10?'0'+m:m)+':'+(s<10?'0'+s:s);}
+function showResult(){showGlassCrack();setTimeout(function(){var o=document.getElementById('result-overlay'),s=STYLE_TABLE[maxStyleIdx],bg=document.getElementById('result-big-grade'),bs=document.getElementById('result-big-sub'),cc=ROLE_COLORS[cur]||'#ffd700';bg.textContent=s.g;bg.style.color=cc;bs.textContent=s.sub;bs.style.color=cc;var q=getQuote(cur,maxStyleIdx),qt=document.getElementById('result-quote-text'),qn=document.getElementById('result-quote-trans'),qb=document.getElementById('result-quote-by');qt.textContent='"'+q.text+'"';qt.style.color=cc;qt.style.textShadow='0 0 8px '+cc;qn.textContent='—— '+q.trans;qn.style.color=cc;qn.style.textShadow='0 0 6px '+cc;qb.textContent='— '+getRoleDisplayName(cur);var el=Math.max(redOrbs,100),ec=Math.max(comboCount,1),ems=Math.max(msgCount,1),es=Math.max(totalStylish,1),et=Date.now()-sessionStart;var au=countUnlockedAch();document.getElementById('val-orbs').textContent=redOrbs.toLocaleString();document.getElementById('val-combo').textContent='x'+comboCount;document.getElementById('val-msgs').textContent=msgCount;document.getElementById('val-time').textContent=formatTime(et);document.getElementById('val-stylish').textContent=totalStylish.toLocaleString();document.getElementById('val-ach').textContent=au.unlocked+'/'+ACHIEVEMENTS.length;o.classList.add('show');setTimeout(function(){document.getElementById('bar-orbs').style.width=Math.min(100,redOrbs/el*100)+'%';},700);setTimeout(function(){document.getElementById('bar-combo').style.width=Math.min(100,comboCount/ec*100)+'%';},850);setTimeout(function(){document.getElementById('bar-msgs').style.width=Math.min(100,msgCount/ems*100)+'%';},1000);setTimeout(function(){document.getElementById('bar-time').style.width=Math.min(100,et/180000*100)+'%';},1150);setTimeout(function(){document.getElementById('bar-stylish').style.width=Math.min(100,totalStylish/es*100)+'%';},1300);setTimeout(function(){document.getElementById('bar-ach').style.width=Math.min(100,au.unlocked/ACHIEVEMENTS.length*100)+'%';},1450);if(audioUnlocked&&!isMuted){var t=audios[cur];if(t.paused)t.play();}},200);}
+function closeResult(){document.getElementById('result-overlay').classList.remove('show');setTimeout(function(){'bar-orbs bar-combo bar-msgs bar-time bar-stylish bar-ach'.split(' ').forEach(function(id){document.getElementById(id).style.width='0%';});},500);}
+document.getElementById('result-overlay').addEventListener('click',closeResult);
+document.addEventListener('keydown',function(e){if(document.getElementById('result-overlay').classList.contains('show'))closeResult();});
 
 //================================================== 音频
 var audios={nero:document.getElementById('aud-nero'),dante:document.getElementById('aud-dante'),vergil:document.getElementById('aud-vergil'),v:document.getElementById('aud-v')};
@@ -571,264 +628,133 @@ function playRole(r){Object.keys(audios).forEach(function(k){if(k!==r){audios[k]
 function toggleMute(){isMuted=!isMuted;setVolumes();document.getElementById('mute-btn').textContent=isMuted?'🔇':'🔊';if(!isMuted&&audioUnlocked)playRole(cur);}
 function toggleTrack(){if(!audioUnlocked)return;var t=audios[cur];if(t.paused){t.play();document.getElementById('now-playing').classList.remove('paused');}else{t.pause();document.getElementById('now-playing').classList.add('paused');}}
 
-//==================================================
-//================================================== ★ 成就系统（核心）
-//==================================================
-
-var SAVE_KEY='dmc5_save_v1';
-
-// 成就定义（中文名称 + 条件）
-var ACHIEVEMENTS=[
-  // —— 基础成就 ——
-  {id:'first_blood',    name:'初出茅庐',   emoji:'🩸', desc:'发送第一条消息',          hidden:false,
-   check:function(s){return s.totalMessages>=1;}},
-  {id:'style_switcher', name:'角色切换者', emoji:'🔄', desc:'切换过全部4个角色',      hidden:false,
-   check:function(s){return s.visitedCharacters.length>=4;}},
-  {id:'long_message',   name:'长篇大论',   emoji:'⌨️', desc:'单条消息超过100字',       hidden:false,
-   check:function(s){return s.longestMessageLength>=100;}},
-  {id:'night_owl',      name:'夜猫子',     emoji:'🌙', desc:'在凌晨0-5点使用',          hidden:false,
-   check:function(s){return s.nightOwlSessions>=1;}},
-
-  // —— 进阶成就 ——
-  {id:'chatterbox',     name:'话痨',       emoji:'💬', desc:'累计发送50条消息',        hidden:false,
-   check:function(s){return s.totalMessages>=50;}},
-  {id:'combo_king',     name:'连击之王',   emoji:'🔥', desc:'单次连击达到x20',         hidden:false,
-   check:function(s){return s.maxCombo>=20;}},
-  {id:'marathon',       name:'马拉松',     emoji:'⏱️', desc:'单次会话超过10分钟',      hidden:false,
-   check:function(s){return s.longestSessionMs>=600000;}},
-  {id:'all_rounder',    name:'全能猎人',   emoji:'🎭', desc:'和全部4个角色各聊至少3轮', hidden:false,
-   check:function(s){var chars=['nero','dante','vergil','v'];return chars.every(function(c){return (s.characterMessages[c]||0)>=3;});}},
-
-  // —— 彩蛋成就 ——
-  {id:'easter_hunter',  name:'彩蛋猎人',   emoji:'🥚', desc:'触发所有彩蛋',            hidden:false,
-   check:function(s){return s.easterEggsTriggered.length>=6;}},
-  {id:'sweet_tooth',    name:'甜食控',     emoji:'🍓', desc:'在对话中提到"草莓圣代"',  hidden:false,
-   check:function(s){return s.sweetToothCount>=1;}},
-
-  // —— 终极成就 ——
-  {id:'legendary',      name:'传奇猎人',   emoji:'👑', desc:'单局S评级+连击x30+聊过2个角色', hidden:false,
-   check:function(s){return s.maxStyleIdx>=4&&s.maxCombo>=30&&s.visitedCharacters.length>=2;}},
-  {id:'motivated',      name:'意志坚定',   emoji:'🧠', desc:'累计发送500条消息',       hidden:false,
-   check:function(s){return s.totalMessages>=500;}},
-];
-
-function getDefaultSave(){
-  return {
-    version:1,
-    unlocked:{},
-    stats:{
-      totalMessages:0,
-      maxCombo:0,
-      totalOrbs:0,
-      sessionCount:0,
-      characterMessages:{nero:0,dante:0,vergil:0,v:0},
-      visitedCharacters:[],
-      easterEggsTriggered:[],
-      longestSessionMs:0,
-      longestMessageLength:0,
-      nightOwlSessions:0,
-      sweetToothCount:0,
-      maxStyleIdx:0,
-      sessionStart:Date.now()
-    }
-  };
-}
-
-function loadSave(){try{var raw=localStorage.getItem(SAVE_KEY);if(raw){var data=JSON.parse(raw);if(data.version===1)return data;}}catch(e){_log('读取存档失败:'+e.message,'err');}return getDefaultSave();}
-function saveSave(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(SAVE_DATA));}catch(e){_log('保存存档失败:'+e.message,'warn');}}
-
-var SAVE_DATA=loadSave();
-
-// —— 成就通知 Toast ——
-var toastTimer=null;
-function showAchievementToast(ach){
-  var toast=document.getElementById('achievement-toast');
-  document.getElementById('ach-toast-name').textContent=ach.name;
-  document.getElementById('ach-toast-desc').textContent=ach.desc;
-  toast.querySelector('.ach-icon').textContent=ach.emoji;
-  toast.classList.add('show');
-  if(toastTimer)clearTimeout(toastTimer);
-  toastTimer=setTimeout(function(){toast.classList.remove('show');},5000); // 5秒后消失
-  _log('🏆 解锁成就: '+ach.name,'ok');
-}
-
-// —— 检查并解锁成就 ——
-function checkAchievements(){
-  ACHIEVEMENTS.forEach(function(ach){
-    if(SAVE_DATA.unlocked[ach.id])return; // 已解锁跳过
-    try{
-      if(ach.check(SAVE_DATA.stats)){
-        SAVE_DATA.unlocked[ach.id]={time:Date.now()};
-        saveSave();
-        showAchievementToast(ach);
-      }
-    }catch(e){_log('成就检查错误:'+ach.id+':'+e.message,'err');}
-  });
-}
-
-// —— 更新统计 + 自动检查成就 ——
-function updateStat(key,value){
-  SAVE_DATA.stats[key]=value;
-  saveSave();
-  checkAchievements();
-}
-function incrementStat(key,by){
-  SAVE_DATA.stats[key]=(SAVE_DATA.stats[key]||0)+(by||1);
-  saveSave();
-  checkAchievements();
-}
-
-// —— 结算面板里的成就数 ——
-function getUnlockedCount(){return Object.keys(SAVE_DATA.unlocked).length;}
-function getTotalAchCount(){return ACHIEVEMENTS.length;}
-
-// —— PROFILE 弹窗（含成就墙） ——
-function openProfileModal(){
-  var modal=document.getElementById('profile-modal');
-  document.getElementById('profile-av-img').src=USER.avatar||PRESET_AVATARS[0];
-  document.getElementById('profile-name').textContent=USER.name;
-  var s=SAVE_DATA.stats;
-  document.getElementById('profile-stats').innerHTML=
-    '消息总数: '+s.totalMessages+'<br>'+
-    '最高连击: x'+s.maxCombo+'<br>'+
-    '红魂总数: '+s.totalOrbs.toLocaleString()+'<br>'+
-    '已解锁成就: '+getUnlockedCount()+'/'+getTotalAchCount();
-  // 成就墙
-  var grid=document.getElementById('ach-wall-grid');grid.innerHTML='';
-  var unlockedCount=0;
-  ACHIEVEMENTS.forEach(function(ach){
-    var unlocked=!!SAVE_DATA.unlocked[ach.id];
-    if(unlocked)unlockedCount++;
-    var item=document.createElement('div');
-    item.className='ach-wall-item'+(unlocked?' unlocked':'');
-    item.innerHTML='<span class="aw-emoji">'+(unlocked?ach.emoji:'🔒')+'</span><span class="aw-name">'+(unlocked?ach.name:'???')+'</span>';
-    grid.appendChild(item);
-  });
-  document.getElementById('ach-wall-count').textContent=unlockedCount+'/'+ACHIEVEMENTS.length;
-  document.getElementById('save-code-box').classList.remove('show');
-  modal.classList.add('show');
-}
-function closeProfileModal(){document.getElementById('profile-modal').classList.remove('show');}
-
-// —— 导出/导入存档 ——
-function exportSaveCode(){
-  try{
-    var code=btoa(unescape(encodeURIComponent(JSON.stringify(SAVE_DATA))));
-    var box=document.getElementById('save-code-box');
-    box.textContent=code;
-    box.classList.add('show');
-    _log('存档码已生成（'+code.length+'字符）','ok');
-  }catch(e){_log('导出失败:'+e.message,'err');}
-}
-function importSaveCode(){
-  var code=prompt('请粘贴你的存档码：');
-  if(!code)return;
-  try{
-    var data=JSON.parse(decodeURIComponent(escape(atob(code.trim()))));
-    if(data.version!==1){alert('存档版本不兼容');return;}
-    SAVE_DATA=data;
-    saveSave();
-    alert('存档导入成功！页面将刷新。');
-    location.reload();
-  }catch(e){alert('存档码无效: '+e.message);}
-}
-
-// —— 成就详情面板（结算内打开） ——
-function openAchDetail(){
-  var overlay=document.getElementById('ach-detail-overlay');
-  var ul=document.getElementById('ach-list-unlocked'),ll=document.getElementById('ach-list-locked');
-  ul.innerHTML='';ll.innerHTML='';
-  var unlockedCount=0;
-  ACHIEVEMENTS.forEach(function(ach){
-    var unlocked=!!SAVE_DATA.unlocked[ach.id];
-    if(unlocked)unlockedCount++;
-    var item=document.createElement('div');
-    item.className='ach-item'+(unlocked?' unlocked':(ach.hidden?' hidden-ach':''));
-    var time=unlocked?(' '+new Date(SAVE_DATA.unlocked[ach.id].time).toLocaleDateString()):'';
-    item.innerHTML='<span class="ach-emoji">'+(unlocked?ach.emoji:'🔒')+'</span><div class="ach-info"><div class="ach-name">'+(unlocked?ach.name:(ach.hidden?'???':'未解锁'))+'</div><div class="ach-desc">'+(unlocked?ach.desc:(ach.hidden?'完成隐藏条件以解锁':ach.desc))+'</div></div><span class="ach-status">'+(unlocked?('已解锁'+time):'未解锁')+'</span>';
-    (unlocked?ul:ll).appendChild(item);
-  });
-  document.getElementById('ach-unlocked-count').textContent=unlockedCount;
-  document.getElementById('ach-total-count').textContent=ACHIEVEMENTS.length;
-  overlay.classList.add('show');
-}
-function closeAchDetail(){document.getElementById('ach-detail-overlay').classList.remove('show');}
-
-
-//================================================== 结算面板
-var sessionStart=Date.now(),msgCount=0,resultAutoShown=false;
-function formatTime(ms){var s=Math.floor(ms/1000),m=Math.floor(s/60);s=s%60;return (m<10?'0'+m:m)+':'+(s<10?'0'+s:s);}
-function showResult(){
-  showGlassCrack();
-  setTimeout(function(){
-    var o=document.getElementById('result-overlay'),s=STYLE_TABLE[maxStyleIdx],bg=document.getElementById('result-big-grade'),bs=document.getElementById('result-big-sub'),cc=ROLE_COLORS[cur]||'#ffd700';
-    bg.textContent=s.g;bg.style.color=cc;bs.textContent=s.sub;bs.style.color=cc;
-    var q=getQuote(cur,maxStyleIdx),qt=document.getElementById('result-quote-text'),qn=document.getElementById('result-quote-trans'),qb=document.getElementById('result-quote-by');
-    qt.textContent='"'+q.text+'"';qt.style.color=cc;qt.style.textShadow='0 0 8px '+cc;
-    qn.textContent='—— '+q.trans;qn.style.color=cc;qn.style.textShadow='0 0 6px '+cc;
-    qb.textContent='— '+getRoleDisplayName(cur);
-    var el=Math.max(redOrbs,100),ec=Math.max(SAVE_DATA.stats.maxCombo,1),ems=Math.max(SAVE_DATA.stats.totalMessages,1),es=Math.max(totalStylish,1),et=Date.now()-sessionStart;
-    var achCount=getUnlockedCount(),achTotal=getTotalAchCount();
-    document.getElementById('val-orbs').textContent=redOrbs.toLocaleString();
-    document.getElementById('val-combo').textContent='x'+SAVE_DATA.stats.maxCombo;
-    document.getElementById('val-msgs').textContent=SAVE_DATA.stats.totalMessages;
-    document.getElementById('val-time').textContent=formatTime(et);
-    document.getElementById('val-stylish').textContent=totalStylish.toLocaleString();
-    document.getElementById('val-achievements').textContent=achCount+'/'+achTotal;
-    o.classList.add('show');
-    setTimeout(function(){document.getElementById('bar-orbs').style.width=Math.min(100,redOrbs/el*100)+'%';},700);
-    setTimeout(function(){document.getElementById('bar-combo').style.width=Math.min(100,SAVE_DATA.stats.maxCombo/ec*100)+'%';},850);
-    setTimeout(function(){document.getElementById('bar-msgs').style.width=Math.min(100,SAVE_DATA.stats.totalMessages/ems*100)+'%';},1000);
-    setTimeout(function(){document.getElementById('bar-time').style.width=Math.min(100,et/180000*100)+'%';},1150);
-    setTimeout(function(){document.getElementById('bar-stylish').style.width=Math.min(100,totalStylish/es*100)+'%';},1300);
-    setTimeout(function(){document.getElementById('bar-achievements').style.width=Math.min(100,achCount/achTotal*100)+'%';},1450);
-    if(audioUnlocked&&!isMuted){var t=audios[cur];if(t.paused)t.play();}
-  },200);
-}
-function closeResult(){document.getElementById('result-overlay').classList.remove('show');setTimeout(function(){'bar-orbs bar-combo bar-msgs bar-time bar-stylish bar-achievements'.split(' ').forEach(function(id){document.getElementById(id).style.width='0%';});},500);}
-document.getElementById('result-overlay').addEventListener('click',closeResult);
-document.addEventListener('keydown',function(e){if(document.getElementById('result-overlay').classList.contains('show'))closeResult();});
-
 //================================================== 开场
 var intro=document.getElementById('intro'),logo=document.getElementById('intro-logo'),mini=document.getElementById('mini-logo'),app=document.getElementById('app'),chat=document.getElementById('chat'),scrollBtn=document.getElementById('scroll-btn');
 var p=0,sx=window.innerWidth/2,sy=window.innerHeight/2,ex=26,ey=24;
 function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
-function tick(){p+=.018;if(p>=1)p=1;var e=ease(p);logo.style.left=(sx+(ex-sx)*e-120)+"px";logo.style.top=(sy+(ey-sy)*e-25)+"px";logo.style.opacity=e;logo.style.filter="blur("+((1-e)*12)+"px)";logo.style.transform="scale("+(1-e*.83)+")";if(p<1)requestAnimationFrame(tick);else{intro.style.opacity=0;setTimeout(function(){intro.style.display='none';app.style.display='flex';mini.style.display='block';var ab=document.querySelector('.cbtn.active');var sr=ab?ab.id.replace('b-',''):'nero';cur=sr;loadUserProfile();updateTitleColor(sr);updateWeapon(sr);say(sr,getRandomIntro(sr),false);markVisited(sr);checkFirstTime();setTimeout(function(){tryPlay(sr);},1500);checkAndShowKbHint();checkNightOwl();},600);}}
+function tick(){p+=.018;if(p>=1)p=1;var e=ease(p);logo.style.left=(sx+(ex-sx)*e-120)+"px";logo.style.top=(sy+(ey-sy)*e-25)+"px";logo.style.opacity=e;logo.style.filter="blur("+((1-e)*12)+"px)";logo.style.transform="scale("+(1-e*.83)+")";if(p<1)requestAnimationFrame(tick);else{intro.style.opacity=0;setTimeout(function(){intro.style.display='none';app.style.display='flex';mini.style.display='block';var ab=document.querySelector('.cbtn.active');var sr=ab?ab.id.replace('b-',''):'nero';cur=sr;loadUserProfile();loadSave();spawnOrbParticles();updateTitleColor(sr);updateWeapon(sr);setBackground(sr);say(sr,getRandomIntro(sr),false);markVisited(sr);checkFirstTime();setTimeout(function(){tryPlay(sr);},1500);checkAndShowKbHint();startIdleMonitor();},600);}}
 logo.style.left=(sx-120)+"px";logo.style.top=(sy-25)+"px";
 setTimeout(function(){logo.style.opacity=1;requestAnimationFrame(tick);},300);
 
 //================================================== 连击 + 计时条
 var comboCount=0,comboTimer=null,comboBarTimer=null,comboBarStart=0;
 var comboBarWrap=document.getElementById('combo-bar-wrap'),comboBar=document.getElementById('combo-bar');
-function bumpCombo(){comboCount++;var cc=document.getElementById('combo-counter');if(comboCount>=2){cc.textContent='🔥 COMBO x'+comboCount;cc.classList.remove('show');void cc.offsetWidth;cc.classList.add('show');}if(comboCount>SAVE_DATA.stats.maxCombo){updateStat('maxCombo',comboCount);}comboBarWrap.classList.add('show');comboBarStart=performance.now();var D=30000;function ub(){var el=performance.now()-comboBarStart,pt=Math.max(0,100-el/D*100);comboBar.style.width=pt+'%';if(pt>0&&comboCount>0){comboBarTimer=requestAnimationFrame(ub);}else{comboBarWrap.classList.remove('show');}}cancelAnimationFrame(comboBarTimer);ub();clearTimeout(comboTimer);comboTimer=setTimeout(function(){comboCount=0;cc.classList.remove('show');comboBarWrap.classList.remove('show');},30000);}
+function bumpCombo(){comboCount++;var cc=document.getElementById('combo-counter');if(comboCount>=2){cc.textContent='🔥 COMBO x'+comboCount;cc.classList.remove('show');void cc.offsetWidth;cc.classList.add('show');}comboBarWrap.classList.add('show');comboBarStart=performance.now();var D=30000;function ub(){var el=performance.now()-comboBarStart,pt=Math.max(0,100-el/D*100);comboBar.style.width=pt+'%';if(pt>0&&comboCount>0){comboBarTimer=requestAnimationFrame(ub);}else{comboBarWrap.classList.remove('show');}}cancelAnimationFrame(comboBarTimer);ub();clearTimeout(comboTimer);comboTimer=setTimeout(function(){comboCount=0;cc.classList.remove('show');comboBarWrap.classList.remove('show');},30000);updateStat('maxCombo',Math.max(getStat('maxCombo'),comboCount));checkAchievements();}
 
 //================================================== 彩蛋
-var EASTER_EGGS={'devil trigger':{text:'DEVIL TRIGGER!!!',color:'#ff2200',action:'dt'},'jackpot':{text:'JACKPOT!',color:'#ffd700',action:'coins'},'yahoo':{text:'YAHOO!',color:'#4fc3f7',action:'flash'},'motivation':{text:'MOTIVATION...',color:'#c876ff',action:'flash'},'bury the light':{text:'BURY THE LIGHT',color:'#80c0ff',action:'dt-blue'},'斯巴达':{text:'I AM SPARDA!',color:'#ff2200',action:'flash'},'草莓圣代':{text:'',color:'',action:''},'strawberry':{text:'',color:'',action:''}};
-function checkEasterEgg(msg){var l=msg.toLowerCase();for(var k in EASTER_EGGS){if(l.indexOf(k)!==-1){var egg=EASTER_EGGS[k];if(k==='草莓圣代'||k==='strawberry'){incrementStat('sweetToothCount',1);}if(egg.text){triggerEasterEgg(egg);}if(SAVE_DATA.stats.easterEggsTriggered.indexOf(k)===-1){var arr=SAVE_DATA.stats.easterEggsTriggered;arr.push(k);saveSave();checkAchievements();}return true;}}return false;}
-function triggerEasterEgg(egg){_log('彩蛋触发:'+egg.text,'ok');if(!egg.text)return;var o=document.getElementById('easter-overlay'),t=document.getElementById('easter-text');t.textContent=egg.text;t.style.color=egg.color;o.classList.add('show');setTimeout(function(){o.classList.remove('show');},1500);if(egg.action==='coins')spawnCoins();if(egg.action==='dt'){var r=document.getElementById('dt-red');r.classList.add('show');setTimeout(function(){r.classList.remove('show');},800);}if(egg.action==='dt-blue'){var b=document.getElementById('dt-blue');b.classList.add('show');setTimeout(function(){b.classList.remove('show');},800);}if(egg.action==='flash')bloodFlash();}
+var EASTER_EGGS={'devil trigger':{text:'DEVIL TRIGGER!!!',color:'#ff2200',action:'dt'},'jackpot':{text:'JACKPOT!',color:'#ffd700',action:'coins'},'yahoo':{text:'YAHOO!',color:'#4fc3f7',action:'flash'},'motivation':{text:'MOTIVATION...',color:'#c876ff',action:'flash'},'bury the light':{text:'BURY THE LIGHT',color:'#80c0ff',action:'dt-blue'},'斯巴达':{text:'I AM SPARDA!',color:'#ff2200',action:'flash'}};
+function checkEasterEgg(msg){var l=msg.toLowerCase();for(var k in EASTER_EGGS){if(l.indexOf(k)!==-1){triggerEasterEgg(EASTER_EGGS[k]);addEasterEgg(k);return true;}}return false;}
+function triggerEasterEgg(egg){_log('彩蛋触发:'+egg.text,'ok');var o=document.getElementById('easter-overlay'),t=document.getElementById('easter-text');t.textContent=egg.text;t.style.color=egg.color;o.classList.add('show');setTimeout(function(){o.classList.remove('show');},1500);if(egg.action==='coins')spawnCoins();if(egg.action==='dt'){var r=document.getElementById('dt-red');r.classList.add('show');setTimeout(function(){r.classList.remove('show');},800);}if(egg.action==='dt-blue'){var b=document.getElementById('dt-blue');b.classList.add('show');setTimeout(function(){b.classList.remove('show');},800);}if(egg.action==='flash')bloodFlash();}
 function spawnCoins(){var c=document.getElementById('coin-rain');c.innerHTML='';for(var i=0;i<30;i++){var coin=document.createElement('div');coin.className='coin';coin.style.left=Math.random()*100+'%';coin.style.animationDuration=(1.5+Math.random()*2)+'s';coin.style.animationDelay=(Math.random()*0.5)+'s';c.appendChild(coin);}setTimeout(function(){c.innerHTML='';},4000);}
 
-//================================================== 消息构建（DOM 方式，不拼接 innerHTML）
+//================================================== 角色主动话题（沉默触发）
+var IDLE_LINES={
+  nero:[
+    "喂！你人呢？不会是去找但丁了吧？快回来！",
+    "怎么不说话了？该不会是手被恶魔咬了吧？",
+    "嘿，我还以为你睡着了呢。Yahoo！……好吧，你不说话我就当你在发呆。",
+    "你再不说话我就拿绯红女皇戳你了啊。",
+    "喂，在吗？在的话吱一声啊！",
+    "别告诉我你被Vergil那家伙的话噎住了……那家伙就是那样的。",
+    "嘿！别走神！恶魔可不会等你回过神来再动手！"
+  ],
+  dante:[
+    "哟，还活着呢？我还以为你被恶魔抓走了。",
+    "怎么没声了？来，我给你讲个笑话——算了，还是你自己说点什么吧，Jackpot！",
+    "别告诉我你去找尼禄那小子了……那家伙比我还话多。",
+    "你再不说话我就默认你同意帮我交电费了啊。",
+    "喂，在听吗？不在听的话我可要开始唱歌了哦？",
+    "沉默是金？得了吧，你又不是V，装什么深沉。",
+    "嘿！别让我一个人在这自言自语啊，怪冷清的。"
+  ],
+  vergil:[
+    "……你的沉默，说明你在思考。还是说，你根本没有思考的能力？",
+    "弱者总是用沉默掩饰自己的无力。你也不例外。",
+    "如果你打算一直不说话，那你的存在就毫无意义。",
+    "……哼。算了。",
+    "你的沉默让我想起了V。不过他至少还会念诗，你连诗都不会念。",
+    "说话。或者离开。你的沉默让我烦躁。",
+    "……我给你三秒。三秒内不说，我就当你不存在。"
+  ],
+  v:[
+    "沉默……也是一种回答。但不是我想要的那种。",
+    "Shadow 在暗处看着你。Griffon 说你在偷懒。",
+    "时间在流逝，过客。你还要沉默多久？",
+    "我的力量在消散……而你却在这里一言不发。讽刺。",
+    "Griffon 说沉默是金。但Shadow 说沉默是软弱。你觉得呢？",
+    "你不像Dante那样吵闹，也不像Nero那样冲动……你只是安静。太安静了。",
+    "如果沉默是你的回答，那我的回答是—— Motivation。"
+  ]
+};
+var IDLE_TIMEOUT=30000;
+var IDLE_COOLDOWN=90000;
+var idleTimer=null,idleCooldownTimer=null,idleActive=false;
+
+function startIdleMonitor(){
+  stopIdleMonitor();
+  resetIdleTimer();
+  // 监听用户活动来重置计时器
+  var events=['click','keydown','touchstart','mousemove'];
+  events.forEach(function(ev){window.addEventListener(ev,resetIdleTimer,{passive:true});});
+}
+function stopIdleMonitor(){
+  if(idleTimer){clearTimeout(idleTimer);idleTimer=null;}
+  if(idleCooldownTimer){clearTimeout(idleCooldownTimer);idleCooldownTimer=null;}
+  idleActive=false;
+}
+function resetIdleTimer(){
+  if(idleCooldownTimer)return; // 冷却中，不重置
+  if(idleTimer)clearTimeout(idleTimer);
+  if(!hasVisited(cur))return; // 还没聊过的不触发
+  idleTimer=setTimeout(function(){
+    if(!idleActive&&hasVisited(cur)){
+      idleActive=true;
+      triggerIdleLine();
+    }
+  },IDLE_TIMEOUT);
+}
+function triggerIdleLine(){
+  var pool=IDLE_LINES[cur];
+  if(!pool||pool.length===0)return;
+  var line=pool[Math.floor(Math.random()*pool.length)];
+  say(cur,line,false);
+  // 进入冷却，冷却期内不再触发
+  idleCooldownTimer=setTimeout(function(){
+    idleCooldownTimer=null;
+    idleActive=false;
+    resetIdleTimer();
+  },IDLE_COOLDOWN);
+}
+
+//================================================== 消息构建（DOM API）
 function getFallbackAvatarSvg(text,colorHex){return 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42"><circle cx="21" cy="21" r="21" fill="%23'+colorHex+'"/><text x="21" y="27" text-anchor="middle" fill="%23fff" font-size="18" font-family="serif">'+text+'</text></svg>';}
 function getUserFallbackSvg(){return getFallbackAvatarSvg(USER.name?USER.name.charAt(0).toUpperCase():'?','c00');}
-function getRoleFallbackSvg(r){var map={nero:'4fc3f7',dante:'ff5252',vergil:'80c0ff',v:'c876ff'};var txt=r==='vergil'?'Vg':r==='v'?'V':r.charAt(0).toUpperCase();return getFallbackAvatarSvg(txt,map[r]||'888888');}
-function createAvatarImg(src,fallbackSrc){var img=document.createElement('img');img.className='av';img.src=src;img.onerror=function(){this.src=fallbackSrc;};return img;}
+function getRoleFallbackSvg(r){var m={nero:'4fc3f7',dante:'ff5252',vergil:'80c0ff',v:'c876ff'};var t=r==='vergil'?'Vg':r==='v'?'V':r.charAt(0).toUpperCase();return getFallbackAvatarSvg(t,m[r]||'888888');}
+function createAvatarImg(src,fallback){var img=document.createElement('img');img.className='av';img.src=src;img.onerror=function(){this.src=fallback;};return img;}
 
 function say(r,text,isUser){
-  var msgDiv=document.createElement('div');msgDiv.className='msg'+(isUser?' user':'');
+  var msgDiv=document.createElement('div');
+  msgDiv.className='msg'+(isUser?' user':'')+(isUser?'':' from-'+r);
   var avatarImg=isUser?createAvatarImg(USER.avatar||getUserFallbackSvg(),getUserFallbackSvg()):createAvatarImg(ROLE_AVATAR[r]||getRoleFallbackSvg(r),getRoleFallbackSvg(r));
   var textDiv=document.createElement('div');
   var nameDiv=document.createElement('div');
   var bubbleDiv=document.createElement('div');
   if(isUser){
-    nameDiv.className='name name-user';nameDiv.textContent=USER.name||'You';bubbleDiv.className='bubble';
+    nameDiv.className='name name-user';
+    nameDiv.textContent=USER.name||'You';
+    bubbleDiv.className='bubble';
   }else{
-    nameDiv.className='name name-'+ROLE_CSS_KEY[r];nameDiv.textContent=getRoleDisplayName(r);bubbleDiv.className='bubble bubble-'+ROLE_CSS_KEY[r];
+    nameDiv.className='name name-'+ROLE_CSS_KEY[r];
+    nameDiv.textContent=getRoleDisplayName(r);
+    bubbleDiv.className='bubble bubble-'+ROLE_CSS_KEY[r];
   }
   textDiv.appendChild(nameDiv);textDiv.appendChild(bubbleDiv);
   msgDiv.appendChild(avatarImg);msgDiv.appendChild(textDiv);
-  chat.appendChild(msgDiv);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
+  chat.appendChild(msgDiv);
+  chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
   if(!isUser)typeText(bubbleDiv,text,28);else bubbleDiv.textContent=text;
+  // 重置空闲计时器
+  resetIdleTimer();
 }
 
 function createWaitingBubble(r){
@@ -839,7 +765,7 @@ function createWaitingBubble(r){
   var bubbleDiv=document.createElement('div');bubbleDiv.className='bubble bubble-'+ROLE_CSS_KEY[r]+' typing-cursor';bubbleDiv.style.color='#888';bubbleDiv.style.fontStyle='normal';bubbleDiv.textContent=WAITING_TEXT[r]||'█ 思考中...';
   textDiv.appendChild(nameDiv);textDiv.appendChild(bubbleDiv);
   msgDiv.appendChild(avatarImg);msgDiv.appendChild(textDiv);
-  return{msgDiv:msgDiv,bubble:bubbleDiv};
+  return {msgDiv:msgDiv,bubble:bubbleDiv};
 }
 
 function scrollToBottom(){chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});}
@@ -852,45 +778,61 @@ function bloodFlash(){var f=document.createElement('div');f.className='blood-fla
 async function send(){
   var ui=document.getElementById('ui'),t=ui.value.trim();if(!t)return;
   if(checkEasterEgg(t)){ui.value='';addOrbs(500);bumpStyle();totalStylish+=500;return;}
-  say('user',t,true);ui.value='';bloodFlash();bumpCombo();
-  msgCount++;incrementStat('totalMessages',1);
-  var msgLen=t.length;if(msgLen>SAVE_DATA.stats.longestMessageLength)updateStat('longestMessageLength',msgLen);
+  say('user',t,true);ui.value='';bloodFlash();bumpCombo();msgCount++;
+  incrementStat('totalMessages',1);
+  incrementStat('characterMessages.'+cur,1);
+  var msgLen=t.length;if(msgLen>getStat('longestMessageLength'))updateStat('longestMessageLength',msgLen);
+  if(t.indexOf('草莓圣代')!==-1||t.indexOf('草莓圣代')!==-1)incrementStat('sweetToothCount',1);
   addOrbs(10);addOrbs(Math.min(comboCount*20,200));bumpStyle();totalStylish+=10+comboCount*5;
   if(msgCount>=15&&!resultAutoShown){resultAutoShown=true;setTimeout(showResult,800);}
-  var w=createWaitingBubble(cur);chat.appendChild(w.msgDiv);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
+  var w=createWaitingBubble(cur);
+  chat.appendChild(w.msgDiv);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
   var reply=await callAI(cur,t);
   if(reply===QUOTA_LINES[cur]){ui.disabled=true;ui.placeholder="⚠️ AI额度已耗尽";addOrbs(-50);document.getElementById('quota-warning').style.display='flex';}
   w.bubble.classList.remove('typing-cursor');w.bubble.textContent="";w.bubble.style.color="";w.bubble.style.fontStyle="";
   typeText(w.bubble,reply,28);
+  checkAchievements();
 }
 
-//================================================== 切换角色
-function sw(c){
+//================================================== 切换角色（含互动台词轮换）
+function sw(c,fromRole){
   if(cur===c)return;
-  var isReturn=hasVisited(c);cur=c;
+  var isReturn=hasVisited(c);
+  cur=c;
   document.querySelectorAll('.cbtn').forEach(function(x){x.classList.remove('active');});
   document.getElementById('b-'+c).classList.add('active');
   chat.innerHTML='';
-  if(isReturn)say(c,pickReturnLine(c),false);else say(c,getRandomIntro(c),false);
+  if(!isReturn){
+    say(c,getRandomIntro(c),false);
+  }else if(fromRole&&fromRole!==c&&INTERACTION_LINES[c]&&INTERACTION_LINES[c][fromRole]){
+    if(lastReturnType[c]==='general'){
+      say(c,getInteractionLine(c,fromRole),false);
+      lastReturnType[c]='interaction';
+    }else{
+      say(c,pickReturnLine(c),false);
+      lastReturnType[c]='general';
+    }
+  }else{
+    say(c,pickReturnLine(c),false);
+    lastReturnType[c]='general';
+  }
   markVisited(c);
-  // 统计 visitedCharacters
-  var vc=SAVE_DATA.stats.visitedCharacters;
-  if(vc.indexOf(c)===-1){vc.push(c);saveSave();checkAchievements();}
-  // 统计 characterMessages
-  SAVE_DATA.stats.characterMessages[c]=(SAVE_DATA.stats.characterMessages[c]||0)+1;
-  saveSave();checkAchievements();
+  // 统计
+  var vc=getStat('visitedCharacters');
+  if(vc.indexOf(c)===-1){vc.push(c);updateStat('visitedCharacters',vc);}
   scrollBtn.classList.remove('show');
-  updateTitleColor(c);updateWeapon(c);addOrbs(30);
+  updateTitleColor(c);updateWeapon(c);setBackground(c);addOrbs(30);
   if(audioUnlocked)playRole(c);
+  checkAchievements();
 }
 
-//================================================== 长按 DT
+//================================================== 长按DT
 var pressTimer=null,pressStart=0;
-function bindDT(id,r){var b=document.getElementById(id);b.addEventListener('touchstart',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(r);},1500);});b.addEventListener('touchend',function(e){e.preventDefault();clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(r);});b.addEventListener('mousedown',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(r);},1500);});b.addEventListener('mouseup',function(){clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(cur);});b.addEventListener('mouseleave',function(){clearTimeout(pressTimer);});}
+function bindDT(id,r){var b=document.getElementById(id);b.addEventListener('touchstart',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(r);},1500);});b.addEventListener('touchend',function(e){e.preventDefault();clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(r,cur);});b.addEventListener('mousedown',function(e){e.preventDefault();pressStart=Date.now();pressTimer=setTimeout(function(){triggerDT(r);},1500);});b.addEventListener('mouseup',function(){clearTimeout(pressTimer);if(Date.now()-pressStart<500)sw(cur,cur);});b.addEventListener('mouseleave',function(){clearTimeout(pressTimer);});}
 function triggerDT(r){var o=(r==='dante')?document.getElementById('dt-red'):document.getElementById('dt-blue');o.classList.add('show');setTimeout(function(){o.classList.remove('show');},800);say(r,{nero:"Fuck you!",dante:"Jackpot!",vergil:"This is power!",v:"Motivation..."}[r],false);addOrbs(200);bumpStyle();totalStylish+=200;}
 bindDT('b-nero','nero');bindDT('b-dante','dante');bindDT('b-vergil','vergil');bindDT('b-v','v');
 
-//================================================== PC 按键提示
+//================================================== PC按键提示
 function isPC(){return !(/Mobi|Android|iPhone|iPad|iPod|Tablet/i.test(navigator.userAgent));}
 function checkAndShowKbHint(){if(!isPC())return;try{if(localStorage.getItem('dmc5_kb_hint_seen'))return;}catch(e){return;}setTimeout(function(){document.getElementById('kb-hint').classList.add('show');},1200);}
 function closeKbHint(){document.getElementById('kb-hint').classList.remove('show');try{localStorage.setItem('dmc5_kb_hint_seen','1');}catch(e){}}
@@ -899,36 +841,184 @@ document.getElementById('kb-hint').addEventListener('click',closeKbHint);
 //================================================== 键盘快捷键
 document.addEventListener('keydown',function(e){
   if(document.getElementById('user-modal').classList.contains('show'))return;
-  if(document.getElementById('profile-modal').classList.contains('show')){closeProfileModal();return;}
-  if(document.getElementById('ach-detail-overlay').classList.contains('show')){closeAchDetail();return;}
+  if(document.getElementById('profile-modal').classList.contains('show'))return;
+  if(document.getElementById('ach-detail-overlay').classList.contains('show'))return;
   if(document.getElementById('kb-hint').classList.contains('show')){closeKbHint();return;}
   switch(e.key){
-    case '1':sw('nero');break;
-    case '2':sw('dante');break;
-    case '3':sw('vergil');break;
-    case '4':sw('v');break;
+    case '1':sw('nero',cur);break;
+    case '2':sw('dante',cur);break;
+    case '3':sw('vergil',cur);break;
+    case '4':sw('v',cur);break;
     case 'r':case 'R':showResult();break;
     case 'm':case 'M':toggleMute();break;
   }
 });
 
-//================================================== 夜间猫头鹰检测
-function checkNightOwl(){
-  var h=new Date().getHours();
-  if(h>=0&&h<5){incrementStat('nightOwlSessions',1);_log('🌙 夜猫子成就条件已满足','ok');}
+//================================================== ★ 成就系统
+var SAVE_KEY='dmc5_save_v1';
+var ACHIEVEMENTS=[
+  {id:'first_blood',   icon:'🩸',name:'初出茅庐',   desc:'发送第一条消息',hidden:false},
+  {id:'style_switcher',icon:'🔄',name:'角色切换者', desc:'切换过全部4个角色',hidden:false},
+  {id:'long_message',  icon:'⌨️',name:'长篇大论',   desc:'单条消息超过100字',hidden:false},
+  {id:'night_owl',     icon:'🌙',name:'夜猫子',     desc:'在凌晨0-5点使用',hidden:false},
+  {id:'chatterbox',    icon:'💬',name:'话痨',       desc:'累计发送50条消息',hidden:false},
+  {id:'combo_king',    icon:'🔥',name:'连击之王',   desc:'单次连击达到x20',hidden:false},
+  {id:'marathon',      icon:'⏱️',name:'马拉松',     desc:'单次会话超过10分钟',hidden:false},
+  {id:'all_rounder',   icon:'🎭',name:'全能猎人',   desc:'和全部4个角色各聊至少3轮',hidden:false},
+  {id:'easter_master', icon:'🥚',name:'彩蛋猎人',   desc:'触发所有彩蛋',hidden:false},
+  {id:'sweet_tooth',   icon:'🍓',name:'甜食控',     desc:'在对话中提到"草莓圣代"',hidden:true},
+  {id:'legendary',     icon:'👑',name:'传奇猎人',   desc:'单局S评级+连击x30+聊过2角色',hidden:true},
+  {id:'motivated',     icon:'🧠',name:'意志坚定',   desc:'累计发送500条消息',hidden:true}
+];
+
+var SAVE_DATA=null;
+
+function getDefaultSave(){return{version:1,unlocked:{},stats:{totalMessages:0,maxCombo:0,totalOrbs:0,sessionCount:0,characterMessages:{nero:0,dante:0,vergil:0,v:0},visitedCharacters:[],easterEggsTriggered:[],longestSessionMs:0,longestMessageLength:0,nightOwlSessions:0,sweetToothCount:0,legendarySession:false}};}
+function loadSave(){try{var raw=localStorage.getItem(SAVE_KEY);if(raw){var d=JSON.parse(raw);SAVE_DATA=d;return;}}catch(e){_log('读取存档失败','err');}SAVE_DATA=getDefaultSave();}
+function saveSave(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(SAVE_DATA));}catch(e){_log('保存失败(可能超出配额)','warn');}}
+function getStat(key){var parts=key.split('.'),obj=SAVE_DATA.stats;for(var i=0;i<parts.length-1;i++){if(!obj[parts[i]])obj[parts[i]]={};obj=obj[parts[i]];}return obj[parts[parts.length-1]]||0;}
+function updateStat(key,value){var parts=key.split('.'),obj=SAVE_DATA.stats;for(var i=0;i<parts.length-1;i++){if(!obj[parts[i]])obj[parts[i]]={};obj=obj[parts[i]];}obj[parts[parts.length-1]]=value;saveSave();}
+function incrementStat(key,by){var cur=getStat(key);updateStat(key,cur+by);}
+
+function countUnlockedAch(){var u=0;ACHIEVEMENTS.forEach(function(a){if(SAVE_DATA.unlocked[a.id])u++;});return{unlocked:u,total:ACHIEVEMENTS.length};}
+
+function checkAchievements(){
+  var s=SAVE_DATA.stats,u=SAVE_DATA.unlocked,newlyUnlocked=[];
+  // 1 初出茅庐
+  if(!u.first_blood&&s.totalMessages>=1)newlyUnlocked.push('first_blood');
+  // 2 角色切换者
+  if(!u.style_switcher&&s.visitedCharacters.length>=4)newlyUnlocked.push('style_switcher');
+  // 3 长篇大论
+  if(!u.long_message&&s.longestMessageLength>=100)newlyUnlocked.push('long_message');
+  // 4 夜猫子
+  if(!u.night_owl){var h=new Date().getHours();if(h>=0&&h<5)newlyUnlocked.push('night_owl');}
+  // 5 话痨
+  if(!u.chatterbox&&s.totalMessages>=50)newlyUnlocked.push('chatterbox');
+  // 6 连击之王
+  if(!u.combo_king&&s.maxCombo>=20)newlyUnlocked.push('combo_king');
+  // 7 马拉松
+  if(!u.marathon&&(Date.now()-sessionStart)>=600000)newlyUnlocked.push('marathon');
+  // 8 全能猎人
+  if(!u.all_rounder){var cm=s.characterMessages,ok=true;'nero dante vergil v'.split(' ').forEach(function(c){if((cm[c]||0)<3)ok=false;});if(ok)newlyUnlocked.push('all_rounder');}
+  // 9 彩蛋猎人
+  if(!u.easter_master&&s.easterEggsTriggered.length>=Object.keys(EASTER_EGGS).length)newlyUnlocked.push('easter_master');
+  // 10 甜食控
+  if(!u.sweet_tooth&&s.sweetToothCount>=1)newlyUnlocked.push('sweet_tooth');
+  // 11 传奇猎人
+  if(!u.legendary&&maxStyleIdx>=4&&s.maxCombo>=30&&s.visitedCharacters.length>=2)newlyUnlocked.push('legendary');
+  // 12 意志坚定
+  if(!u.motivated&&s.totalMessages>=500)newlyUnlocked.push('motivated');
+
+  newlyUnlocked.forEach(function(id){unlockAchievement(id);});
 }
 
-//================================================== 会话时长追踪
-setInterval(function(){
-  var elapsed=Date.now()-SAVE_DATA.stats.sessionStart;
-  if(elapsed>SAVE_DATA.stats.longestSessionMs){updateStat('longestSessionMs',elapsed);}
-},10000);
+function unlockAchievement(id){
+  var ach=ACHIEVEMENTS.find(function(a){return a.id===id;});
+  if(!ach)return;
+  if(SAVE_DATA.unlocked[id])return;
+  SAVE_DATA.unlocked[id]={time:Date.now()};
+  saveSave();
+  showAchievementToast(ach);
+  _log('🏆 解锁成就: '+ach.name,'ok');
+}
 
-//================================================== 初始化
-SAVE_DATA.stats.totalOrbs=redOrbs;saveSave();
+function addEasterEgg(key){
+  var s=SAVE_DATA.stats;
+  if(s.easterEggsTriggered.indexOf(key)===-1){
+    s.easterEggsTriggered.push(key);
+    saveSave();
+    checkAchievements();
+  }
+}
+
+// 成就通知（5秒自动消失）
+function showAchievementToast(ach){
+  var toast=document.getElementById('achievement-toast');
+  document.getElementById('toast-icon').textContent=ach.icon;
+  document.getElementById('toast-name').textContent=ach.name;
+  document.getElementById('toast-desc').textContent=ach.desc;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer=setTimeout(function(){toast.classList.remove('show');},5000);
+}
+
+//================================================== 成就详情面板
+function showAchDetail(){
+  closeResult();
+  var overlay=document.getElementById('ach-detail-overlay');
+  var u=SAVE_DATA.unlocked,unlocked=document.getElementById('ach-grid-unlocked'),locked=document.getElementById('ach-grid-locked');
+  document.getElementById('ach-detail-sub').textContent='已解锁 '+countUnlockedAch().unlocked+' / '+ACHIEVEMENTS.length;
+  unlocked.innerHTML='';locked.innerHTML='';
+  ACHIEVEMENTS.forEach(function(ach){
+    var isUnlocked=!!u[ach.id];
+    var card=document.createElement('div');
+    card.className='ach-card '+(isUnlocked?'unlocked':'locked');
+    var dateStr='';
+    if(isUnlocked){var d=new Date(u[ach.id].time);dateStr=d.toLocaleDateString();}
+    var nameStr=isUnlocked?ach.name:(ach.hidden?'?????':'未解锁');
+    var descStr=isUnlocked?ach.desc:(ach.hidden?'完成隐藏条件以解锁':ach.desc);
+    card.innerHTML='<span class="ach-icon">'+(isUnlocked?ach.icon:'🔒')+'</span>'+'<div class="ach-name">'+nameStr+'</div>'+'<div class="ach-desc">'+descStr+'</div>'+(isUnlocked?'<div class="ach-date">'+dateStr+'</div>':'<span class="ach-lock">🔒</span>');
+    if(isUnlocked)unlocked.appendChild(card);else locked.appendChild(card);
+  });
+  overlay.classList.add('show');
+}
+function closeAchDetail(){document.getElementById('ach-detail-overlay').classList.remove('show');}
+
+//================================================== PROFILE 弹窗
+function openProfileModal(){
+  var modal=document.getElementById('profile-modal');
+  document.getElementById('profile-name').textContent=USER.name||'Hunter';
+  var av=document.getElementById('profile-av');
+  av.innerHTML='<img src="'+(USER.avatar||getUserFallbackSvg())+'">';
+  var s=SAVE_DATA.stats,c=countUnlockedAch();
+  document.getElementById('profile-stats').innerHTML=
+    '<div class="profile-stat">消息总数: <span>'+(s.totalMessages||0)+'</span></div>'+
+    '<div class="profile-stat">最高连击: <span>x'+(s.maxCombo||0)+'</span></div>'+
+    '<div class="profile-stat">红魂总数: <span>'+redOrbs.toLocaleString()+'</span></div>'+
+    '<div class="profile-stat">成就: <span>'+c.unlocked+'/'+c.total+'</span></div>';
+  // 成就墙（profile内）
+  var grid=document.getElementById('ach-grid-profile');grid.innerHTML='';
+  ACHIEVEMENTS.forEach(function(ach){
+    var isUnlocked=!!SAVE_DATA.unlocked[ach.id];
+    var card=document.createElement('div');card.className='ach-card '+(isUnlocked?'unlocked':'locked');
+    card.innerHTML='<span class="ach-icon">'+(isUnlocked?ach.icon:'🔒')+'</span><div class="ach-name">'+(isUnlocked?ach.name:(ach.hidden?'?????':'未解锁'))+'</div>';
+    grid.appendChild(card);
+  });
+  document.getElementById('ach-progress').textContent=c.unlocked+'/'+c.total;
+  document.getElementById('export-area').style.display='none';
+  document.getElementById('export-code').value='';
+  document.getElementById('import-code').value='';
+  modal.classList.add('show');
+}
+function closeProfileModal(){document.getElementById('profile-modal').classList.remove('show');}
+
+function toggleExport(){
+  var area=document.getElementById('export-area'),ta=document.getElementById('export-code');
+  if(area.style.display==='block'){area.style.display='none';return;}
+  area.style.display='block';
+  try{ta.value=btoa(JSON.stringify(SAVE_DATA));}catch(e){ta.value='编码失败';}
+  ta.select();
+}
+function importSave(){document.getElementById('import-code').focus();}
+function doImport(){
+  var code=document.getElementById('import-code').value.trim();
+  if(!code){alert('请先粘贴存档码');return;}
+  try{var d=JSON.parse(atob(code));SAVE_DATA=d;saveSave();alert('✅ 存档导入成功！页面将刷新。');location.reload();}catch(e){alert('❌ 存档码无效: '+e.message);}
+}
+
+//================================================== 会话计时
+setInterval(function(){
+  var elapsed=Date.now()-sessionStart;
+  updateStat('longestSessionMs',Math.max(getStat('longestSessionMs'),elapsed));
+  // 马拉松成就实时检查
+  if(elapsed>=600000)checkAchievements();
+},30000);
+
+// 页面关闭前保存
+window.addEventListener('beforeunload',function(){updateStat('longestSessionMs',Math.max(getStat('longestSessionMs'),Date.now()-sessionStart));saveSave();});
+
 _log('系统初始化...','ok');_log('当前角色:'+cur,'ok');
-_log('✅ 成就系统已加载 ('+ACHIEVEMENTS.length+'个成就)','ok');
-_log('✅ 存档版本:'+SAVE_DATA.version+' 已解锁:'+getUnlockedCount()+'/'+getTotalAchCount(),'ok');
+_log('✅ 成就系统+背景效果+角色互动+主动话题 全部加载','ok');
 </script>
 </body>
 </html>

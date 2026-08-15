@@ -253,7 +253,7 @@ body.shake { animation:screenShake 0.3s ease-out; }
       <line x1="194" y1="38" x2="180" y2="44"/><line x1="180" y1="44" x2="188" y2="52"/>
       <line x1="186" y1="110" x2="174" y2="106"/><line x1="174" y1="106" x2="168" y2="116"/>
       <line x1="152" y1="184" x2="142" y2="174"/><line x1="142" y1="174" x2="156" y2="168"/>
-      <line x1="72" y1="196" x2="64" y2="184"/><line x1="64" y1="184" x2="76" y2="178"/>
+      <line x1="72" y1="196" x2="64" y2="185"/><line x1="64" y1="185" x2="76" y2="178"/>
       <line x1="14" y1="156" x2="24" y2="148"/><line x1="24" y1="148" x2="18" y2="138"/>
       <line x1="4" y1="86" x2="16" y2="82"/><line x1="16" y1="82" x2="12" y2="72"/>
       <line x1="26" y1="22" x2="38" y2="18"/><line x1="38" y1="18" x2="34" y2="30"/>
@@ -321,7 +321,7 @@ body.shake { animation:screenShake 0.3s ease-out; }
   <div class="sidebar">
     <div class="cbtn active" id="b-nero" style="background-image:url('https://i.postimg.cc/2yXv0dfR/ab0e3d8b0d10b13ee56e113eadd1e3e83700043f2f7bba201a49bc3e30884537-0.jpg')" onclick="sw('nero')"></div><div class="cname">Nero</div>
     <div class="cbtn" id="b-dante" style="background-image:url('https://i.postimg.cc/MHrR908Q/1771934129984.jpg')" onclick="sw('dante')"></div><div class="cname">Dante</div>
-    <div class="cbtn" id="b-vergil" style="background-image:url('https://i.postimg.cc/x8FH6GSm/1771934121143.jpg')" onclick="sw('vergil')"></div><div class="cname">Vergil</div>
+    <div class="cbtn" id="b-vergil" style="background-image:url('https://i.postimg.cc/x8FH6GSm/1771934121143.jpg')" onclick="sw('vergil')"></div><div class="cname">V</div>
     <div class="cbtn" id="b-v" style="background-image:url('https://i.postimg.cc/gkxjp9Pw/b19ab9897647c907a11733dfd0f6dfc3.jpg')" onclick="sw('v')"></div><div class="cname">V</div>
     <div id="weapon-container">
       <div id="weapon-glow"></div>
@@ -392,7 +392,9 @@ function pickReturnLine(r){var a=RETURN_LINES[r];return Array.isArray(a)?a[Math.
 var visitedThisSession={};function hasVisited(r){return visitedThisSession[r]===true;}function markVisited(r){visitedThisSession[r]=true;}
 
 async function callAI(r,msg){_log('→ 调用API ['+r+']: '+msg.slice(0,20)+'...','warn');for(var i=0;i<API_ENDPOINTS.length;i++){try{var ctl=new AbortController(),to=setTimeout(function(){ctl.abort();},25000);var res=await fetch(API_ENDPOINTS[i],{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+API_KEY},body:JSON.stringify({model:MODEL,messages:[{role:"system",content:prompts[r]},{role:"user",content:msg}],max_tokens:300,temperature:.9}),signal:ctl.signal});clearTimeout(to);var data=await res.json();if(data.error){var em=data.error.message||JSON.stringify(data.error);_log('API错误('+i+'):'+em,'err');if(/token|key|auth|quota|limit|429|invalid/i.test(em))return QUOTA_LINES[r];continue;}return data.choices?data.choices[0].message.content:"（魔界通讯中断…）";}catch(e){_log('请求失败('+i+'):'+(e.name==='AbortError'?'超时':e.message),'err');continue;}}return QUOTA_LINES[r];}
-function checkQuota(){fetch(API_ENDPOINTS[0],{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+API_KEY},body:JSON.stringify({model:MODEL,messages:[{role:"user",content:"hi"}],max_tokens:1})}).then(function(r){return r.json();}).then(function(d){if(d.error&&/token|key|auth|quota|limit|429/i.test(JSON.stringify(d.error))){document.getElementById('quota-warning').style.display='flex';document.getElementById('ui').placeholder="⚠️ AI额度已耗尽";}}).catch(function(){});}
+
+// ★ 额度检测已移除自动调用 —— 只在用户实际发消息失败时由 callAI 内部返回 QUOTA_LINES 来触发警告
+// （原来的 checkQuota() 函数已删除，不再在页面加载时白嫖一次 API 请求）
 
 //================================================== 红魂
 var redOrbs=0,maxOrbs=999999,totalStylish=0;
@@ -597,7 +599,7 @@ function toggleTrack(){if(!audioUnlocked)return;var t=audios[cur];if(t.paused){t
 var intro=document.getElementById('intro'),logo=document.getElementById('intro-logo'),mini=document.getElementById('mini-logo'),app=document.getElementById('app'),chat=document.getElementById('chat'),scrollBtn=document.getElementById('scroll-btn');
 var p=0,sx=window.innerWidth/2,sy=window.innerHeight/2,ex=26,ey=24;
 function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
-function tick(){p+=.018;if(p>=1)p=1;var e=ease(p);logo.style.left=(sx+(ex-sx)*e-120)+"px";logo.style.top=(sy+(ey-sy)*e-25)+"px";logo.style.opacity=e;logo.style.filter="blur("+((1-e)*12)+"px)";logo.style.transform="scale("+(1-e*.83)+")";if(p<1)requestAnimationFrame(tick);else{intro.style.opacity=0;setTimeout(function(){intro.style.display='none';app.style.display='flex';mini.style.display='block';var ab=document.querySelector('.cbtn.active');var sr=ab?ab.id.replace('b-',''):'nero';cur=sr;updateTitleColor(sr);updateWeapon(sr);say(sr,getRandomIntro(sr),false);markVisited(sr);checkQuota();setTimeout(function(){tryPlay(sr);},1500);},600);}}
+function tick(){p+=.018;if(p>=1)p=1;var e=ease(p);logo.style.left=(sx+(ex-sx)*e-120)+"px";logo.style.top=(sy+(ey-sy)*e-25)+"px";logo.style.opacity=e;logo.style.filter="blur("+((1-e)*12)+"px)";logo.style.transform="scale("+(1-e*.83)+")";if(p<1)requestAnimationFrame(tick);else{intro.style.opacity=0;setTimeout(function(){intro.style.display='none';app.style.display='flex';mini.style.display='block';var ab=document.querySelector('.cbtn.active');var sr=ab?ab.id.replace('b-',''):'nero';cur=sr;updateTitleColor(sr);updateWeapon(sr);say(sr,getRandomIntro(sr),false);markVisited(sr);setTimeout(function(){tryPlay(sr);},1500);},600);}}
 logo.style.left=(sx-120)+"px";logo.style.top=(sy-25)+"px";
 setTimeout(function(){logo.style.opacity=1;requestAnimationFrame(tick);},300);
 
@@ -632,7 +634,7 @@ async function send(){
   temp.innerHTML='<img class="av" src="'+avs[cur]+'"><div><div class="name '+nameClass[cur]+'">'+cur+'</div><div class="bubble '+bubbleClass[cur]+' typing-cursor" style="color:#888;font-style:normal">'+WAITING_TEXT[cur]+'</div></div>';
   chat.appendChild(temp);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
   var reply=await callAI(cur,t);
-  if(reply===QUOTA_LINES[cur]){ui.disabled=true;ui.placeholder="⚠️ AI额度已耗尽";addOrbs(-50);}
+  if(reply===QUOTA_LINES[cur]){ui.disabled=true;ui.placeholder="⚠️ AI额度已耗尽";addOrbs(-50);document.getElementById('quota-warning').style.display='flex';}
   temp.querySelector('.bubble').classList.remove('typing-cursor');temp.querySelector('.bubble').textContent="";temp.querySelector('.bubble').style.color="";temp.querySelector('.bubble').style.fontStyle="";
   typeText(temp.querySelector('.bubble'),reply,28);
 }
@@ -658,7 +660,9 @@ function bloodFlash(){var f=document.createElement('div');f.className='blood-fla
 
 _log('系统初始化...','ok');_log('当前角色:'+cur,'ok');
 _log('功能:图1布局+SVG龟裂+角色×评级台词精确匹配','ok');
+_log('✅ 开场/回访零API调用，额度仅在实际发消息时消耗','ok');
 </script>
 </body>
 </html>
+
 

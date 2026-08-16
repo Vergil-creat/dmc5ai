@@ -175,8 +175,8 @@ body{position:fixed;top:0;left:0;right:0;bottom:0;transition:background .8s,box-
 #result-overlay.show{display:flex}
 #result-panel{width:92vw;max-width:540px;min-height:360px;background:radial-gradient(ellipse at 30% 50%,rgba(50,0,0,.35) 0%,transparent 60%),#080808;border:1px solid #220808;box-shadow:0 0 50px rgba(150,0,0,.2);padding:26px 30px;position:relative;overflow:hidden;transform:scale(.93);opacity:0;transition:transform .45s,opacity .35s ease}
 #result-overlay.show #result-panel{transform:scale(1);opacity:1}
-.result-top-label{font-size:10px;color:#555;letter-spacing:8px;text-transform:uppercase;margin-bottom:4px;opacity:0;animation:rfade .4s .15s forwards}
-.result-stage-name{font-size:12px;color:#777;letter-spacing:2px;margin-bottom:16px;opacity:0;animation:rfade .4s .25s forwards}
+.result-top-label{font-size:11px;color:#fff;font-weight:bold;letter-spacing:8px;text-transform:uppercase;margin-bottom:4px;text-align:center;text-shadow:0 0 8px #fff,0 0 16px rgba(255,255,255,.6),0 0 28px rgba(255,255,255,.3);opacity:0;animation:rfade .4s .15s forwards}
+.result-stage-name{font-size:22px;color:#fff;font-weight:bold;letter-spacing:3px;margin-bottom:16px;text-align:center;line-height:1.3;text-shadow:0 0 8px #fff,0 0 18px rgba(255,255,255,.7),0 0 32px rgba(255,255,255,.4),0 0 48px rgba(80,180,255,.35);opacity:0;animation:rfade .4s .25s forwards}
 @keyframes rfade{to{opacity:1}}
 .result-body{display:flex;align-items:stretch;gap:28px;opacity:0;animation:rfade .5s .4s forwards}
 .result-left{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #151515;padding-right:28px}
@@ -568,10 +568,10 @@ var QUOTE_DB={
     4:{en:"You are the Style King! Even I have to admit it! Jackpot!",zh:"你就是Style之王！连我都得承认！Jackpot！",by:"Dante"}
   },
   vergil:{
-    0:{en:"Weak. Your will is as fragile as glass.",zh:"弱。你的意志像玻璃一样脆弱。",by:"Vergil"},
-    1:{en:"You have potential. But potential without power is nothing.",zh:"你有潜力。但没有力量的潜力什么也不是。",by:"Vergil"},
-    2:{en:"Accept your powerlessness. It is the first step to strength.",zh:"接受你的无力吧。这是变强的第一步。",by:"Vergil"},
-    3:{en:"Power... I see it awakening within you. But it is not enough.",zh:"力量……我看见它在你体内觉醒。但这还不够。",by:"Vergil"},
+    0:{en:"Pathetic. You possess no power, and your will is as fragile as glass.",zh:"可怜。你不仅没有力量，连意志都跟玻璃一样脆弱。",by:"Vergil"},
+    1:{en:"You have potential. But how tragic — your power and your potential are worlds apart.",zh:"你有潜力。不过真可悲，你的力量跟你的潜力两极分化。",by:"Vergil"},
+    2:{en:"Still powerless. You have changed slightly, but only slightly. You remain powerless.",zh:"还是一样无力。你有了一点变化，但也只是那么一点，你还是无力。",by:"Vergil"},
+    3:{en:"Power... I see it awakening within you. Yet, you still fall short.",zh:"你体内的力量，我看到了它在觉醒，然而你还是差了点。",by:"Vergil"},
     4:{en:"I admit, you have impressed me. But do not mistake this for my approval. You want to become strong — this is only your starting point.",zh:"我承认你让我刮目相看。但是别误会成我对你的认可，你想要变得很强，这还只是你的起点。",by:"Vergil"}
   },
   v:{
@@ -853,7 +853,8 @@ function triggerDevilTrigger(role){
   triggerEasterEgg(egg);
   var lines={nero:"Fuck you!",dante:"Jackpot! Subhuman!",vergil:"This is power!",v:"Motivation..."};
   setTimeout(function(){say(role,lines[role],false);},600);
-  setStyle(4);addOrbs(200);bumpCombo();
+  // 方案A：魔人化不再秒锁S，只给少量风格分+连击装饰
+  bumpStyle();bumpStyle();addOrbs(50);bumpCombo();bumpCombo();
 }
 
 // ========== 主动话题 ==========
@@ -862,12 +863,14 @@ function resetIdleTimer(){clearTimeout(idleTimer);idleCooldown=false;idleTimer=s
 // ========== 结算 ==========
 function formatTime(ms){var s=Math.floor(ms/1000),m=Math.floor(s/60);s=s%60;return (m<10?'0'+m:m)+':'+(s<10?'0'+s:s);}
 function showResult(){
-  var o=document.getElementById('result-overlay'),s=STYLE_TABLE[maxStyleIdx],cc=ROLE_COLORS[cur]||'#ffd700';
+  // 每次打开都实时读取当前评级，而不是历史最高
+  var liveIdx=curStyleIdx<0?0:curStyleIdx;
+  var o=document.getElementById('result-overlay'),s=STYLE_TABLE[liveIdx],cc=ROLE_COLORS[cur]||'#ffd700';
   document.getElementById('result-big-grade').textContent=s.g;
   document.getElementById('result-big-grade').style.color=cc;
   document.getElementById('result-big-sub').textContent=s.sub;
   document.getElementById('result-big-sub').style.color=cc;
-  var q=QUOTE_DB[cur][maxStyleIdx];
+  var q=QUOTE_DB[cur][liveIdx];
   document.getElementById('result-quote-text').textContent='"'+q.en+'"';
   document.getElementById('result-quote-text').style.color=cc;
   document.getElementById('result-quote-trans').textContent='—— '+q.zh;
@@ -893,7 +896,12 @@ function showResult(){
   setTimeout(function(){document.getElementById('bar-stylish').style.width=Math.min(100,totalStylish/es*100)+'%';},1300);
   setTimeout(function(){document.getElementById('bar-ach').style.width=(uc/12*100)+'%';},1450);
 }
-function closeResult(){document.getElementById('result-overlay').classList.remove('show');setTimeout(function(){'bar-orbs bar-combo bar-msgs bar-time bar-stylish bar-ach'.split(' ').forEach(function(id){document.getElementById(id).style.width='0%';});},500);}
+function closeResult(){
+  // 关闭时同步历史最高为当前实时等级，下次打开不会显示过时的更高评级
+  if(curStyleIdx>0)maxStyleIdx=curStyleIdx;
+  document.getElementById('result-overlay').classList.remove('show');
+  setTimeout(function(){'bar-orbs bar-combo bar-msgs bar-time bar-stylish bar-ach'.split(' ').forEach(function(id){document.getElementById(id).style.width='0%';});},500);
+}
 document.getElementById('result-overlay').addEventListener('click',closeResult);
 document.addEventListener('keydown',function(e){if(document.getElementById('result-overlay').classList.contains('show'))closeResult();});
 
@@ -986,3 +994,4 @@ document.addEventListener('keydown',function(e){
 </script>
 </body>
 </html>
+

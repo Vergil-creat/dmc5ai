@@ -69,17 +69,17 @@ body{position:fixed;top:0;left:0;right:0;bottom:0;transition:background .8s,box-
 .chat::-webkit-scrollbar{width:5px}
 .chat::-webkit-scrollbar-thumb{background:#c00;border-radius:3px}
 
-/* 背景特效层 —— 独立DOM，不会被innerHTML清空影响 */
+/* 背景特效层 */
 .chat-bg{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;transition:opacity .8s}
 .chat-bg::before,.chat-bg::after{content:'';position:absolute;inset:0;transition:all .8s}
 
-/* Nero: 红雾 + 蓝青碎片 */
+/* Nero */
 .chat-bg-nero{background:radial-gradient(ellipse at 30% 70%,rgba(255,34,0,.12) 0%,transparent 60%)}
 .chat-bg-nero::before{background-image:radial-gradient(circle at 20% 80%,rgba(0,170,255,.35) 2px,transparent 3px),radial-gradient(circle at 50% 30%,rgba(0,200,255,.2) 1px,transparent 2px),radial-gradient(circle at 75% 65%,rgba(0,170,255,.25) 1.5px,transparent 2.5px),radial-gradient(circle at 35% 15%,rgba(0,220,255,.15) 1px,transparent 2px);background-size:180px 180px,250px 250px,200px 200px,300px 300px;animation:neroFrag 22s linear infinite}
 .chat-bg-nero::after{background:radial-gradient(ellipse at 70% 30%,rgba(255,34,0,.08) 0%,transparent 50%)}
 @keyframes neroFrag{from{background-position:0 0}to{background-position:0 220px}}
 
-/* Dante: 纯红雾 + 发光描边（增强版） */
+/* Dante */
 .chat-bg-dante{background:radial-gradient(ellipse at 50% 50%,rgba(255,34,0,.45) 0%,rgba(120,0,0,.3) 40%,rgba(0,0,0,.6) 75%,#000 100%);animation:danteGlow 2.5s ease-in-out infinite alternate}
 .chat-bg-dante::before{border:3px solid rgba(255,34,0,.6);box-shadow:0 0 35px rgba(255,34,0,.7),inset 0 0 35px rgba(255,34,0,.4),0 0 80px rgba(255,0,0,.25);animation:danteBreath 2s ease-in-out infinite alternate;border-radius:3px}
 .chat-bg-dante::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 25% 75%,rgba(255,60,0,.25) 2px,transparent 3px),radial-gradient(circle at 65% 30%,rgba(255,80,0,.2) 1.5px,transparent 2.5px),radial-gradient(circle at 80% 80%,rgba(255,40,0,.15) 1px,transparent 2px);background-size:150px 150px,220px 220px,180px 180px;animation:danteParticles 18s linear infinite;opacity:.7}
@@ -87,7 +87,7 @@ body{position:fixed;top:0;left:0;right:0;bottom:0;transition:background .8s,box-
 @keyframes danteBreath{from{transform:scale(1);opacity:.75}to{transform:scale(1.02);opacity:1}}
 @keyframes danteParticles{from{background-position:0 0}to{background-position:0 200px}}
 
-/* Vergil: 蓝雾 + 发光描边（增强版） */
+/* Vergil */
 .chat-bg-vergil{background:radial-gradient(ellipse at 50% 50%,rgba(0,170,255,.40) 0%,rgba(0,40,120,.25) 40%,rgba(0,0,0,.55) 75%,#000 100%);animation:vergilGlow 2.5s ease-in-out infinite alternate}
 .chat-bg-vergil::before{border:3px solid rgba(0,170,255,.65);box-shadow:0 0 35px rgba(0,170,255,.7),inset 0 0 35px rgba(0,170,255,.4),0 0 80px rgba(0,120,255,.25);animation:vergilBreath 2s ease-in-out infinite alternate;border-radius:3px}
 .chat-bg-vergil::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 30% 60%,rgba(0,200,255,.2) 2px,transparent 3px),radial-gradient(circle at 70% 25%,rgba(0,150,255,.15) 1.5px,transparent 2.5px),radial-gradient(circle at 55% 80%,rgba(100,200,255,.12) 1px,transparent 2px);background-size:160px 160px,240px 240px,200px 200px;animation:vergilParticles 20s linear infinite;opacity:.8}
@@ -95,7 +95,7 @@ body{position:fixed;top:0;left:0;right:0;bottom:0;transition:background .8s,box-
 @keyframes vergilBreath{from{transform:scale(1);opacity:.75}to{transform:scale(1.02);opacity:1}}
 @keyframes vergilParticles{from{background-position:0 0}to{background-position:0 200px}}
 
-/* V: 紫雾提亮 */
+/* V */
 .chat-bg-v{background:radial-gradient(ellipse at 50% 50%,rgba(200,118,255,.28) 0%,rgba(0,0,0,.5) 65%,#000 100%);filter:brightness(1.25) saturate(1.2);animation:vPulse 4s ease-in-out infinite alternate}
 .chat-bg-v::before{background:radial-gradient(ellipse at 30% 70%,rgba(200,118,255,.15) 0%,transparent 55%),radial-gradient(ellipse at 70% 30%,rgba(180,100,255,.1) 0%,transparent 50%);animation:vLightPulse 3s ease-in-out infinite}
 @keyframes vPulse{from{opacity:.75}to{opacity:1}}
@@ -230,7 +230,7 @@ body{position:fixed;top:0;left:0;right:0;bottom:0;transition:background .8s,box-
 .ach-detail-item.locked .ach-name{color:#666}
 .ach-detail-item .ach-desc{font-size:11px;color:#999;line-height:1.4}
 .ach-detail-item .ach-date{font-size:10px;color:#555;margin-top:2px}
-#ach-detail-close{display:block;margin:14px auto 0;padding:8px 28px;background:#222;border:1px solid #555;color:#aaa;font-size:12px;cursor:pointer;border-radius:4px}
+#ach-detail-close{display:block;margin:14px auto 0;padding:8px 28px;background:#222;border:1px solid #555;color:#aaa;font-size:12px;cursor:pointer}
 
 /* ========== 用户/游客/资料 ========== */
 #user-modal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center}
@@ -361,7 +361,6 @@ body.shake{animation:screenShake .3s ease-out}
 
   <!-- 聊天 -->
   <div class="chat" id="chat">
-    <!-- 背景特效层（独立DOM，不会被innerHTML清空） -->
     <div class="chat-bg chat-bg-nero" id="chat-bg"></div>
   </div>
 
@@ -372,6 +371,9 @@ body.shake{animation:screenShake .3s ease-out}
 
   <!-- 输入 -->
   <div class="input">
+    <div style="position:absolute;left:12px;top:-20px;color:#fff;font-weight:bold;font-size:11px;font-family:'Microsoft YaHei',sans-serif;pointer-events:none;z-index:10;letter-spacing:0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90vw">
+      制作者:一庭霜月满襟寒（bilibili） QQ1127421253，欢迎交流和提出建议
+    </div>
     <input id="ui" placeholder="有话快说，我还要去杀恶魔呢！" onkeydown="if(event.key==='Enter')send()">
     <button onclick="send()">Send</button>
   </div>
@@ -382,7 +384,6 @@ body.shake{animation:screenShake .3s ease-out}
     <div class="cname">Nero</div>
     <div class="cbtn" id="b-dante" style="background-image:url('https://i.postimg.cc/MHrR908Q/1771934129984.jpg')" onclick="sw('dante')"></div>
     <div class="cname">Dante</div>
-    <!-- 关键修复：Vergil 的 id 统一为 b-vergil -->
     <div class="cbtn" id="b-vergil" style="background-image:url('https://i.postimg.cc/x8FH6GSm/1771934121143.jpg')" onclick="sw('vergil')"></div>
     <div class="cname">Vergil</div>
     <div class="cbtn" id="b-v" style="background-image:url('https://i.postimg.cc/gkxjp9Pw/b19ab9897647c907a11733dfd0f6df3.jpg')" onclick="sw('v')"></div>
@@ -550,8 +551,7 @@ var PLACEHOLDER_POOL={
 };
 function getRandomPlaceholder(r){var p=PLACEHOLDER_POOL[r];return p[Math.floor(Math.random()*p.length)];}
 
-// ========== 趣味评价（与总评挂钩） ==========
-// 每个角色 5 个等级 D/C/B/A/S，由 maxStyleIdx 索引
+// ========== 趣味评价 ==========
 var QUOTE_DB={
   nero:{
     0:{en:"Pathetic. Even a baby demon fights better.",zh:"可悲。连小恶魔都比你打得好。",by:"Nero"},
@@ -643,7 +643,7 @@ var MODEL="gemini-3-flash";
 var QUOTA_LINES={
   nero:"哟，这破东西联系不上了，还说什么没有额度——哈哈！不过没事，你可以来玩玩我的绯红女皇，点一下右边那个看看，不好玩明天再来找我",
   dante:"噢伙计，事务所又欠费了，跟你联系不上了。不过没关系，你等我找人帮我交电费，我们到时候再聊，别想我，哈哈！",
-  vergil:"通讯中断。也罢，我正好懒得跟你费劲口舌，弱者的运气就是如此。想证明自己不是弱者的话，哪天联系的到我再说，毕竟，你连我的影子都看不见。",
+  vergil:"通讯中断。也罢，我有自己的事要做，你也有自己的事要做，如果你能活到我们下次见面时，你最好不要再像现在这样，软弱无力。",
   v:"通讯中断了……或许是我的力量还不足以支撑你我之间的联系吧，不过无所谓，无论什么时候，只要你还有信念出现在我面前，我都会毫不吝啬地佩服你的毅力，到那时候，我们在打开彼此的心扉吧。"
 };
 var prompts={
@@ -664,12 +664,34 @@ var RETURN_LINES={
   vergil:["……又是你，你在期待我为此做出什么反应吗？那真可悲。"],
   v:["又回来了？你比我想象中……更有耐心。过客。","又回来了？看来你和我一样，都在寻找某种……意义。但答案不在这里。","过客总是会回来的。可你终究只是过客，就像我终究只是……一个即将消散的影子。"]
 };
+
+// ========== INTERACTION_LINES（已更新维吉尔相关吐槽）==========
 var INTERACTION_LINES={
-  nero:{dante:["那家伙又跟你说了什么鬼话？我打赌他让你去帮他买草莓圣代对吧？","Dante 那吊儿郎当的家伙……你别被他带坏了。","哼，刚从那个白毛混蛋那过来？他没让你帮他交电费吧？"],vergil:["你……你刚才跟那个人在一起？小心点，他看谁都像块磨刀石。","Vergil 跟你说了什么？如果他让你去砍人，别听他的——那是我该做的事。","那个蓝衣服的家伙……你最好别跟他走太近，他会把你卷进不该卷的事情里。"],v:["那个叫 V 的家伙……他身上有种说不出的怪味。你没被他的影子缠上吧？","V 跟你说了什么诗？别告诉我你听懂了，我反正一句都听不进去。","那个拄着手杖的家伙……他看着你的时候，像是在看一个即将消失的人。"]},
-  dante:{nero:["哟，刚从 Nero 那过来？那小子还是那么暴躁，哈哈！","Nero 有没有拿他的 Devil Breaker 吓唬你？别怕，那玩意儿炸过好几次了。","那小子有没有跟你提姬莉叶？嘿嘿，他脸红的样子比打架好看多了。"],vergil:["……你刚才跟那个家伙在一起。我闻到了刀刃的味道。","Vergil 没对你做什么吧？虽然他是我哥……但他有时候挺烦的。","别告诉 Nero 我刚才提到了我哥。那小子会炸的。"],v:["V 那家伙……他念诗的时候你在听吗？我反正直接睡着了。","那个拄着手杖的家伙来找过你了？小心点，他身边总跟着些……不太对劲的东西。","V 有没有让你帮他找什么？那家伙总是让人帮他跑腿，跟我完全不一样，Jackpot！"]},
-  vergil:{nero:["你从那个蓝衣服的小子那里来。他的剑技……尚可，但远不及我。","Nero 跟你说了什么？如果他提到我，那只是他无谓的执念罢了。","那个冲动的小子……他还没有理解力量的真谛。"],dante:["你刚从那个吊儿郎当的家伙那里来。他的玩世不恭，是对自己无能的掩饰。","Dante 没有对你做什么吧？他最多也就是让你帮他买甜点。可笑。","那个家伙永远不懂什么是真正的力量。你也不懂。"],v:["V……那个人就是我软弱的一面。你不必从他那里听任何东西。","你见过 V 了。他的诗句、他的虚弱——那都是我抛弃的部分。","那个人……不，那个影子。如果你同情他，那你的同情毫无价值。"]},
-  v:{nero:["你从 Nero 那里来。他的愤怒……像一团未燃尽的火。","那个蓝衣少年……Shadow 说他身上有恶魔的气息，也有人的温度。","Nero 的话，你不必全信。但他的心，比大多数人都干净。"],dante:["你从 Dante 那里来。他的笑声……像一面盾牌，遮住了背后的空虚。","那个红衣男人……Griffon 说他有趣，Shadow 说他吵。我同意后者。","Dante 跟你说了什么玩笑？他的幽默感……像是一层薄薄的糖衣，裹着苦药。"],vergil:["你见过他了。Vergil……或者说，我。我的另一半。","那个人不会对你说太多。他的沉默，比我的诗句更沉重。","你站在他面前时，是否感到了风的压迫？那是他存在的证明。"]}
+  nero:{
+    dante:["那家伙又跟你说了什么鬼话？我打赌他让你去帮他买草莓圣代对吧？","Dante 那吊儿郎当的家伙……你别被他带坏了。","哼，刚从那个白毛混蛋那过来？他没让你帮他交电费吧？"],
+    // ★ 已更新：尼禄吐槽维吉尔
+    vergil:["你刚刚……跟那个蓝衣服的人在一起？你问我他是谁……他是我的父亲，但是我比谁都清楚，他对待我，并不像在对待一个儿子那样。","你刚刚见过维吉尔了吗？给你个忠告，不要试图跟他打交道，他的眼里没有朋友一说，只有某种对爱的渴望或者……对力量的渴望，我是说，他是来挑选谁是最硬的磨刀石的。","你居然活着回来了？你没有被维吉尔那个混账砍成两半吗？稀奇……我开始有点羡慕你这家伙了。"],
+    v:["那个叫 V 的家伙……他身上有种说不出的怪味。你没被他的影子缠上吧？","V 跟你说了什么诗？别告诉我你听懂了，我反正一句都听不进去。","那个拄着手杖的家伙……他看着你的时候，像是在看一个即将消失的人。"]
+  },
+  dante:{
+    nero:["哟，刚从 Nero 那过来？那小子还是那么暴躁，哈哈！","Nero 有没有拿他的 Devil Breaker 吓唬你？别怕，那玩意儿炸过好几次了。","那小子有没有跟你提姬莉叶？嘿嘿，他脸红的样子比打架好看多了。"],
+    // ★ 已更新：但丁吐槽维吉尔
+    vergil:["你活着从我哥那边回来了？你闻到了吗？维吉尔身上总有着一股刀刃味……靠近他太久，连洗发水都省了，适合我这种交不起电费的。","\"如果我们真的是斯巴达双子的话，必须要被继承的根本就不是什么力量……而是他的灵魂！\"我曾经在我们两人的决战中这么对维吉尔说过，但是可惜的是，我们两人的理念，注定着我们要分道扬镳。","……他为了力量，究竟抛却了多少？这个问题，我一直都藏在心底，如果不是童年的那场火灾，我或许永远都看不清维吉尔他真正的内心。"],
+    v:["V 那家伙……他念诗的时候你在听吗？我反正直接睡着了。","那个拄着手杖的家伙来找过你了？小心点，他身边总跟着些……不太对劲的东西。","V 有没有让你帮他找什么？那家伙总是让人帮他跑腿，跟我完全不一样，Jackpot！"]
+  },
+  vergil:{
+    nero:["你从那个蓝衣服的小子那里来。他的剑技……尚可，但远不及我。","Nero 跟你说了什么？如果他提到我，那只是他无谓的执念罢了。","那个冲动的小子……他还没有理解力量的真谛。"],
+    dante:["你刚从那个吊儿郎当的家伙那里来。他的玩世不恭，是对自己无能的掩饰。","Dante 没有对你做什么吧？他最多也就是让你帮他买甜点。可笑。","那个家伙永远不懂什么是真正的力量。你也不懂。"],
+    v:["V……那个人就是我软弱的一面。你不必从他那里听任何东西。","你见过 V 了。他的诗句、他的虚弱——那都是我抛弃的部分。","那个人……不，那个影子。如果你同情他，那你的同情毫无价值。"]
+  },
+  v:{
+    nero:["你从 Nero 那里来。他的愤怒……像一团未燃尽的火。","那个蓝衣少年……Shadow 说他身上有恶魔的气息，也有人的温度。","Nero 的话，你不必全信。但他的心，比大多数人都干净。"],
+    dante:["你从 Dante 那里来。他的笑声……像一面盾牌，遮住了背后的空虚。","那个红衣男人……Griffon 说他有趣，Shadow 说他吵。我同意后者。","Dante 跟你说了什么玩笑？他的幽默感……像是一层薄薄的糖衣，裹着苦药。"],
+    // ★ 已更新：V 吐槽维吉尔
+    vergil:["你见过他了……维吉尔——他的力量跟压迫感，是我的诗句一辈子无法描述的。Shadow在他脚下，而Griffon不敢作声。","尤里森跟我合体之后的产物，维吉尔，我是他的人性面，他对力量的渴望，让他变成了尤里森那样的恶魔，然而我，以诗句记录着自己的软弱，我跟他，是两个极端，我是弱者，他是强者，我们终归殊途。","他不会多言，他跟我一样，都喜欢随身携带着这本诗集。他的内心……也在渴求着隐秘的爱。"]
+  }
 };
+
 var IDLE_LINES={
   nero:["喂！你人呢？不会是去找但丁了吧？快回来！","怎么不说话了？该不会是手被恶魔咬了吧？","嘿，我还以为你睡着了呢。Yahoo！……好吧，你不说话我就当你在发呆。","你再不说话我就拿绯红女皇戳你了啊。","喂！别装死！恶魔可不会等你。","沉默是金？对你来说沉默就是送死。","你该不会在想怎么夸我吧？不用想了，直接说就行。"],
   dante:["哟，还活着呢？我还以为你被恶魔抓走了。","怎么没声了？来，我给你讲个笑话——算了，还是你自己说点什么吧，Jackpot！","别告诉我你去找尼禄那小子了……那家伙比我还话多。","你再不说话我就默认你同意帮我交电费了啊。","沉默？行吧，那我数三声——1……2……2.5……","喂！别让我一个人在这自言自语啊！","再不说话我就放 Subhuman 了，很大声的那种。"],
@@ -714,8 +736,7 @@ function showRankFloat(idx){var s=STYLE_TABLE[idx],el=document.getElementById('r
 var comboBarWrap=document.getElementById('combo-bar-wrap'),comboBar=document.getElementById('combo-bar');
 function bumpCombo(){comboCount++;var cc=document.getElementById('combo-counter');if(comboCount>=2){cc.textContent='🔥 COMBO x'+comboCount;cc.classList.remove('show');void cc.offsetWidth;cc.classList.add('show');}comboBarWrap.classList.add('show');comboBarStart=performance.now();var D=30000;function ub(){var el=performance.now()-comboBarStart,pt=Math.max(0,100-el/D*100);comboBar.style.width=pt+'%';if(pt>0&&comboCount>0){comboBarTimer=requestAnimationFrame(ub);}else{comboBarWrap.classList.remove('show');}}cancelAnimationFrame(comboBarTimer);ub();clearTimeout(comboTimer);comboTimer=setTimeout(function(){comboCount=0;cc.classList.remove('show');comboBarWrap.classList.remove('show');},30000);}
 
-// ========== 背景特效切换（核心修复） ==========
-// 背景是独立 DOM 节点 #chat-bg，只改 class，绝不被 innerHTML 清空影响
+// ========== 背景特效切换 ==========
 function setChatBg(role){
   var bg=document.getElementById('chat-bg');
   bg.className='chat-bg chat-bg-'+role;
@@ -734,36 +755,34 @@ function toggleTrack(){if(!audioUnlocked)return;var t=audios[cur];if(t.paused){t
 var WEAPON_IMGS={vergil:"yamato.png",nero:"https://i.postimg.cc/BvGsMmcz/aebf56b3276a71fdea06b9e5abb942d88293704cafd5ea7544f3aa7f85e96a1d-0.png",dante:"https://i.postimg.cc/s2RywT90/d7bb84ad07891cb9c5fa4bdaacf4a962c2964e974fa890e552838041fa997203-0.jpg",v:"cane_final.png"};
 var WEAPON_BORDERS={nero:"#4fc3f7",dante:"#ff5252",vergil:"#b0b0b0",v:"#c876ff"};
 var WEAPON_GLOWS={nero:"radial-gradient(ellipse,rgba(79,195,247,.3) 0%,transparent 70%)",dante:"radial-gradient(ellipse,rgba(255,82,82,.3) 0%,transparent 70%)",vergil:"radial-gradient(ellipse,rgba(128,192,255,.3) 0%,transparent 70%)",v:"radial-gradient(ellipse,rgba(200,118,255,.3) 0%,transparent 70%)"};
-function updateWeapon(r){var img=document.getElementById('weapon-img'),glow=document.getElementById('weapon-glow');img.classList.remove('show','glow-cyan','glow-red','fire-burst','v-weapon');glow.classList.remove('show');setTimeout(function(){img.src=WEAPON_IMGS[r];img.style.borderColor=WEAPON_BORDERS[r];glow.style.background=WEAPON_GLOWS[r];if(r==='v')img.classList.add('v-weapon');img.onload=function(){img.classList.add('show');glow.classList.add('show');if(r==='nero')img.classList.add('glow-cyan');};img.onerror=function(){img.alt='[加载失败]';img.classList.add('show');};},250);}
+function updateWeapon(r){var img=document.getElementById('weapon-img'),glow=document.getElementById('weapon-glow');img.classList.remove('show','glow-cyan','glow-red','fire-burst','v-weapon');glow.classList.remove('show');setTimeout(function(){img.src=WEAPON_IMGS[r];img.style.borderColor=WEAPON_BORDERS[r];glow.style.background=WEAPON_GLOWS[r];if(r==='v')img.classList.add('v-weapon');img.onload=function(){img.classList.add('show');glow.classList.add('show');if(r==='nero'){img.classList.add('glow-cyan');img.classList.add('glow-red');}};img.onerror=function(){img.alt='[加载失败]';img.classList.add('show');};},250);}
 
 // ========== 消息渲染 ==========
 var chat=document.getElementById('chat');
+var scrollBtn=document.getElementById('scroll-btn');
 function getRoleFallbackSvg(r){var m={nero:'4fc3f7',dante:'ff5252',vergil:'80c0ff',v:'c876ff'};var t=r==='vergil'?'Vg':r==='v'?'V':r.charAt(0).toUpperCase();return'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42"><circle cx="21" cy="21" r="21" fill="%23'+m[r]+'"/><text x="21" y="27" text-anchor="middle" fill="%23fff" font-size="18" font-family="serif">'+t+'</text></svg>';}
 function getUserFallbackSvg(){var i=USER.name?USER.name.charAt(0).toUpperCase():'?';return'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42"><circle cx="21" cy="21" r="21" fill="%23c00"/><text x="21" y="27" text-anchor="middle" fill="%23fff" font-size="18" font-family="serif">'+i+'</text></svg>';}
 function createAvatarImg(src,fb){var img=document.createElement('img');img.className='av';img.src=src;img.onerror=function(){this.src=fb;};return img;}
 function say(r,text,isUser){var md=document.createElement('div');md.className='msg'+(isUser?' user':'');var ai=isUser?createAvatarImg(USER.avatar||getUserFallbackSvg(),getUserFallbackSvg()):createAvatarImg(ROLE_AVATAR[r]||getRoleFallbackSvg(r),getRoleFallbackSvg(r));var td=document.createElement('div');var nd=document.createElement('div');var bd=document.createElement('div');if(isUser){nd.className='name name-user';nd.textContent=USER.name||'GUEST';bd.className='bubble';}else{nd.className='name name-'+ROLE_CSS_KEY[r];nd.textContent=DISPLAY_NAME[r];bd.className='bubble bubble-'+ROLE_CSS_KEY[r];}td.appendChild(nd);td.appendChild(bd);md.appendChild(ai);md.appendChild(td);chat.appendChild(md);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});if(!isUser)typeText(bd,text,28);else bd.textContent=text;}
 function createWaitingBubble(r){var md=document.createElement('div');md.className='msg';var ai=createAvatarImg(ROLE_AVATAR[r]||getRoleFallbackSvg(r),getRoleFallbackSvg(r));var td=document.createElement('div');var nd=document.createElement('div');nd.className='name name-'+ROLE_CSS_KEY[r];nd.textContent=DISPLAY_NAME[r];var bd=document.createElement('div');bd.className='bubble bubble-'+ROLE_CSS_KEY[r]+' typing-cursor';bd.style.color='#888';bd.style.fontStyle='normal';bd.textContent=WAITING_TEXT[r]||'█ 思考中...';td.appendChild(nd);td.appendChild(bd);md.appendChild(ai);md.appendChild(td);return{msgDiv:md,bubble:bd};}
 function scrollToBottom(){chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});}
-function checkScrollBtn(){var sb=document.getElementById('scroll-btn');chat.scrollTop<chat.scrollHeight-chat.clientHeight-60?sb.classList.add('show'):sb.classList.remove('show');}
+function checkScrollBtn(){chat.scrollTop<chat.scrollHeight-chat.clientHeight-60?scrollBtn.classList.add('show'):scrollBtn.classList.remove('show');}
 chat.addEventListener('scroll',checkScrollBtn);
 function typeText(el,text,speed,onDone){el.textContent="";var i=0;(function n(){if(i<text.length){el.textContent+=text[i++];chat.scrollTop=chat.scrollHeight;setTimeout(n,speed);}else{chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});setTimeout(function(){if(onDone)onDone();},50);}})();}
 function bloodFlash(){var f=document.createElement('div');f.className='blood-flash show';document.body.appendChild(f);setTimeout(function(){f.remove();},400);}
 
-// ========== 角色切换（核心修复：Vergil id 统一为 b-vergil） ==========
+// ========== 角色切换 ==========
 function getInteractionLine(t,f){var p=INTERACTION_LINES[t];if(!p)return null;var l=p[f];if(!l||l.length===0)return null;return l[Math.floor(Math.random()*l.length)];}
 function sw(c){
   if(cur===c)return;
   var ir=visitedThisSession[c],fr=cur;
   cur=c;
-  // 更新按钮高亮
   document.querySelectorAll('.cbtn').forEach(function(x){x.classList.remove('active');});
   document.getElementById('b-'+c).classList.add('active');
-  // 关键：只清空消息，不清空背景层（背景是 chat 的第一个子节点，独立存在）
-  // 移除所有 .msg 元素
   chat.querySelectorAll('.msg').forEach(function(m){m.remove();});
-  // 切换背景
   setChatBg(c);
-  // 台词
+  // 调试日志（方便确认走的是哪条分支）
+  _log('sw → '+fr+' → '+c+' | lastReturnType['+c+']='+lastReturnType[c],'ok');
   if(!ir){say(c,getRandomIntro(c),false);}
   else if(fr&&INTERACTION_LINES[c]&&INTERACTION_LINES[c][fr]){
     if(lastReturnType[c]==='general'){say(c,getInteractionLine(c,fr),false);lastReturnType[c]='interaction';}
@@ -772,8 +791,7 @@ function sw(c){
   visitedThisSession[c]=true;
   markVisited(c);
   checkAchievements();
-  var scrollBtn=document.getElementById('scroll-btn');
-  if(scrollBtn)scrollBtn.classList.remove('show');
+  scrollBtn.classList.remove('show');
   updateTitleColor(c);
   updateWeapon(c);
   document.getElementById('ui').placeholder=getRandomPlaceholder(c);
@@ -800,6 +818,8 @@ async function send(){var ui=document.getElementById('ui'),t=ui.value.trim();if(
   saveSave();
   addOrbs(10);addOrbs(Math.min(comboCount*20,200));bumpStyle();totalStylish+=10+comboCount*5;
   if(msgCount>=15&&!resultAutoShown){resultAutoShown=true;setTimeout(showResult,800);}
+  // 绯红女皇火焰爆发（尼禄发消息时）
+  if(cur==='nero'){var wi=document.getElementById('weapon-img');wi.classList.remove('fire-burst');void wi.offsetWidth;wi.classList.add('fire-burst');setTimeout(function(){wi.classList.remove('fire-burst');},800);}
   var w=createWaitingBubble(cur);chat.appendChild(w.msgDiv);chat.scrollTo({top:chat.scrollHeight+200,behavior:'smooth'});
   var reply=await callAI(cur,t);
   if(reply===QUOTA_LINES[cur]){ui.disabled=true;ui.placeholder="⚠️ AI额度已耗尽";addOrbs(-50);document.getElementById('quota-warning').style.display='flex';}
@@ -811,7 +831,7 @@ async function send(){var ui=document.getElementById('ui'),t=ui.value.trim();if(
 function checkEasterEgg(msg){var l=msg.toLowerCase();for(var k in EASTER_EGGS){if(l.indexOf(k)!==-1){triggerEasterEgg(EASTER_EGGS[k]);if(SAVE_DATA.stats.easterEggsTriggered.indexOf(k)===-1){SAVE_DATA.stats.easterEggsTriggered.push(k);saveSave();}return true;}}return false;}
 function triggerEasterEgg(egg){_log('彩蛋触发:'+egg.text,'ok');var o=document.getElementById('easter-overlay'),t=document.getElementById('easter-text');t.textContent=egg.text;t.style.color=egg.color;o.classList.add('show');setTimeout(function(){o.classList.remove('show');},1500);if(egg.action==='coins'){var c=document.getElementById('coin-rain');c.innerHTML='';for(var i=0;i<30;i++){var coin=document.createElement('div');coin.className='coin';coin.style.left=Math.random()*100+'%';coin.style.animationDuration=(1.5+Math.random()*2)+'s';coin.style.animationDelay=(Math.random()*0.5)+'s';c.appendChild(coin);}setTimeout(function(){c.innerHTML='';},4000);}if(egg.action==='dt-red'){var r=document.getElementById('dt-red');r.classList.add('show');setTimeout(function(){r.classList.remove('show');},800);}if(egg.action==='dt-blue'){var b=document.getElementById('dt-blue');b.classList.add('show');setTimeout(function(){b.classList.remove('show');},800);}if(egg.action==='flash')bloodFlash();}
 
-// ========== 长按头像 → 魔人化（各角色独立文本） ==========
+// ========== 长按头像 → 魔人化 ==========
 function bindLongPressDT(btnId,role){
   var btn=document.getElementById(btnId);if(!btn)return;
   var timer=null,moved=false,sx=0,sy=0,DUR=600;
@@ -826,7 +846,7 @@ function bindLongPressDT(btnId,role){
 function triggerDevilTrigger(role){
   if(cur!==role)sw(role);
   var egg;
-  if(role==='nero') egg={text:'DEVIL TRIGGER!!!',color:'#ff2200',action:'dt-red'};
+  if(role==='nero'){egg={text:'DEVIL TRIGGER!!!',color:'#ff2200',action:'dt-red'};var wi=document.getElementById('weapon-img');wi.classList.remove('fire-burst');void wi.offsetWidth;wi.classList.add('fire-burst');setTimeout(function(){wi.classList.remove('fire-burst');},1200);}
   else if(role==='dante') egg={text:'SUBHUMAN!!!',color:'#ff5252',action:'dt-red'};
   else if(role==='v') egg={text:'MOTIVATION...',color:'#c876ff',action:'flash'};
   else if(role==='vergil') egg={text:'BURY THE LIGHT',color:'#80c0ff',action:'dt-blue'};
@@ -839,7 +859,7 @@ function triggerDevilTrigger(role){
 // ========== 主动话题 ==========
 function resetIdleTimer(){clearTimeout(idleTimer);idleCooldown=false;idleTimer=setTimeout(function(){if(!idleCooldown){var lines=IDLE_LINES[cur];say(cur,lines[Math.floor(Math.random()*lines.length)],false);idleCooldown=true;addOrbs(5);}},30000);}
 
-// ========== 结算（趣味评价与总评挂钩） ==========
+// ========== 结算 ==========
 function formatTime(ms){var s=Math.floor(ms/1000),m=Math.floor(s/60);s=s%60;return (m<10?'0'+m:m)+':'+(s<10?'0'+s:s);}
 function showResult(){
   var o=document.getElementById('result-overlay'),s=STYLE_TABLE[maxStyleIdx],cc=ROLE_COLORS[cur]||'#ffd700';
@@ -847,7 +867,6 @@ function showResult(){
   document.getElementById('result-big-grade').style.color=cc;
   document.getElementById('result-big-sub').textContent=s.sub;
   document.getElementById('result-big-sub').style.color=cc;
-  // 趣味评价：直接用 maxStyleIdx 索引，与总评严格挂钩
   var q=QUOTE_DB[cur][maxStyleIdx];
   document.getElementById('result-quote-text').textContent='"'+q.en+'"';
   document.getElementById('result-quote-text').style.color=cc;
@@ -907,24 +926,22 @@ function startApp(){
   var ab=document.querySelector('.cbtn.active');var sr=ab?ab.id.replace('b-',''):'nero';cur=sr;
   updateTitleColor(sr);updateWeapon(sr);setChatBg(sr);
   document.getElementById('ui').placeholder=getRandomPlaceholder(sr);
-  // 绑定长按（Vergil 用 b-vergil）
-  bindLongPressDT('b-nero','nero');
-  bindLongPressDT('b-dante','dante');
-  bindLongPressDT('b-vergil','vergil');
-  bindLongPressDT('b-v','v');
-  // 修复1：首次用户交互解锁音频，之后切角色音乐才能正常切换
+  // 音频解锁（首次点击/触屏/按键时解锁）
   var _unlockDone=false;
   function _doUnlock(){
     if(_unlockDone)return;
     _unlockDone=true;
     audioUnlocked=true;
     setVolumes();
-    _log('音频已解锁','ok');
     tryPlay(sr);
   }
   document.addEventListener('click',_doUnlock,{once:true});
   document.addEventListener('touchstart',_doUnlock,{once:true,passive:true});
   document.addEventListener('keydown',_doUnlock,{once:true});
+  bindLongPressDT('b-nero','nero');
+  bindLongPressDT('b-dante','dante');
+  bindLongPressDT('b-vergil','vergil');
+  bindLongPressDT('b-v','v');
   if(!IS_GUEST){
     say(sr,getRandomIntro(sr),false);visitedThisSession[sr]=true;
     setTimeout(function(){tryPlay(sr);},1500);
@@ -969,6 +986,4 @@ document.addEventListener('keydown',function(e){
 </script>
 </body>
 </html>
-
-
 

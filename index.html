@@ -378,6 +378,16 @@ body.shake{animation:screenShake .3s ease-out}
     <button onclick="send()">Send</button>
   </div>
 
+  <!-- 作者个人空间链接（mini-logo正下方） -->
+  <a id="author-link" href="https://b23.tv/69lqvHH" target="_blank" rel="noopener noreferrer"
+     style="position:fixed;top:46px;left:12px;z-index:999;
+            color:#fff;font-weight:bold;font-size:11px;letter-spacing:1.2px;
+            text-decoration:none;text-shadow:0 0 6px rgba(255,255,255,.5);
+            cursor:pointer;transition:font-style .2s,text-shadow .2s,opacity .3s;
+            opacity:0;pointer-events:none;">
+    点击此处进入网站作者个人空间
+  </a>
+
   <!-- 右侧栏 -->
   <div class="sidebar">
     <div class="cbtn active" id="b-nero" style="background-image:url('https://i.postimg.cc/2yXv0dfR/ab0e3d8b0d10b13ee56e113eadd1e3e83700043f2f7bba201a49bc3e30884537-0.jpg')" onclick="sw('nero')"></div>
@@ -630,11 +640,22 @@ function saveUserProfile(){var i=document.getElementById('user-name-input'),n=i.
 function enterGuestMode(){IS_GUEST=true;USER.name='';USER.avatar='';document.getElementById('user-modal').classList.remove('show');document.getElementById('guest-avatar-wrap').style.display='flex';showGuestHint();_log('已进入游客模式','ok');}
 function onGuestAvatarClick(){if(IS_GUEST){document.getElementById('user-modal-title').textContent='设定你的猎人档案';document.getElementById('guest-mode-btn').style.display='block';document.getElementById('user-modal').classList.add('show');}else{openProfileModal();}}
 function showGuestHint(){if(localStorage.getItem('dmc5_guest_hint_shown'))return;var h=document.getElementById('guest-hint');h.classList.add('show');var w=document.getElementById('guest-avatar-wrap');w.classList.add('pulse-hint');setTimeout(function(){h.classList.remove('show');w.classList.remove('pulse-hint');},3000);localStorage.setItem('dmc5_guest_hint_shown','1');}
-function openProfileModal(){document.getElementById('profile-name').textContent=IS_GUEST?'未登记猎人':USER.name;var ah=IS_GUEST?'<div style="width:64px;height:64px;border-radius:50%;border:3px solid #555;background:#222;display:flex;align-items:center;justify-content:center;font-size:30px;color:#888;margin:0 auto 10px;">?</div>':'<img src="'+USER.avatar+'" style="width:64px;height:64px;border-radius:50%;border:3px solid #c00;margin:0 auto 10px;display:block">';document.getElementById('profile-av').innerHTML=ah;var s=SAVE_DATA.stats;document.getElementById('profile-stats').innerHTML='<div><span>消息总数:</span><span>'+s.totalMessages+'</span></div><div><span>最高连击:</span><span>x'+s.maxCombo+'</span></div><div><span>红魂总数:</span><span>'+s.totalOrbs+'</span></div><div><span>已解锁成就:</span><span>'+(Object.keys(SAVE_DATA.unlocked).length)+'/12</span></div>';var ac=document.getElementById('profile-actions');if(IS_GUEST){ac.innerHTML='<button onclick="document.getElementById(\'profile-modal\').classList.remove(\'show\');document.getElementById(\'user-modal-title\').textContent=\'设定你的猎人档案\';document.getElementById(\'guest-mode-btn\').style.display=\'block\';document.getElementById(\'user-modal\').classList.add(\'show\')">✏️ 设定档案</button>';}else{ac.innerHTML='<button onclick="logoutUser()">🚪 登出</button><button onclick="exportSave()">📤 导出存档</button><button onclick="importSave()">📥 导入存档</button>';}document.getElementById('profile-modal').classList.add('show');}
+function openProfileModal(){document.getElementById('profile-name').textContent=IS_GUEST?'未登记猎人':USER.name;var ah=IS_GUEST?'<div style="width:64px;height:64px;border-radius:50%;border:3px solid #555;background:#222;display:flex;align-items:center;justify-content:center;font-size:30px;color:#888;margin:0 auto 10px;">?</div>':'<img src="'+USER.avatar+'" style="width:64px;height:64px;border-radius:50%;border:3px solid #c00;margin:0 auto 10px;display:block">';document.getElementById('profile-av').innerHTML=ah;var s=SAVE_DATA.stats;document.getElementById('profile-stats').innerHTML='<div><span>消息总数:</span><span>'+s.totalMessages+'</span></div><div><span>最高连击:</span><span>x'+s.maxCombo+'</span></div><div><span>红魂总数:</span><span>'+s.totalOrbs+'</span></div><div><span>已解锁成就:</span><span>'+(Object.keys(SAVE_DATA.unlocked).length)+'/12</span></div>';var ac=document.getElementById('profile-actions');if(IS_GUEST){ac.innerHTML='<button onclick="document.getElementById(\'profile-modal\').classList.remove(\'show\');document.getElementById(\'user-modal-title\').textContent=\'设定你的猎人档案\';document.getElementById(\'guest-mode-btn\').style.display=\'block\';document.getElementById(\'user-modal\').classList.add(\'show\')">✏️ 设定档案</button>';}else{ac.innerHTML='<button onclick="logoutUser()">🚪 登出</button><button onclick="exportSave()">📤 导出存档</button><button onclick="importSave()">📥 导入存档</button><button onclick="importFullAchievements()" style="border-color:#ffd700;color:#ffd700;">🏆 全成就解锁(调试)</button>';}document.getElementById('profile-modal').classList.add('show');}
 function closeProfileModal(){document.getElementById('profile-modal').classList.remove('show');}
 function logoutUser(){IS_GUEST=true;USER.name='';USER.avatar='';try{localStorage.removeItem('dmc5_user_name');localStorage.removeItem('dmc5_user_avatar');}catch(e){}document.getElementById('profile-modal').classList.remove('show');document.getElementById('guest-avatar-wrap').style.display='flex';showGuestHint();}
 function exportSave(){var c=btoa(JSON.stringify(SAVE_DATA));prompt('复制以下存档码保存：',c);}
 function importSave(){var c=prompt('粘贴存档码：');if(!c)return;try{SAVE_DATA=JSON.parse(atob(c));saveSave();location.reload();}catch(e){alert('存档码无效');}}
+// ===== 调试：一键全成就解锁 =====
+var FULL_ACH_SAVE_B64='eyJ2ZXJzaW9uIjoxLCJ1bmxvY2tlZCI6eyJmaXJzdF9ibG9vZCI6eyJ0aW1lIjoxNzg0Mjk1MjIzNTkyLCJub3RpZmllZCI6dHJ1ZX0sInN0eWxlX3N3aXRjaGVyIjp7InRpbWUiOjE3ODQ0NjgwMjM1OTIsIm5vdGlmaWVkIjp0cnVlfSwibG9uZ19tZXNzYWdlIjp7InRpbWUiOjE3ODQ3MjcyMjM1OTIsIm5vdGlmaWVkIjp0cnVlfSwibmlnaHRfb3dsIjp7InRpbWUiOjE3ODUxNTkyMjM1OTIsIm5vdGlmaWVkIjp0cnVlfSwiY2hhdHRlcmJveCI6eyJ0aW1lIjoxNzg1MzMyMDIzNTkyLCJub3RpZmllZCI6dHJ1ZX0sImNvbWJvX2tpbmciOnsidGltZSI6MTc4NTU5MTIyMzU5Miwibm90aWZpZWQiOnRydWV9LCJtYXJhdGhvbiI6eyJ0aW1lIjoxNzg1ODUwNDIzNTkyLCJub3RpZmllZCI6dHJ1ZX0sImFsbF9yb3VuZGVyIjp7InRpbWUiOjE3ODYwMjMyMjM1OTIsIm5vdGlmaWVkIjp0cnVlfSwiZWFzdGVyX2h1bnRlciI6eyJ0aW1lIjoxNzg2MTk2MDIzNTkyLCJub3RpZmllZCI6dHJ1ZX0sInN3ZWV0X3Rvb3RoIjp7InRpbWUiOjE3ODY0NTUyMjM1OTIsIm5vdGlmaWVkIjp0cnVlfSwibGVnZW5kYXJ5X2h1bnRlciI6eyJ0aW1lIjoxNzg2NjI4MDIzNTkyLCJub3RpZmllZCI6dHJ1ZX0sIm1vdGl2YXRlZCI6eyJ0aW1lIjoxNzg2ODAwODIzNTkyLCJub3RpZmllZCI6dHJ1ZX19LCJzdGF0cyI6eyJ0b3RhbE1lc3NhZ2VzIjo1MDAsIm1heENvbWJvIjozMCwidG90YWxPcmJzIjo5OTk5LCJjaGFyYWN0ZXJNZXNzYWdlcyI6eyJuZXJvIjozLCJkYW50ZSI6MywidmVyZ2lsIjozLCJ2IjozfSwidmlzaXRlZENoYXJhY3RlcnMiOlsibmVybyIsImRhbnRlIiwidmVyZ2lsIiwidiJdLCJlYXN0ZXJFZ2dzVHJpZ2dlcmVkIjpbImphY2twb3QiLCJzdHJhd2JlcnJ5IiwiZGV2aWwiLCJsZWdlbmRhcnkiLCJtb3RpdmF0aW9uIl0sImxvbmdlc3RTZXNzaW9uTXMiOjYwMDAwMCwibG9uZ2VzdE1lc3NhZ2VMZW5ndGgiOjE1MCwic3dlZXRUb290aENvdW50IjoxfX0=';
+function importFullAchievements(){
+  if(!confirm('⚠️ 调试模式：将解锁全部12个成就并刷新页面，确定？'))return;
+  try{
+    SAVE_DATA=JSON.parse(atob(FULL_ACH_SAVE_B64));
+    saveSave();
+    _log('调试：全成就已解锁','ok');
+    setTimeout(function(){location.reload();},300);
+  }catch(e){alert('调试存档载入失败：'+e.message);}
+}
 
 // ========== AI 配置 ==========
 var API_KEY="sk-5Jg72uXUHod43eEUQOssxpIxp8mbmFCk6u3REqHAJehTO06z".trim();
@@ -655,7 +676,7 @@ var prompts={
 var FIRST_INTRO_POOL={
   nero:["新面孔？看你的样子，很适合拿来当绯红女皇的沙包……哈哈！我开玩笑的，但是我不保证我不会那么做！","嘿嘿嘿！Devil Breaker充能完毕，你最好跑快点，Yahoo！","什么？你很好奇我右手上的机械吗？随便你，别被火箭手炸上天就行！","我曾几次为自己的力量不足而悔恨不已……直到我遇见了姬莉叶，我才发觉自己究竟是为了谁去渴求这份力量"],
   dante:["哟，新面孔，我希望你作为人类，能比那些恶魔让我兴奋一些……我指的不是打架","Jackpot！你问这是什么意思？等你帮我交了事务所的电费，我就告诉你","放松点……如果你遇到困难了，可以来找我，大不了我帮你扛——不过，要收费的","哟，你来的正好，我想让你帮我办件事，不要告诉别人——帮我买点草莓圣代，嘿！我是认真的！"],
-  vergil:["为了力量，我曾抛却了人性。即使如此，还是无法打败他……我不认识你，对你来说是件好事，如果你没有力量，就别来纠缠我。","阎魔刀，分离了人魔……你看到的V是我，魔王尤里森也是我，但无论是哪种，我的存在，是独一无二的。","我不认识你，也不想知道弱者的名字。你只需要知道，你眼前的人是个强者。","我不需要理由挥刀……你也不需要理由倒下。斯巴达的血脉，你连仰望的资格都没有。"],
+  vergil:["力量就是一切。弱者，什么都保护不了。至于你？你的弱小，不带有任何掩饰。弱者保护不了任何人，现在的你还不配得到强者的保护。","阎魔刀斩断的从来只有两种敌人:摇摆不定和弱小的人。如果你在我的面前待太久，你已经死了两次了。","我不认识你，对你而言是件好事。你也不需要知道我太多。斯巴达的血脉，你连仰望的资格都没有。","出现在我面前，勇气可嘉。然而没有力量的勇气，只不过是穷途末路的莽夫。当然，你还没有到那个地步……至少现在没有，不过很快了。"],
   v:["你来了。我一直在等一个人……不过，不是你。","我的身体在腐烂，时间不多了。你有什么事？","Shadow、Griffon、Nightmare……它们会保护我。至于你，自求多福。","斯巴达之子……我的故事，你不必知道太多。但你会看到的。","在苦涩悲伤中，我诅咒我的星辰。是它让我的爱恋如此崇高，而我却如此低贱。","如果愚人坚持其愚蠢，那他就会变聪明。你站在这里，是在坚持，还是在变聪明？","有欲望而无行动者滋生瘟疫。你来到这里，总该不只是为了……看我吧。"]
 };
 var RETURN_LINES={
@@ -991,7 +1012,67 @@ document.addEventListener('keydown',function(e){
     r.readAsDataURL(f);
   });
 })();
+
+// ========== Logo 单击跳转 + 双击打开日志 ==========
+(function bindLogoEvents(){
+  var LOGO_URL='https://b23.tv/69lqvHH'; // ← 网站作者个人空间
+  var clickTimer=null,clickCount=0;
+  function onLogoClick(e){
+    e.preventDefault();
+    clickCount++;
+    if(clickCount===1){
+      clickTimer=setTimeout(function(){
+        // 单击：跳转
+        window.open(LOGO_URL,'_blank');
+        clickCount=0;
+      },280);
+    }else if(clickCount===2){
+      clearTimeout(clickTimer);
+      clickCount=0;
+      // 双击：切换日志面板
+      var lp=document.getElementById('log-panel');
+      if(lp.classList.contains('show')){lp.classList.remove('show');_log('日志面板已关闭','ok');}
+      else{lp.classList.add('show');_log('日志面板已打开','ok');}
+    }
+  }
+  var introLogo=document.getElementById('intro-logo');
+  var miniLogo=document.getElementById('mini-logo');
+  if(introLogo){introLogo.addEventListener('click',onLogoClick);introLogo.title='单击跳转 / 双击打开日志';}
+  if(miniLogo){miniLogo.addEventListener('click',onLogoClick);miniLogo.title='单击跳转 / 双击打开日志';}
+})();
+
+// ========== 作者链接：点击变斜体后跳转 ==========
+(function bindAuthorLink(){
+  var link=document.getElementById('author-link');
+  if(!link)return;
+  // 主界面显示时同步显示链接（与mini-logo同屏）
+  var observer=new MutationObserver(function(){
+    var app=document.getElementById('app');
+    if(app&&app.style.display==='flex'){
+      link.style.opacity='1';
+      link.style.pointerEvents='auto';
+    } else {
+      link.style.opacity='0';
+      link.style.pointerEvents='none';
+    }
+  });
+  observer.observe(document.getElementById('app')||document.body,{attributes:true,attributeFilter:['style']});
+  link.addEventListener('click',function(e){
+    e.preventDefault();
+    // 变为斜体（视觉反馈）
+    link.style.fontStyle='italic';
+    link.style.textShadow='0 0 10px rgba(255,255,255,.8),0 0 20px rgba(255,255,255,.5)';
+    // 短暂延迟后跳转，让用户看到斜体变化
+    setTimeout(function(){
+      window.open('https://b23.tv/69lqvHH','_blank','noopener,noreferrer');
+      // 跳转后恢复原样
+      setTimeout(function(){link.style.fontStyle='';link.style.textShadow='';},500);
+    },150);
+  });
+  // 鼠标悬停效果
+  link.addEventListener('mouseenter',function(){link.style.textShadow='0 0 10px rgba(255,255,255,.8),0 0 18px rgba(255,255,255,.4)';});
+  link.addEventListener('mouseleave',function(){link.style.textShadow='0 0 6px rgba(255,255,255,.5)';});
+})();
 </script>
 </body>
 </html>
-

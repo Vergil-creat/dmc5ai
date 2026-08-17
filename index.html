@@ -58,6 +58,60 @@ body{position:fixed;top:0;left:0;right:0;bottom:0;transition:background .8s,box-
 #combo-bar-wrap.show{opacity:1}
 #combo-bar{height:100%;width:100%;background:linear-gradient(90deg,#ffd700,#ff6a00);box-shadow:0 0 6px #ff6a00;transition:width .3s linear}
 
+/* ========== 角色档案 ========== */
+#char-profile-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99990;display:none;justify-content:center;align-items:center;opacity:0;transition:opacity .4s ease}
+#char-profile-overlay.show{display:flex;opacity:1}
+#char-profile-panel{width:92vw;max-width:560px;max-height:90vh;overflow-y:auto;background:linear-gradient(180deg,#0a0a0a 0%,#111 40%,#0d0d0d 100%);border:2px solid #330000;border-radius:14px;box-shadow:0 0 40px rgba(200,0,0,.35),inset 0 0 30px rgba(0,0,0,.6);padding:20px 22px 18px;scrollbar-width:thin;scrollbar-color:#c00 #111}
+#char-profile-panel::-webkit-scrollbar{width:5px}
+#char-profile-panel::-webkit-scrollbar-thumb{background:#c00;border-radius:3px}
+.cp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #330000}
+.cp-header h3{font-size:18px;color:#ffd700;letter-spacing:2px;text-shadow:0 0 10px rgba(255,215,0,.5);margin:0}
+.cp-close{background:none;border:none;color:#888;font-size:28px;cursor:pointer;line-height:1;padding:0 6px;transition:color .2s}
+.cp-close:hover{color:#ff5252;text-shadow:0 0 8px #ff5252}
+
+/* 家族关系图 */
+.cp-family-tree{background:rgba(0,0,0,.5);border:1px solid #222;border-radius:10px;padding:14px 12px;margin-bottom:16px;text-align:center}
+.cp-family-title{font-size:11px;color:#888;letter-spacing:3px;margin-bottom:10px;text-transform:uppercase}
+.cp-family-diagram{display:flex;flex-direction:column;align-items:center;gap:4px}
+.cp-family-gen{display:flex;gap:24px;justify-content:center;align-items:flex-start}
+.cp-family-node{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 14px;border-radius:8px;min-width:110px;transition:all .3s}
+.cp-family-node .cp-fn{font-size:14px;font-weight:900;letter-spacing:1px}
+.cp-family-node .cp-fd{font-size:9px;color:#888;letter-spacing:.5px}
+.cp-family-node.ancestor{border:1px solid #555;background:rgba(100,100,100,.15)}
+.cp-family-node.ancestor .cp-fn{color:#ccc}
+.cp-family-node.twin{border:1px solid #80c0ff;background:rgba(128,192,255,.1)}
+.cp-family-node.twin .cp-fn{color:#80c0ff;text-shadow:0 0 6px rgba(128,192,255,.5)}
+.cp-family-node.child{border:1px solid #4fc3f7;background:rgba(79,195,247,.1)}
+.cp-family-node.child .cp-fn{color:#4fc3f7;text-shadow:0 0 6px rgba(79,195,247,.5)}
+.cp-family-node.child.fragment{border-color:#c876ff;background:rgba(200,118,255,.1)}
+.cp-family-node.child.fragment .cp-fn{color:#c876ff;text-shadow:0 0 6px rgba(200,118,255,.5)}
+.cp-family-arrow{font-size:18px;color:#555;line-height:1.2}
+
+/* 角色卡片 */
+.cp-cards{position:relative;min-height:280px}
+.cp-card{display:none;animation:cpFade .35s ease}
+.cp-card.active{display:block}
+@keyframes cpFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.cp-card-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 12px;display:block;border:3px solid;object-fit:cover;box-shadow:0 0 20px currentColor}
+.cp-card-name{font-size:22px;font-weight:900;text-align:center;letter-spacing:2px;margin-bottom:2px;text-shadow:0 0 10px currentColor}
+.cp-card-title{font-size:11px;text-align:center;color:#888;letter-spacing:2px;margin-bottom:14px;text-transform:uppercase}
+.cp-card-section{margin-bottom:10px}
+.cp-card-section-title{font-size:10px;color:#666;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;border-bottom:1px solid #222;padding-bottom:3px}
+.cp-card-text{font-size:13px;line-height:1.7;color:#ccc}
+.cp-card-quote{font-style:italic;color:#aaa;font-size:12px;padding:8px 12px;border-left:3px solid;margin-top:10px;background:rgba(255,255,255,.03);line-height:1.6}
+.cp-card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.cp-card-tag{font-size:10px;padding:3px 10px;border-radius:12px;background:rgba(255,255,255,.08);color:#aaa;border:1px solid #333;letter-spacing:.5px}
+
+/* 导航 */
+.cp-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid #222}
+.cp-nav button{background:rgba(255,255,255,.05);border:1px solid #444;color:#ccc;padding:6px 16px;border-radius:6px;font-size:13px;cursor:pointer;transition:all .2s;letter-spacing:1px}
+.cp-nav button:hover{background:rgba(200,0,0,.2);border-color:#c00;color:#fff;text-shadow:0 0 6px #ff5252}
+#cp-counter{font-size:13px;color:#888;letter-spacing:1px}
+
+/* 角色档案按钮（结算面板内） */
+#char-profile-btn{display:block;width:100%;margin:8px auto 0;padding:10px 20px;background:linear-gradient(135deg,rgba(128,192,255,.15),rgba(200,118,255,.1));border:1px solid #80c0ff;color:#80c0ff;font-size:14px;font-weight:700;letter-spacing:2px;border-radius:8px;cursor:pointer;transition:all .3s;text-shadow:0 0 6px rgba(128,192,255,.4)}
+#char-profile-btn:hover{background:linear-gradient(135deg,rgba(128,192,255,.3),rgba(200,118,255,.2));box-shadow:0 0 15px rgba(128,192,255,.4);transform:scale(1.02)}
+
 /* 成就通知 */
 #ach-notify{position:fixed;top:52px;left:50%;transform:translateX(-50%) translateY(-20px);z-index:99995;background:rgba(0,0,0,.92);border:2px solid #ffd700;border-radius:10px;padding:10px 22px;box-shadow:0 0 20px rgba(255,215,0,.5);opacity:0;pointer-events:none;transition:opacity .4s ease,transform .4s ease;max-width:90vw;text-align:center}
 #ach-notify.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -402,9 +456,13 @@ body.shake{animation:screenShake .3s ease-out}
       <div id="weapon-glow"></div>
       <img id="weapon-img" src="" alt="weapon">
     </div>
-    <div style="margin-top:auto;margin-bottom:14px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer" onclick="showResult()" title="MISSION RESULT">
+    <div style="margin-top:auto;margin-bottom:10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer" onclick="showResult()" title="MISSION RESULT">
       <div style="font-size:24px;filter:drop-shadow(0 0 6px #ffd700);transition:transform .2s" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🏆</div>
       <span style="font-size:9px;color:#ffd700;letter-spacing:1px">RESULT</span>
+    </div>
+    <div style="margin-bottom:10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer" onclick="openCharProfile()" title="角色档案">
+      <div style="font-size:20px;filter:drop-shadow(0 0 4px #80c0ff);transition:transform .2s" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">📖</div>
+      <span style="font-size:9px;color:#80c0ff;letter-spacing:1px">PROFILE</span>
     </div>
     <div style="margin-bottom:8px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer" onclick="openProfileModal()" title="猎人档案">
       <div style="font-size:20px;filter:drop-shadow(0 0 4px #ffd700);transition:transform .2s" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">👤</div>
@@ -484,6 +542,61 @@ body.shake{animation:screenShake .3s ease-out}
     <div class="result-time-quote"><div class="result-time-quote-text" id="result-time-quote-text"></div></div>
     <button id="ach-detail-btn" onclick="openAchDetail()">🏆 查看成就详情</button>
     <div class="result-bottom-hint">按任意键或点击关闭</div>
+  </div>
+</div>
+
+<!-- 角色档案 -->
+<div id="char-profile-overlay">
+  <div id="char-profile-panel">
+    <div class="cp-header">
+      <h3>📖 角色档案</h3>
+      <button class="cp-close" onclick="closeCharProfile()">×</button>
+    </div>
+    <div class="cp-family-tree">
+      <div class="cp-family-title">— 斯巴达血脉 · 家族关系 —</div>
+      <div class="cp-family-diagram">
+        <div class="cp-family-gen">
+          <div class="cp-family-node ancestor">
+            <div class="cp-fn">斯巴达</div>
+            <div class="cp-fd">Sparda · 传奇魔剑士</div>
+          </div>
+          <div class="cp-family-node ancestor">
+            <div class="cp-fn">Eva</div>
+            <div class="cp-fd">人类女性</div>
+          </div>
+        </div>
+        <div class="cp-family-arrow">┃</div>
+        <div class="cp-family-gen">
+          <div class="cp-family-node twin">
+            <div class="cp-fn">维吉尔</div>
+            <div class="cp-fd">Vergil · 长子</div>
+          </div>
+          <div class="cp-family-node twin">
+            <div class="cp-fn">但丁</div>
+            <div class="cp-fd">Dante · 次子</div>
+          </div>
+        </div>
+        <div class="cp-family-arrow">┃</div>
+        <div class="cp-family-gen">
+          <div class="cp-family-node child">
+            <div class="cp-fn">尼禄</div>
+            <div class="cp-fd">Nero · 维吉尔之子</div>
+          </div>
+          <div class="cp-family-node child fragment">
+            <div class="cp-fn">V / 尤里森</div>
+            <div class="cp-fd">维吉尔的人性与魔性分裂体</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cp-cards" id="cp-cards">
+      <!-- 卡片由JS动态渲染 -->
+    </div>
+    <div class="cp-nav">
+      <button id="cp-prev" onclick="cpNav(-1)">◀ 上一个</button>
+      <span id="cp-counter">1 / 4</span>
+      <button id="cp-next" onclick="cpNav(1)">下一个 ▶</button>
+    </div>
   </div>
 </div>
 
@@ -931,6 +1044,92 @@ function openAchDetail(){var l=document.getElementById('ach-detail-list');l.inne
 function closeAchDetail(){document.getElementById('ach-detail-overlay').classList.remove('show');}
 function switchAchTab(type,el){document.querySelectorAll('.ach-detail-tabs span').forEach(function(s){s.className='tab-inactive';});el.className='tab-active';var l=document.getElementById('ach-detail-list');l.innerHTML='';ACHIEVEMENTS.forEach(function(a){var u=!!SAVE_DATA.unlocked[a.id];if(type==='unlocked'&&!u)return;if(type==='locked'&&u)return;var d=document.createElement('div');d.className='ach-detail-item '+(u?'unlocked':'locked');var ds=u?new Date(SAVE_DATA.unlocked[a.id].time).toLocaleDateString():'';var n=a.hidden&&!u?'???':a.name,dc=a.hidden&&!u?'完成隐藏条件以解锁':a.desc;d.innerHTML='<div class="ach-icon">'+(u?'🏆':'🔒')+'</div><div class="ach-info"><div class="ach-name">'+n+'</div><div class="ach-desc">'+dc+'</div>'+(u?'<div class="ach-date">'+ds+'</div>':'')+'</div>';l.appendChild(d);});}
 
+// ========== 角色档案 ==========
+var CHAR_PROFILES=[
+  {
+    id:'nero',name:'尼禄',en:'Nero',title:'恶魔猎人 · 新生代',
+    avatar:"https://i.postimg.cc/2yXv0dfR/ab0e3d8b0d10b13ee56e113eadd1e3e83700043f2f7bba201a49bc3e30884537-0.jpg",
+    color:'#4fc3f7',
+    bio:'年轻的恶魔猎人，在福尔图纳被骑士团养大。曾被剥夺恶魔右臂"Devil Bringer"，后在妮可的帮助下装备机械义肢"Devil Breaker"。为人暴躁护短，嘴上不饶人，但对姬莉叶和在意的人极其珍视。在《鬼泣5》中，他觉醒了属于自己的真正恶魔之力，手臂重新生长。',
+    personality:'🔥 热血 · 暴躁 · 重情义 · 嘴硬心软',
+    weapon:'⚔ 绯红女皇（机动剑）· 湛蓝玫瑰（改装左轮）· Devil Breaker 系列义肢',
+    quote:'"Devil May Cry? More like Devil May… DIE!"',
+    tags:['斯巴达血脉第三代','维吉尔之子','Devil Bringer','姬莉叶的恋人']
+  },
+  {
+    id:'dante',name:'但丁',en:'Dante',title:'Devil May Cry 事务所主人 · 传奇猎人',
+    avatar:"https://i.postimg.cc/MHrR908Q/1771934129984.jpg",
+    color:'#ff5252',
+    bio:'传奇魔剑士斯巴达与人类女性Eva的次子，维吉尔的双胞胎弟弟。开着"Devil May Cry"恶魔猎人事务所，一边吃披萨一边拯救世界。表面玩世不恭、爱耍帅，关键时刻从不掉链子。在《鬼泣5》中，他将叛逆之刃刺入自身，吸收斯巴达之剑的力量，觉醒了完整的恶魔形态，获得了新武器"魔剑但丁"。',
+    personality:'🎭 不羁 · 痞气 · 嘴硬心软 · 关键时刻靠谱',
+    weapon:'⚔ 叛逆之刃 · 黑檀木与白象牙（双枪）· 魔剑但丁 · 斯巴达之剑',
+    quote:'"Jackpot!"',
+    tags:['斯巴达次子','维吉尔的双胞胎弟弟','尼禄的叔叔','事务所所长']
+  },
+  {
+    id:'vergil',name:'维吉尔',en:'Vergil',title:'传奇魔剑士 · 斯巴达长子',
+    avatar:"https://i.postimg.cc/x8FH6GSm/1771934121143.jpg",
+    color:'#80c0ff',
+    bio:'斯巴达与Eva的长子，但丁的双胞胎哥哥，尼禄的亲生父亲。幼年时母亲被恶魔杀害却无力阻止，从此埋下对力量的极度渴望。为追求力量不惜分离自己的人性与魔性——人性化为V，魔性化为魔王尤里森。冷酷、高傲、信奉"力量即真理"。在《鬼泣5》结尾，他与但丁一同前往魔界封印门户，两人以切磋的方式和解。',
+    personality:'❄️ 冷酷 · 高傲 · 偏执 · 追求极致力量',
+    weapon:'⚔ 阎魔刀（居合斩）· 幻影剑 · 贝奥武夫拳套',
+    quote:'"I am the storm that is approaching."',
+    tags:['斯巴达长子','但丁的双胞胎哥哥','尼禄的父亲','V与尤里森的本体']
+  },
+  {
+    id:'v',name:'V',en:'V',title:'神秘诗人 · 维吉尔的人性面',
+    avatar:"https://i.postimg.cc/gkxjp9Pw/b19ab9897647c907a11733dfd0f6df3.jpg",
+    color:'#c876ff',
+    bio:'维吉尔人性一面的具象化。身体虚弱需依靠手杖行走，却能召唤三头魔兽战斗——暗影（Shadow）、格里芬（Griffon）、噩梦（Nightmare）。终其一生都在寻找"成为完整之人"的答案。在《鬼泣5》中，他找到但丁委托讨伐尤里森，实则是为了让但丁杀死自己，与尤里森重新合体为完整的维吉尔。',
+    personality:'🌙 忧郁 · 神秘 · 诗意 · 内心坚定',
+    weapon:'⚔ 手杖 · 召唤兽（Shadow / Griffon / Nightmare）· 诗集',
+    quote:'"I am thou, thou art I."',
+    tags:['维吉尔的人性面','尤里森的对应体','诗人','即将消散的影子']
+  }
+];
+var cpIndex=0;
+function openCharProfile(){
+  document.getElementById('char-profile-overlay').classList.add('show');
+  cpIndex=0;renderCard();
+}
+function closeCharProfile(){
+  document.getElementById('char-profile-overlay').classList.remove('show');
+}
+function cpNav(dir){
+  cpIndex+=dir;
+  if(cpIndex<0)cpIndex=CHAR_PROFILES.length-1;
+  if(cpIndex>=CHAR_PROFILES.length)cpIndex=0;
+  renderCard();
+}
+function renderCard(){
+  var c=CHAR_PROFILES[cpIndex];
+  var html='';
+  html+='<div class="cp-card active" style="color:'+c.color+'">';
+  html+='<img class="cp-card-avatar" src="'+c.avatar+'" style="border-color:'+c.color+';color:'+c.color+'" onerror="this.src=\'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><circle cx=%2220%22 cy=%2220%22 r=%2220%22 fill=%22'+encodeURIComponent(c.color)+'%22/></svg>\'">';
+  html+='<div class="cp-card-name" style="color:'+c.color+'">'+c.name+' <span style="font-size:13px;color:#666;font-weight:400">'+c.en+'</span></div>';
+  html+='<div class="cp-card-title">'+c.title+'</div>';
+  html+='<div class="cp-card-section"><div class="cp-card-section-title">📖 简介</div><div class="cp-card-text">'+c.bio+'</div></div>';
+  html+='<div class="cp-card-section"><div class="cp-card-section-title">🎭 性格</div><div class="cp-card-text">'+c.personality+'</div></div>';
+  html+='<div class="cp-card-section"><div class="cp-card-section-title">⚔ 武器</div><div class="cp-card-text">'+c.weapon+'</div></div>';
+  html+='<div class="cp-card-quote" style="border-color:'+c.color+'">'+c.quote+'</div>';
+  html+='<div class="cp-card-tags">'+c.tags.map(function(t){return '<span class="cp-card-tag">'+t+'</span>';}).join('')+'</div>';
+  html+='</div>';
+  document.getElementById('cp-cards').innerHTML=html;
+  document.getElementById('cp-counter').textContent=(cpIndex+1)+' / '+CHAR_PROFILES.length;
+}
+// 键盘导航
+document.addEventListener('keydown',function(e){
+  var overlay=document.getElementById('char-profile-overlay');
+  if(!overlay.classList.contains('show'))return;
+  if(e.key==='Escape')closeCharProfile();
+  if(e.key==='ArrowLeft')cpNav(-1);
+  if(e.key==='ArrowRight')cpNav(1);
+});
+// 点击遮罩关闭
+document.getElementById('char-profile-overlay').addEventListener('click',function(e){
+  if(e.target===this)closeCharProfile();
+});
+
 // ========== 开场流程 ==========
 var intro=document.getElementById('intro'),logo=document.getElementById('intro-logo'),mini=document.getElementById('mini-logo'),app=document.getElementById('app');
 var p=0,sx=window.innerWidth/2,sy=window.innerHeight/2,ex=26,ey=24;
@@ -1076,3 +1275,4 @@ document.addEventListener('keydown',function(e){
 </script>
 </body>
 </html>
+
